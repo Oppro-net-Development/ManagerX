@@ -1,6 +1,28 @@
 <img draggable="false" src="https://github.com/Oppro-net-Development/ManagerX/blob/main/GitHub/Img/managerx.png"></a>
-<div id="badges" align="center">
-<img alt="GitHub commit activity" src="https://img.shields.io/github/commit-activity/t/Oppro-net-Development/oppronetbot?style=for-the-badge">
-<img alt="Lastet Version" src="https://img.shields.io/badge/V1_Preivew-blue?style=for-the-badge&label=lastet%20Version">
-<img alt="Next Version" src="https://img.shields.io/badge/V1.1_Preview-green?style=for-the-badge&label=Next%20Version">
-</div>
+
+
+Aufbau:
+```
+ManagerX/
+├── main.py
+├── .env
+├── cogs/
+│   ├── informationen/
+│   │   ├── bot.py
+│   │   ├── botstatus.py
+│   │   ├── server.py
+│   │   ├── user.py
+│   ├── moderation
+│   │   ├── Datenbanken
+│   │   │   ├── warns.db
+│   │   ├── warning-system.py
+│   │   ├── admin.py
+│   ├── TempVC
+│   │   ├── tempvc.py
+├── ui/
+│   ├── colors.py
+│   ├── emojis.py
+│   └── templates/
+│       └── embeds.py
+
+```
