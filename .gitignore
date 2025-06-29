@@ -1,0 +1,24 @@
+# .env-Dateien
+.env
+.env.*
+
+# IDE-Einstellungen
+.idea/
+.vscode/
+
+# Python
+__pycache__/
+*.pyc
+
+# Logs, Datenbanken, temporäre Dateien
+*.log
+*.sqlite3
+*.db
+
+# System
+.DS_Store
+Thumbs.db
+
+# Sonstiges
+*.bak
+*.tmp
