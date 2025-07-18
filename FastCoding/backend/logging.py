@@ -17,8 +17,11 @@ def init_notes_db():
 def init_tempvc_db():
     print(f"{time} [{Style.BRIGHT}{Fore.MAGENTA}DATABASE{Style.RESET_ALL}] TempVC database initialized successfully.")
 
+def init_stats_db():
+    print(f"{time} [{Style.BRIGHT}{Fore.MAGENTA}DATABASE{Style.RESET_ALL}] Stats database initialized successfully.")
 def init_all():
     init_spam_db()
     init_notes_db()
     init_warn_db()
     init_tempvc_db()
+    init_stats_db()
