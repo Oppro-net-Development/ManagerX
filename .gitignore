@@ -5,7 +5,7 @@
 # IDE-Einstellungen
 .idea/
 .vscode/
-
+data/
 # Python
 __pycache__/
 *.pyc

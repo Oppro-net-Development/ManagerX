@@ -20,6 +20,7 @@ intents = discord.Intents.default()
 intents.members = True
 intents.guilds = True
 intents.messages = True
+intents.message_content = True
 load_dotenv()
 
 ezcord.set_log(

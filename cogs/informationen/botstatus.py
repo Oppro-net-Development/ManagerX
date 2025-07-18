@@ -26,6 +26,7 @@ class StatusCog(ezcord.Cog):
 
         statuses = [
             f"🌍 {guild_count} | 👥 {member_count} | 🏓 {latency}ms",
+            "🔥ManagerX V1.1GLO"
         ]
         status_text = statuses[self.update_status.current_loop % len(statuses)]
 
