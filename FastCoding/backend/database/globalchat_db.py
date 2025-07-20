@@ -99,7 +99,6 @@ class GlobalChatDatabase:
                         user_id INTEGER NOT NULL,
                         guild_id INTEGER NOT NULL,
                         channel_id INTEGER NOT NULL,
-                        message_content TEXT,
                         attachment_urls TEXT,
                         timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                     )
@@ -284,7 +283,7 @@ class GlobalChatDatabase:
                 attachment_str = ",".join(attachment_urls) if attachment_urls else None
                 c.execute("""
                     INSERT INTO message_log 
-                    (user_id, guild_id, channel_id, message_content, attachment_urls) 
+                    (user_id, guild_id, channel_id, attachment_urls) 
                     VALUES (?, ?, ?, ?, ?)
                 """, (user_id, guild_id, channel_id, content, attachment_str))
                 conn.commit()
