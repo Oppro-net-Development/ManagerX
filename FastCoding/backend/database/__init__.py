@@ -5,3 +5,4 @@ from .notes_db import *
 from .Stats_db import *
 from .globalchat_db import *
 from .levelroles_db import *
+from .logging_db import *
