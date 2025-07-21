@@ -1,3 +1,4 @@
+# Copyright (c) 2025 OPPRO.NET Network
 import sqlite3
 import asyncio
 from typing import Optional, List, Tuple

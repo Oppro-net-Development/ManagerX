@@ -1,3 +1,4 @@
+# Copyright (c) 2025 OPPRO.NET Network
 import discord
 import os
 from dotenv import load_dotenv

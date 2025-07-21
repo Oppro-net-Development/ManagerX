@@ -1,3 +1,4 @@
+# Copyright (c) 2025 OPPRO.NET Network
 emoji_settings = "<:settings:1380796107298443315>"
 emoji_no = "<:no:1380796085802500148>"
 emoji_yes = "<:yes:1380796058963153017>"

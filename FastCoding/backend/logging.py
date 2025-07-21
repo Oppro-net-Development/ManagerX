@@ -1,3 +1,4 @@
+# Copyright (c) 2025 OPPRO.NET Network
 import colorama
 from colorama import Fore, Style
 from datetime import datetime

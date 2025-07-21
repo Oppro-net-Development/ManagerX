@@ -1,3 +1,4 @@
+# Copyright (c) 2025 OPPRO.NET Network
 KICK = "kick_members"
 BAN = "ban_members"
 ADMIN = "administrator"
