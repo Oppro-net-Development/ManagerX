@@ -1,3 +1,4 @@
+# Copyright (c) 2025 OPPRO.NET Network
 import os
 import sqlite3
 from contextlib import contextmanager

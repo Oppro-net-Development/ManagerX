@@ -1,3 +1,4 @@
+# Copyright (c) 2025 OPPRO.NET Network
 import discord
 from discord.ext import commands
 from discord.commands import slash_command

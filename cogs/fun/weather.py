@@ -1,3 +1,4 @@
+# Copyright (c) 2025 OPPRO.NET Network
 import requests
 from FastCoding.backend import discord, slash_command, ezcord
 from FastCoding.backend import WEATHER_API

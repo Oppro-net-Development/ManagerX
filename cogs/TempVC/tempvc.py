@@ -1,3 +1,4 @@
+# Copyright (c) 2025 OPPRO.NET Network
 from FastCoding import TempVCDatabase
 from FastCoding import discord, commands, option, slash_command, ezcord
 from FastCoding import emoji_yes, emoji_no, emoji_settings, ERROR_TITLE, ERROR_COLOR, SUCCESS_COLOR, AUTHOR, FLOOTER
