@@ -1,13 +1,19 @@
 <div align="center">
-  <h1>ManagerX - Discord Bot</h1>
+<h1> ✨ ManagerX - Discord Bot ✨ </h1>
 
-  <p>Ein vielseitiger Discord-Bot für Moderation, Spaß und Serververwaltung.</p>
+Ein vielseitiger Discord-Bot für Moderation, Spaß und Serververwaltung.
 
-  <img src="https://img.shields.io/badge/Version-1.3.1-blue?style=for-the-badge" alt="Version" />
-  <img src="https://img.shields.io/badge/Next%20Version-V1.4-green?style=for-the-badge" alt="Next Version" />
+![Version](https://img.shields.io/badge/Version-1.3.1-blue?style=for-the-badge)
+![Next Version](https://img.shields.io/badge/Next%20Version-V1.4-green?style=for-the-badge)
+![Last Commit](https://img.shields.io/github/last-commit/Oppro-net-Development/ManagerX?style=for-the-badge)
+![Built with Py-Cord](https://img.shields.io/badge/Built%20with-py--cord-7289DA?style=for-the-badge&logo=discord&logoColor=white)
+![Python](https://img.shields.io/badge/Python-3.11-blue?style=for-the-badge&logo=python&logoColor=white)
+![SQLite](https://img.shields.io/badge/Database-SQLite-lightgrey?style=for-the-badge&logo=sqlite&logoColor=003B57)
+![License](https://img.shields.io/github/license/Oppro-net-Development/ManagerX?style=for-the-badge)
+![Issues](https://img.shields.io/github/issues/Oppro-net-Development/ManagerX?style=for-the-badge)
+![Pull Requests](https://img.shields.io/github/issues-pr/Oppro-net-Development/ManagerX?style=for-the-badge)
+![Contributions Welcome](https://img.shields.io/badge/Contributions-Welcome-ff69b4?style=for-the-badge)
 
-  <!-- Letzter Commit -->
-  <img src="https://img.shields.io/github/last-commit/Oppro-net-Development/ManagerX?style=for-the-badge" alt="Last Commit" />
 </div>
 ---
 
