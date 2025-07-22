@@ -8,9 +8,9 @@
   <a href="#"><img src="https://img.shields.io/github/contributors/Oppro-net-Development/ManagerX?style=flat" alt="Contributors"></a>
   <a href="#"><img src="https://img.shields.io/github/last-commit/Oppro-net-Development/ManagerX?style=flat" alt="Letzter Commit"></a>
   <a href="https://www.python.org/"><img src="https://img.shields.io/badge/python-3.10%2B-blue?logo=python" alt="Python Version"></a>
-  <a href="https://github.com/Oppro-net-Development/ManagerX/blob/main/LICENSE"><img src="https://img.shields.io/github/license/Oppro-net-Development/ManagerX?style=flat-square" alt="Lizenz"></a>
-  <a href="https://github.com/Oppro-net-Development/ManagerX/stargazers"><img src="https://img.shields.io/github/stars/Oppro-net-Development/ManagerX?style=flat-square" alt="GitHub Stars"></a>
+  <a href="https://github.com/Oppro-net-Development/ManagerX/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"></a>
 </p>
+
 ---
 
 ## 📁 Dateistruktur
