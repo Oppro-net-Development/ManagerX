@@ -10,10 +10,19 @@ import ezcord
 import logging
 from discord.ext import tasks
 from FastCoding.backend import init_all
-
+import yaml
 import aiohttp
 
 from ezcord import log
+
+def load_locale(file_path):
+    with open(file_path, "r", encoding="utf-8") as f:
+        return yaml.safe_load(f)
+
+en = load_locale("locales/en.yaml")
+de = load_locale("locales/de.yaml")
+
+ezcord.I18N({"de": de, "en": en}, prefer_user_locale=True, fallback_locale="en")
 
 
 

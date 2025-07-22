@@ -1,14 +1,16 @@
-<div align="center">
-  <h1>ManagerX - Discord Bot</h1>
-  
-  <p>Ein vielseitiger Discord-Bot für Moderation, Spaß und Serververwaltung.</p>
-  
-  <img src="https://img.shields.io/badge/Version-1.3.1-blue?style=for-the-badge" alt="Version" />
-  <img src="https://img.shields.io/badge/Next%20Version-V1.4-green?style=for-the-badge" alt="Next Version" />
-  
-  <!-- Letzter Commit -->
-  <img src="https://img.shields.io/github/last-commit/Oppro-net-Development/ManagerX?style=for-the-badge" alt="Last Commit" />
-</div>
+<p align="center">
+  <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=500&pause=1000&color=F75590&center=true&vCenter=true&width=435&lines=Willkommen+bei+ManagerX!;Ein+kostenloser+Discord+Bot!;Moderation%2C+Fun%2C+Logging+und+mehr!" alt="ManagerX animierte Überschrift">
+</p>
+
+<p align="center">
+  <a href="#"><img src="https://img.shields.io/badge/Discord-Bot-5865F2?style=flat&logo=discord&logoColor=white" alt="Discord Bot"></a>
+  <a href="#"><img src="https://img.shields.io/badge/status-Aktiv-brightgreen?style=flat&logo=serverfault" alt="Status"></a>
+  <a href="#"><img src="https://img.shields.io/github/contributors/Oppro-net-Development/ManagerX?style=flat" alt="Contributors"></a>
+  <a href="#"><img src="https://img.shields.io/github/last-commit/Oppro-net-Development/ManagerX?style=flat" alt="Letzter Commit"></a>
+  <a href="https://www.python.org/"><img src="https://img.shields.io/badge/python-3.10%2B-blue?logo=python" alt="Python Version"></a>
+  <a href="https://github.com/Oppro-net-Development/ManagerX/blob/main/LICENSE"><img src="https://img.shields.io/github/license/Oppro-net-Development/ManagerX?style=flat-square" alt="Lizenz"></a>
+  <a href="https://github.com/Oppro-net-Development/ManagerX/stargazers"><img src="https://img.shields.io/github/stars/Oppro-net-Development/ManagerX?style=flat-square" alt="GitHub Stars"></a>
+</p>
 ---
 
 ## 📁 Dateistruktur
