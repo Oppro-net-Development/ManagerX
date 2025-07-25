@@ -10,12 +10,12 @@ import time
 from typing import List, Optional, Dict
 import json
 from datetime import datetime, timedelta
-
+import ezcord
 # Logger konfigurieren
 logger = logging.getLogger(__name__)
 
 
-class EnhancedGlobalChat(commands.Cog):
+class EnhancedGlobalChat(ezcord.Cog, group="globalchat"):
     def __init__(self, bot):
         self.bot = bot
 

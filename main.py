@@ -12,17 +12,9 @@ from discord.ext import tasks
 from FastCoding.backend import init_all
 import yaml
 import aiohttp
-
+import random
 from ezcord import log
 
-def load_locale(file_path):
-    with open(file_path, "r", encoding="utf-8") as f:
-        return yaml.safe_load(f)
-
-en = load_locale("locales/en.yaml")
-de = load_locale("locales/de.yaml")
-
-ezcord.I18N({"de": de, "en": en}, prefer_user_locale=True, fallback_locale="en")
 
 
 
@@ -63,7 +55,30 @@ async def on_ready():
 bot.add_help_command()
 
 
+antworten = [
+    ("Wer stört mich bei der Arbeit?", 21),
+    ("Ja? Was gibt's?", 21),
+    ("Ich bin beschäftigt, aber gut…", 23),
+    ("Sprich schnell, ich hab nicht ewig Zeit 😤", 35)
+]
 
+@bot.event
+async def on_message(message):
+    if message.author.bot:
+        return
+
+    if bot.user in message.mentions:
+        antwort = weighted_choice(antworten)
+        await message.channel.send(antwort)
+
+def weighted_choice(choices):
+    total = sum(weight for _, weight in choices)
+    r = random.randint(1, total)
+    upto = 0
+    for choice, weight in choices:
+        upto += weight
+        if r <= upto:
+            return choice
 if __name__ == "__main__":
     # Cogs laden
     bot.load_cogs("cogs", subdirectories=True, custom_log_level =f"{time2} [{Style.BRIGHT}{Fore.RED}COGS LOADING{Style.RESET_ALL}")
