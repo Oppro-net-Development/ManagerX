@@ -69,7 +69,7 @@ class LevelSystem(commands.Cog):
                         pass
 
     @discord.slash_command(description="Zeigt das Server-Leaderboard")
-    async def leaderboard(self, ctx,
+    async def lleaderboard(self, ctx,
                           anzahl: discord.Option(int, "Anzahl der User", default=10, min_value=1, max_value=25)):
         if not self.db.is_levelsystem_enabled(ctx.guild.id):
             embed = discord.Embed(

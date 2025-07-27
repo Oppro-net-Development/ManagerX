@@ -7,6 +7,7 @@ ERROR_TITLE = f"{emoji_no} × Fehler"
 ERROR_COLOR = discord.Color.red()
 ERROR_DESCRIPTION = "Es ist ein Fehler aufgetreten. Bitte versuche es später erneut oder kontaktiere den Support."
 
+WARNING_COLOR = discord.Color.orange()
 
 SUCCESS_TITLE = f"{emoji_yes} × Erfolg"
 SUCCESS_COLOR = discord.Color.green()
