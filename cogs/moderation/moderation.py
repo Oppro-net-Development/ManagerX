@@ -3,7 +3,7 @@
 # >> Imports
 # ───────────────────────────────────────────────
 
-from FastCoding.backend import discord, ezcord, slash_command, option, timedelta
+from FastCoding.backend import discord, ezcord, slash_command, option, timedelta, SlashCommandGroup
 from FastCoding.backend import KICK, BAN, MODERATE
 from FastCoding.ui import emoji_yes, emoji_no, emoji_user, ERROR_TITLE, ERROR_COLOR
 
