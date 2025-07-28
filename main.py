@@ -14,7 +14,7 @@ import yaml
 import aiohttp
 import random
 from ezcord import log
-
+import re
 
 
 
@@ -50,35 +50,58 @@ async def on_ready():
     await asyncio.sleep(1.5)
     print(f"{time} [{Style.BRIGHT}{Fore.LIGHTYELLOW_EX}FASTCODING{Style.RESET_ALL}] Fast is ready to use!")
 
+def parse_time(text: str) -> int:
+    # Sucht nach Zahl+Einheit direkt hinter slowmode oder irgendwo im Text
+    match = re.search(r'slowmode\s*(\d+)(s|min|m)?', text.lower())
+    if not match:
+        return None
+    value = int(match.group(1))
+    unit = match.group(2)
+    if unit in ("min", "m"):
+        return value * 60
+    return value  # Sekunden standardmäßig
 
-
-bot.add_help_command()
-
-
-antworten = [
-    ("Wer stört mich bei der Arbeit?", 21),
-    ("Ja? Was gibt's?", 21),
-    ("Ich bin beschäftigt, aber gut…", 23),
-    ("Sprich schnell, ich hab nicht ewig Zeit 😤", 35)
-]
 
 @bot.event
-async def on_message(message):
+async def on_message(message: discord.Message):
     if message.author.bot:
         return
 
-    if bot.user in message.mentions:
-        antwort = weighted_choice(antworten)
-        await message.channel.send(antwort)
+    content_lower = message.content.lower()
 
-def weighted_choice(choices):
-    total = sum(weight for _, weight in choices)
-    r = random.randint(1, total)
-    upto = 0
-    for choice, weight in choices:
-        upto += weight
-        if r <= upto:
-            return choice
+    # 1. "Antwort + lösch das"
+    if message.reference and "lösch das" in content_lower:
+        if message.mentions and bot.user in message.mentions:
+            if not message.author.guild_permissions.manage_messages:
+                await message.channel.send(f"{message.author.mention}, du hast keine Berechtigung zum Löschen!", delete_after=5)
+                return
+            try:
+                replied_message = await message.channel.fetch_message(message.reference.message_id)
+                await replied_message.delete()
+                await message.delete()
+                await message.channel.send("✅ Nachricht gelöscht!", delete_after=3)
+            except Exception as e:
+                print(f"Fehler beim Löschen: {e}")
+        return  # Wichtig: sonst können weitere Checks doppelt reagieren
+
+    # 2. Slowmode setzen bei Nachricht an Bot mit slowmode
+    if message.mentions and bot.user in message.mentions and "slowmode" in content_lower:
+        seconds = parse_time(content_lower)
+        if seconds is None:
+            await message.channel.send("❌ Ungültige Zeitangabe! Nutze z. B. `10s`, `1min` etc.", delete_after=5)
+            return
+        if not message.author.guild_permissions.manage_channels:
+            await message.channel.send("🚫 Du darfst den Slowmode nicht ändern!", delete_after=5)
+            return
+        try:
+            await message.channel.edit(slowmode_delay=seconds)
+            await message.channel.send(f"✅ Slowmode auf `{seconds}` Sekunden gesetzt!", delete_after=5)
+        except Exception as e:
+            await message.channel.send(f"⚠️ Fehler: {e}", delete_after=5)
+        return  # wichtig für andere Befehle
+
+
+bot.add_help_command()
 if __name__ == "__main__":
     # Cogs laden
     bot.load_cogs("cogs", subdirectories=True, custom_log_level =f"{time2} [{Style.BRIGHT}{Fore.RED}COGS LOADING{Style.RESET_ALL}")

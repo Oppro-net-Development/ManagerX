@@ -17,22 +17,23 @@ class LoggingDatabase:
                 CREATE TABLE IF NOT EXISTS log_channels (
                     guild_id INTEGER PRIMARY KEY,
                     channel_id INTEGER NOT NULL,
-                    enabled BOOLEAN DEFAULT 1
+                    enabled BOOLEAN DEFAULT 1,
+                    log_type TEXT DEFAULT 'default'  -- neue Spalte für log_type
                 )
             ''')
             conn.commit()
 
-    async def set_log_channel(self, guild_id: int, channel_id: int):
-        """Setzt den Log-Channel für einen Server"""
-
+    async def set_log_channel(self, guild_id: int, channel_id: int, log_type: str = 'default'):
         def _insert():
             with sqlite3.connect(self.db_path) as conn:
                 cursor = conn.cursor()
                 cursor.execute('''
-                    INSERT OR REPLACE INTO log_channels (guild_id, channel_id, enabled)
-                    VALUES (?, ?, ?)
-                ''', (guild_id, channel_id, True))
+                    INSERT OR REPLACE INTO log_channels (guild_id, channel_id, enabled, log_type)
+                    VALUES (?, ?, ?, ?)
+                ''', (guild_id, channel_id, True, log_type))
                 conn.commit()
+
+        await asyncio.get_event_loop().run_in_executor(None, _insert)
 
         await asyncio.get_event_loop().run_in_executor(None, _insert)
 
