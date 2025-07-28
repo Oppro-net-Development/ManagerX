@@ -7,6 +7,7 @@ from FastCoding.backend import discord, ezcord, slash_command, option, timedelta
 from FastCoding.backend import KICK, BAN, MODERATE
 from FastCoding.ui import emoji_yes, emoji_no, emoji_user, ERROR_TITLE, ERROR_COLOR
 
+import asyncio
 import re
 from datetime import datetime
 from typing import Optional
@@ -325,6 +326,168 @@ class Moderation(ezcord.Cog):
             )
             await ctx.respond(embed=embed, ephemeral=True)
 
+    @slash_command()
+    async def votekick(self, ctx: discord.ApplicationContext, member: discord.Member,
+                       reason: str = "Kein Grund angegeben"):
+        """Startet eine Votekick-Abstimmung für ein Mitglied"""
+        # Berechtigung prüfen
+        if not getattr(ctx.author.guild_permissions, KICK, False):
+            embed = discord.Embed(
+                title=ERROR_TITLE,
+                description=f"{emoji_no} Du benötigst die `Mitglieder kicken` Berechtigung.",
+                color=ERROR_COLOR
+            )
+            return await ctx.respond(embed=embed, ephemeral=True)
+
+        # Moderation möglich?
+        can_moderate, error_msg = self._can_moderate_member(ctx.author, member)
+        if not can_moderate:
+            embed = discord.Embed(
+                title=ERROR_TITLE,
+                description=f"{emoji_no} {error_msg}",
+                color=ERROR_COLOR
+            )
+            return await ctx.respond(embed=embed, ephemeral=True)
+
+        # Votekick-Embed erstellen
+        embed = discord.Embed(
+            title=f"Votekick für {member.name}",
+            description=f"{ctx.author.mention} möchte {member.mention} kicken.\n\n"
+                        f"Grund: {reason}\n\nReagiere mit ✅ zum Kicken oder ❌ zum Ablehnen.",
+            color=discord.Color.red(),
+            timestamp=datetime.utcnow()
+        )
+        embed.set_footer(text=f"User ID: {member.id}")
+        message = await ctx.respond(embed=embed)
+        # Reaktionen hinzufügen
+        await message.add_reaction(emoji_yes)
+        await message.add_reaction(emoji_no)
+        # Warten auf Reaktionen
+        def check(reaction, user):
+            return user != self.bot.user and str(reaction.emoji) in [emoji_yes, emoji_no] and reaction.message.id == message.id
+        try:
+            reactions = await self.bot.wait_for('reaction_add', timeout=300.0, check=check)
+        except asyncio.TimeoutError:
+            # Timeout nach 5 Minuten
+            embed = discord.Embed(
+                title=ERROR_TITLE,
+                description=f"{emoji_no} Die Votekick-Abstimmung ist abgelaufen.",
+                color=ERROR_COLOR
+            )
+            return await ctx.respond(embed=embed, ephemeral=True)
+
+        # Zähle Reaktionen
+        yes_count = sum(1 for r in reactions if str(r.emoji) == emoji_yes)
+        no_count = sum(1 for r in reactions if str(r.emoji) == emoji_no)
+
+        # Prüfen ob genug Ja-Stimmen
+        required_votes = len(ctx.guild.members) // 2 + 1  # Mehrheit
+        if yes_count >= required_votes:
+            try:
+                # Kick durchführen
+                await member.kick(reason=f"Votekick | Grund: {reason} | Moderator: {ctx.author}")
+                embed = discord.Embed(
+                    title="✅ Votekick erfolgreich",
+                    description=f"{member.mention} wurde gekickt.",
+                    color=discord.Color.green(),
+                    timestamp=datetime.utcnow()
+                )
+                await ctx.respond(embed=embed)
+            except discord.Forbidden:
+                embed = discord.Embed(
+                    title=ERROR_TITLE,
+                    description=f"{emoji_no} Mir fehlen die Berechtigungen, um {member.mention} zu kicken.",
+                    color=ERROR_COLOR
+                )
+                await ctx.respond(embed=embed, ephemeral=True)
+            except discord.HTTPException as e:
+                embed = discord.Embed(
+                    title=ERROR_TITLE,
+                    description=f"{emoji_no} Fehler beim Kicken: {str(e)}",
+                    color=ERROR_COLOR
+                )
+                await ctx.respond(embed=embed, ephemeral=True)
+        else:
+            embed = discord.Embed(
+                title="❌ Votekick abgelehnt",
+                description=f"{member.mention} wurde nicht gekickt.\n\n"
+                            f"Ja-Stimmen: {yes_count}, Nein-Stimmen: {no_count}",
+                color=discord.Color.red(),
+                timestamp=datetime.utcnow()
+            )
+            await ctx.respond(embed=embed)
+
+
+    @slash_command()
+    async def slowmode(self, ctx, time: str = "1h", reason: str = "Kein Grund angegeben"):
+        """Versetzt ein Mitglied in Slowmode"""
+        # Berechtigung prüfen
+        if not getattr(ctx.author.guild_permissions, MODERATE, False):
+            embed = discord.Embed(
+                title=ERROR_TITLE,
+                description=f"{emoji_no} Du benötigst die `Mitglieder moderieren` Berechtigung.",
+                color=ERROR_COLOR
+            )
+            return await ctx.respond(embed=embed, ephemeral=True)
+
+        # Moderation möglich?
+        can_moderate, error_msg = self._can_moderate_member(ctx.author, ctx.author)
+        if not can_moderate:
+            embed = discord.Embed(
+                title=ERROR_TITLE,
+                description=f"{emoji_no} {error_msg}",
+                color=ERROR_COLOR
+            )
+            return await ctx.respond(embed=embed, ephemeral=True)
+
+        # Dauer parsen
+        parsed_duration = self._parse_duration(time)
+        if parsed_duration is None:
+            embed = discord.Embed(
+                title=ERROR_TITLE,
+                description=f"{emoji_no} Ungültige Dauer! Beispiele: `10m`, `1h30m`, `2d`",
+                color=ERROR_COLOR
+            )
+            return await ctx.respond(embed=embed, ephemeral=True)
+
+        # Minimale Dauer prüfen (1 Sekunde)
+        if parsed_duration.total_seconds() < 1:
+            embed = discord.Embed(
+                title=ERROR_TITLE,
+                description=f"{emoji_no} Die Slowmode-Dauer muss mindestens 1 Sekunde betragen.",
+                color=ERROR_COLOR
+            )
+            return await ctx.respond(embed=embed, ephemeral=True)
+
+        try:
+            # Slowmode durchführen
+            await ctx.channel.edit(slowmode_delay=int(parsed_duration.total_seconds()), reason=f"{reason} | Moderator: {ctx.author}")
+
+            # Erfolgs-Embed
+            embed = discord.Embed(
+                title="✅ Slowmode erfolgreich",
+                description=f"Slowmode für {ctx.channel.mention} auf {time} gesetzt.",
+                color=discord.Color.green(),
+                timestamp=datetime.utcnow()
+            )
+            await ctx.respond(embed=embed)
+
+        except discord.Forbidden:
+            embed = discord.Embed(
+                title=ERROR_TITLE,
+                description=f"{emoji_no} Mir fehlen die Berechtigungen, um den Slowmode zu setzen.",
+                color=ERROR_COLOR
+            )
+            await ctx.respond(embed=embed, ephemeral=True)
+        except discord.HTTPException as e:
+            embed = discord.Embed(
+                title=ERROR_TITLE,
+                description=f"{emoji_no} Fehler beim Setzen des Slowmodes: {str(e)}",
+                color=ERROR_COLOR
+            )
+            await ctx.respond(embed=embed, ephemeral=True)
+
+# ───────────────────────────────────────────────
 
 def setup(bot):
     bot.add_cog(Moderation(bot))
