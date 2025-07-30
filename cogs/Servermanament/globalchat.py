@@ -1,7 +1,7 @@
 # Copyright (c) 2025 OPPRO.NET Network
 import discord
 from discord.ext import commands, tasks
-from discord import slash_command, Option
+from discord import slash_command, Option, SlashCommandGroup
 from FastCoding import db
 import asyncio
 import logging
@@ -18,6 +18,8 @@ logger = logging.getLogger(__name__)
 class EnhancedGlobalChat(ezcord.Cog, group="globalchat"):
     def __init__(self, bot):
         self.bot = bot
+
+
 
         # Rate limiting für Spam-Schutz
         self.message_cooldown = commands.CooldownMapping.from_cooldown(
@@ -334,8 +336,10 @@ class EnhancedGlobalChat(ezcord.Cog, group="globalchat"):
 
     # --- Slash Commands ---
 
-    @slash_command(
-        name="globalchat_setup",
+    globalchat = SlashCommandGroup("globalchat", "Commands für den GlobalChat")
+
+    @globalchat.command(
+        name="setup",
         description="Richtet einen GlobalChat-Channel ein"
     )
     async def setup_globalchat(
@@ -389,8 +393,8 @@ class EnhancedGlobalChat(ezcord.Cog, group="globalchat"):
         else:
             await ctx.respond("❌ Fehler beim Einrichten des GlobalChat-Channels!", ephemeral=True)
 
-    @slash_command(
-        name="globalchat_remove",
+    @globalchat.command(
+        name="remove",
         description="Entfernt den GlobalChat-Channel von diesem Server"
     )
     async def remove_globalchat(self, ctx: discord.ApplicationContext):
@@ -415,8 +419,8 @@ class EnhancedGlobalChat(ezcord.Cog, group="globalchat"):
         else:
             await ctx.respond("❌ Kein GlobalChat-Channel auf diesem Server gefunden!", ephemeral=True)
 
-    @slash_command(
-        name="globalchat_stats",
+    @globalchat.command(
+        name="stats",
         description="Zeigt GlobalChat-Statistiken"
     )
     async def globalchat_stats(self, ctx: discord.ApplicationContext):
@@ -451,8 +455,8 @@ class EnhancedGlobalChat(ezcord.Cog, group="globalchat"):
 
         await ctx.respond(embed=embed)
 
-    @slash_command(
-        name="globalchat_settings",
+    @globalchat.command(
+        name="settings",
         description="Konfiguriert GlobalChat-Einstellungen für diesen Server"
     )
     async def globalchat_settings(
@@ -529,8 +533,8 @@ class EnhancedGlobalChat(ezcord.Cog, group="globalchat"):
 
     # --- Admin Commands (nur für Bot-Owner) ---
 
-    @slash_command(
-        name="globalchat_ban",
+    @globalchat.command(
+        name="ban",
         description="[ADMIN] Sperrt einen User oder Server vom GlobalChat"
     )
     async def ban_from_globalchat(
@@ -570,8 +574,8 @@ class EnhancedGlobalChat(ezcord.Cog, group="globalchat"):
         else:
             await ctx.respond("❌ Fehler beim Verhängen der Sperre!", ephemeral=True)
 
-    @slash_command(
-        name="globalchat_unban",
+    @globalchat.command(
+        name="unban",
         description="[ADMIN] Entsperrt einen User oder Server"
     )
     async def unban_from_globalchat(

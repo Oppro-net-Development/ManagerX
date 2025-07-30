@@ -1,6 +1,6 @@
 # Copyright (c) 2025 OPPRO.NET Network
 from FastCoding import TempVCDatabase
-from FastCoding import discord, commands, option, slash_command, ezcord
+from FastCoding import discord, commands, option, slash_command, ezcord, SlashCommandGroup
 from FastCoding import emoji_yes, emoji_no, emoji_settings, ERROR_TITLE, ERROR_COLOR, SUCCESS_COLOR, AUTHOR, FLOOTER
 
 db = TempVCDatabase()
@@ -9,8 +9,8 @@ db = TempVCDatabase()
 class TempVC(ezcord.Cog):
     def __init__(self, bot):
         self.bot = bot
-
-    @slash_command(name="create", description="Erstelle ein VC-Erstellungssystem")
+    tempvc = SlashCommandGroup("tempvc", "Verwalte temporäre Voice-Channel Systeme")
+    @tempvc.command(name="create", description="Erstelle ein VC-Erstellungssystem")
     @option("creator_channel", description="Channel, den Mitglieder betreten, um ihren VC zu erstellen",
             channel_types=[discord.ChannelType.voice])
     @option("category", description="Kategorie, in der die Temp-Channels erstellt werden",
@@ -58,7 +58,7 @@ class TempVC(ezcord.Cog):
             error_embed.set_footer(text=FLOOTER)
             await ctx.respond(embed=error_embed, ephemeral=True)
 
-    @slash_command(name="remove", description="Entferne das VC-Erstellungssystem")
+    @tempvc.command(name="remove", description="Entferne das VC-Erstellungssystem")
     async def tempvc_remove(self, ctx: discord.ApplicationContext):
         if not ctx.author.guild_permissions.administrator:
             # No permission embed

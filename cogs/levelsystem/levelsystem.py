@@ -1,5 +1,6 @@
 # Copyright (c) 2025 OPPRO.NET Network
 import discord
+from discord import SlashCommandGroup
 from discord.ext import commands
 import time
 import random
@@ -13,6 +14,8 @@ class LevelSystem(commands.Cog):
         self.db = LevelDatabase()
         self.xp_cooldowns = {}  # User-ID -> Timestamp
 
+    levelsystem = SlashCommandGroup("levelsystem", "Verwalte das Levelsystem")
+    levelrole = SlashCommandGroup("levelrole", "Verwalte Level-Rollen")
     @commands.Cog.listener()
     async def on_message(self, message):
         # Ignoriere Bot-Nachrichten
@@ -68,8 +71,8 @@ class LevelSystem(commands.Cog):
                     except discord.Forbidden:
                         pass
 
-    @discord.slash_command(description="Zeigt das Server-Leaderboard")
-    async def lleaderboard(self, ctx,
+    @levelsystem.command(description="Zeigt das Server-Leaderboard")
+    async def leaderboard(self, ctx,
                           anzahl: discord.Option(int, "Anzahl der User", default=10, min_value=1, max_value=25)):
         if not self.db.is_levelsystem_enabled(ctx.guild.id):
             embed = discord.Embed(
@@ -117,7 +120,7 @@ class LevelSystem(commands.Cog):
 
         await ctx.respond(embed=embed)
 
-    @discord.slash_command(description="Zeigt dein Profil oder das eines anderen Users")
+    @levelsystem.command(description="Zeigt dein Profil oder das eines anderen Users")
     async def profil(self, ctx,
                      user: discord.Option(discord.Member, "User dessen Profil angezeigt werden soll", default=None)):
         if not self.db.is_levelsystem_enabled(ctx.guild.id):
@@ -168,9 +171,7 @@ class LevelSystem(commands.Cog):
 
         await ctx.respond(embed=embed)
 
-    levelrole_group = discord.SlashCommandGroup("levelrole", "Verwalte Level-Rollen")
-
-    @levelrole_group.command(description="Fügt eine Level-Rolle hinzu")
+    @levelrole.command(description="Fügt eine Level-Rolle hinzu")
     @commands.has_permissions(manage_roles=True)
     async def add(self, ctx, level: discord.Option(int, "Level für die Rolle", min_value=1),
                   rolle: discord.Option(discord.Role, "Die Rolle die vergeben werden soll")):
@@ -201,7 +202,7 @@ class LevelSystem(commands.Cog):
         )
         await ctx.respond(embed=embed)
 
-    @levelrole_group.command(description="Bearbeitet eine bestehende Level-Rolle")
+    @levelrole.command(description="Bearbeitet eine bestehende Level-Rolle")
     @commands.has_permissions(manage_roles=True)
     async def edit(self, ctx, level: discord.Option(int, "Level der zu bearbeitenden Rolle", min_value=1),
                    neue_rolle: discord.Option(discord.Role, "Die neue Rolle")):
@@ -243,7 +244,7 @@ class LevelSystem(commands.Cog):
         )
         await ctx.respond(embed=embed)
 
-    @levelrole_group.command(description="Entfernt eine Level-Rolle")
+    @levelrole.command(description="Entfernt eine Level-Rolle")
     @commands.has_permissions(manage_roles=True)
     async def remove(self, ctx, level: discord.Option(int, "Level der zu entfernenden Rolle", min_value=1)):
         # Prüfen ob Level-Rolle existiert
@@ -266,7 +267,7 @@ class LevelSystem(commands.Cog):
         )
         await ctx.respond(embed=embed)
 
-    @levelrole_group.command(description="Zeigt alle konfigurierten Level-Rollen")
+    @levelrole.command(description="Zeigt alle konfigurierten Level-Rollen")
     async def list(self, ctx):
         level_roles = self.db.get_level_roles(ctx.guild.id)
 
@@ -295,9 +296,8 @@ class LevelSystem(commands.Cog):
 
         await ctx.respond(embed=embed)
 
-    levelsystem_group = discord.SlashCommandGroup("levelsystem", "Verwalte das Levelsystem")
 
-    @levelsystem_group.command(description="Aktiviert das Levelsystem")
+    @levelsystem.command(description="Aktiviert das Levelsystem")
     @commands.has_permissions(manage_guild=True)
     async def enable(self, ctx):
         if self.db.is_levelsystem_enabled(ctx.guild.id):
@@ -318,7 +318,7 @@ class LevelSystem(commands.Cog):
         )
         await ctx.respond(embed=embed)
 
-    @levelsystem_group.command(description="Deaktiviert das Levelsystem")
+    @levelsystem.command(description="Deaktiviert das Levelsystem")
     @commands.has_permissions(manage_guild=True)
     async def disable(self, ctx):
         if not self.db.is_levelsystem_enabled(ctx.guild.id):
@@ -339,7 +339,7 @@ class LevelSystem(commands.Cog):
         )
         await ctx.respond(embed=embed)
 
-    @levelsystem_group.command(description="Zeigt den Status des Levelsystems")
+    @levelsystem.command(description="Zeigt den Status des Levelsystems")
     async def status(self, ctx):
         enabled = self.db.is_levelsystem_enabled(ctx.guild.id)
 
