@@ -7,7 +7,7 @@ import asyncio
 import re
 from datetime import datetime, timedelta
 from typing import Optional, List, Dict, Any
-from FastCoding import discord, ezcord
+from FastCoding import discord, ezcord, SlashCommandGroup
 
 # Fallback für Farben falls nicht in FastCoding definiert
 try:
@@ -606,7 +606,8 @@ class WikipediaCog(ezcord.Cog):
         if hasattr(self, 'cleanup_task') and self.cleanup_task:
             self.cleanup_task.cancel()
 
-    @discord.slash_command(name="wikipedia", description="🔍 Durchsuche Wikipedia nach Artikeln und Informationen")
+    wiki = SlashCommandGroup("wikipedia", "Wikipedia-Funktionen")
+    @wiki.command(name="search", description="🔍 Durchsuche Wikipedia nach Artikeln und Informationen")
     async def wikipedia_search(
             self,
             ctx: discord.ApplicationContext,
@@ -704,7 +705,7 @@ class WikipediaCog(ezcord.Cog):
                 wikipedia.set_lang(original_lang)
                 self.current_language = original_lang
 
-    @discord.slash_command(name="wikisearch", description="🔍 Erweiterte Wikipedia-Suche mit mehreren Ergebnissen")
+    @wiki.command(name="multisearch", description="🔍 Erweiterte Wikipedia-Suche mit mehreren Ergebnissen")
     async def wiki_multi_search(
             self,
             ctx: discord.ApplicationContext,
@@ -792,7 +793,7 @@ class WikipediaCog(ezcord.Cog):
                 wikipedia.set_lang(original_lang)
                 self.current_language = original_lang
 
-    @discord.slash_command(name="wikirand", description="🎲 Zeige einen zufälligen Wikipedia-Artikel")
+    @wiki.command(name="random", description="🎲 Zeige einen zufälligen Wikipedia-Artikel")
     async def wiki_random(
             self,
             ctx: discord.ApplicationContext,
@@ -890,7 +891,7 @@ class WikipediaCog(ezcord.Cog):
                 wikipedia.set_lang(original_lang)
                 self.current_language = original_lang
 
-    @discord.slash_command(name="wikistats", description="📊 Zeige Bot-Statistiken und Wikipedia-Informationen")
+    @wiki.command(name="stats", description="📊 Zeige Bot-Statistiken und Wikipedia-Informationen")
     async def wiki_statistics(self, ctx: discord.ApplicationContext):
         # Uptime berechnen
         uptime = datetime.now() - self.stats['start_time']
@@ -933,7 +934,7 @@ class WikipediaCog(ezcord.Cog):
 
         await ctx.respond(embed=embed)
 
-    @discord.slash_command(name="wikicategory", description="📂 Durchsuche Wikipedia-Kategorien")
+    @wiki.command(name="category", description="📂 Durchsuche Wikipedia-Kategorien")
     async def wiki_category(
             self,
             ctx: discord.ApplicationContext,
@@ -1021,7 +1022,7 @@ class WikipediaCog(ezcord.Cog):
                 wikipedia.set_lang(original_lang)
                 self.current_language = original_lang
 
-    @discord.slash_command(name="wikicache", description="🗑️ Cache-Management (nur für Administratoren)")
+    @wiki.command(name="cache", description="🗑️ Cache-Management (nur für Administratoren)")
     @discord.default_permissions(administrator=True)
     async def wiki_cache_management(
             self,

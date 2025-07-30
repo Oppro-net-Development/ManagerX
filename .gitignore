@@ -22,3 +22,4 @@ Thumbs.db
 # Sonstiges
 *.bak
 *.tmp
+FastCoding/backend/utils/config.py

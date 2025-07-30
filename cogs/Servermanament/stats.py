@@ -1,6 +1,7 @@
 # Copyright (c) 2025 OPPRO.NET Network
 import discord
 from discord.ext import commands, tasks
+from discord import SlashCommandGroup
 import logging
 from typing import Optional
 from FastCoding import StatsDB
@@ -22,6 +23,8 @@ class EnhancedStatsCog(commands.Cog):
         self.db = StatsDB()
         self.cleanup_task.start()
         logger.info("Enhanced StatsCog initialized")
+
+    stats = SlashCommandGroup("stats", "Statistiken")
 
     def cog_unload(self):
         """Called when the cog is unloaded."""
@@ -107,9 +110,9 @@ class EnhancedStatsCog(commands.Cog):
         except Exception as e:
             logger.error(f"Error logging enhanced message from {message.author.display_name}: {e}")
 
-    @discord.slash_command(
-        name="stats",
-        description="Zeige deine erweiterten Aktivitätsstatistiken an"
+    @stats.command(
+        name="statsistics",
+        description="Zeige deine Aktivitätsstatistiken an"
     )
     async def stats_command(
             self,
@@ -204,7 +207,7 @@ class EnhancedStatsCog(commands.Cog):
             )
             await ctx.followup.send(embed=error_embed, ephemeral=True)
 
-    @discord.slash_command(
+    @stats.command(
         name="globalstats",
         description="Zeige deine globalen Level-Statistiken über alle Server an"
     )
@@ -303,7 +306,7 @@ class EnhancedStatsCog(commands.Cog):
             )
             await ctx.followup.send(embed=error_embed, ephemeral=True)
 
-    @discord.slash_command(
+    @stats.command(
         name="leaderboard",
         description="Zeige die Top-User Rangliste an"
     )
@@ -403,7 +406,7 @@ class EnhancedStatsCog(commands.Cog):
             )
             await ctx.followup.send(embed=error_embed, ephemeral=True)
 
-    @discord.slash_command(
+    @stats.command(
         name="achievements",
         description="Zeige deine freigeschalteten Erfolge an"
     )
@@ -500,7 +503,7 @@ class EnhancedStatsCog(commands.Cog):
             )
             await ctx.followup.send(embed=error_embed, ephemeral=True)
 
-    @discord.slash_command(
+    @stats.command(
         name="stats_info",
         description="Informationen über das erweiterte Statistik-System"
     )

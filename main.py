@@ -16,7 +16,7 @@ import random
 from ezcord import log
 import re
 
-
+import yaml
 
 intents = discord.Intents.default()
 intents.members = True
@@ -29,6 +29,7 @@ ezcord.set_log(
     log_level=logging.DEBUG,
     webhook_url=os.getenv("LOGGING_WEBHOOK_URL"),
 )
+
 
 time = datetime.now().strftime(f"[{Fore.CYAN}%H:%M{Style.RESET_ALL}]")
 time2 = datetime.now().strftime(f"{Fore.CYAN}%H:%M{Style.RESET_ALL}]")
