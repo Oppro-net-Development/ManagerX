@@ -4,8 +4,8 @@
 
 *Ein vielseitiger Discord-Bot für Moderation, Spaß und Serververwaltung*
 
-[![Version](https://img.shields.io/badge/Version-1.5-blue?style=for-the-badge&logo=github)](https://github.com/Oppro-net-Development/ManagerX)
-[![Next Version](https://img.shields.io/badge/Next%20Version-V1.6-green?style=for-the-badge&logo=rocket)](https://github.com/Oppro-net-Development/ManagerX)
+[![Version](https://img.shields.io/badge/Version-1.6.1-blue?style=for-the-badge&logo=github)](https://github.com/Oppro-net-Development/ManagerX)
+[![Next Version](https://img.shields.io/badge/Next%20Version-V1.7-green?style=for-the-badge&logo=rocket)](https://github.com/Oppro-net-Development/ManagerX)
 [![Last Commit](https://img.shields.io/github/last-commit/Oppro-net-Development/ManagerX?style=for-the-badge&logo=git)](https://github.com/Oppro-net-Development/ManagerX/commits)
 
 [![Built with Py-Cord](https://img.shields.io/badge/Built%20with-py--cord-7289DA?style=for-the-badge&logo=discord&logoColor=white)](https://pycord.dev/)
