@@ -1,6 +1,6 @@
 # Copyright (c) 2025 OPPRO.NET Network
 import discord
-from discord import SlashCommandGroup
+from discord import SlashCommandGroup, Option
 from discord.ext import commands
 import time
 import random
