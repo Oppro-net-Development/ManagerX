@@ -25,6 +25,8 @@
 
 </div>
 
+Dieser Bot wird verwaltet von OPPRO.NET Development, Urheberrecht hat jedoch OPPRO.NET Network
+
 ## 📁 Projektstruktur
 
 ```
