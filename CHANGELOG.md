@@ -1,6 +1,18 @@
 # Changelog
 ### Von der letzten Version bis 1.0alpha1 
 
+# V1.6.3
+## 📦 Neue Dateien
+- `template.env`
+## ✏️ Rename
+`user.py` wurde zu `usermanagemt.py`
+
+# V1.6.2
+# ✏️ Geänderte Dateien
+- `.CHANGELOG.md` 
+- `CONTRIBUTING.md` 
+- `cogs/levelsystem/levelsystem.py` 
+- `README.md` 
 # V1.6.1
 ## ✏️ Geänderte Dateien
 
