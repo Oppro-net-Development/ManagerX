@@ -44,7 +44,7 @@ class UserManagement(ezcord.Cog):
         await ctx.respond(embed=embed)
 
     @user.command(description="Setzt den Nicknamen eines Benutzers")
-    @discord.default_permissions(manage_member=True)
+    @discord.default_permissions(manage_nicknames=True)
     async def set_nickname(self, ctx, user: Option(discord.Member, "Der Benutzer, dessen Nicknamen du ändern möchtest"), nickname: Option(str, "Der neue Nickname")):
         if not nickname:
             await ctx.respond("Bitte gib einen gültigen Nicknamen an.")
@@ -82,5 +82,6 @@ class UserManagement(ezcord.Cog):
             return
         await user.remove_roles(role)
         await ctx.respond(f"Die Rolle {role.name} wurde von {user.name} entfernt.")
+
 def setup(bot):
     bot.add_cog(UserManagement(bot))
