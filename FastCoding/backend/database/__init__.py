@@ -8,3 +8,4 @@ from .globalchat_db import *
 from .levelroles_db import *
 from .logging_db import *
 from .autodelete_db import *
+from .welcome_db import *
