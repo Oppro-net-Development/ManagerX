@@ -19,6 +19,9 @@ __pycache__/
 .DS_Store
 Thumbs.db
 
+# Datenbank Dateien (unnötig auf Repo)
+*.db
+
 # Sonstiges
 *.bak
 *.tmp
