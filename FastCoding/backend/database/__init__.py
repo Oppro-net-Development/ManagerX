@@ -5,7 +5,7 @@ from .spam_db import *
 from .notes_db import *
 from .Stats_db import *
 from .globalchat_db import *
-from .levelroles_db import *
+from .levelsystem_db import *
 from .logging_db import *
 from .autodelete_db import *
 from .welcome_db import *

@@ -1,0 +1,147 @@
+de:
+  # ────────────── TEMPVC ──────────────
+  tempvc:
+    
+
+    create:
+      name: erstellen
+      description: Erstelle ein VC-Erstellungssystem
+      options:
+        creator_channel: 
+          name: kanal
+          description: Kanal, den Mitglieder betreten, um ihren VC zu erstellen
+
+        category:
+          name: kategorie
+          description: Kategorie, in der die Temp-Channels erstellt werden
+
+    remove:
+      name: entferne
+      description: Entferne das VC-Erstellungssystem
+
+
+    settings:
+      name: einstellung
+      description: Zeige die aktuellen Temp-VC Einstellungen
+
+  # ────────────── WECOME ──────────────
+  welcome:
+    name: willkommen
+    description: Stelle das Willkommenssystem.
+
+    channel: 
+      name: kanal
+      description: Setzt den Willkommens Kanal
+      options:
+        channel:
+          name: kanal
+          description: Setz den Willkommenskanal
+
+    message:
+      name: nachricht
+      description: Setzt die Willkommens Nachricht
+
+    toggle:
+      name: umschalten
+      description: Schaltet das Willkommens System ein/aus
+
+    autorole:
+      description: Setzt eine Rolle die automatisch vergeben wird
+
+    template:
+      name: vorlagen
+      
+    config:
+      name: konfiguration
+      description: Zeigt die aktuelle Konfiguration
+
+    test:
+      description: Testet die Willkommens Nachricht
+  
+    placeholders:
+      name: platzhalter
+      description: Zeigt alle verfügbaren Platzhalter
+
+    export:
+      description: Exportiert die Welcome Konfiguration
+
+    stats:
+      name: statistiken
+      description: Zeigt Willkommen Statistiken
+
+    reset:
+      description: Setzt alle Welcome Einstellungen zurück
+
+# ────────────── ENGLISH ──────────────
+
+en-US:
+  # ────────────── TEMPVC ──────────────
+  tempvc:
+
+    create:
+      name: create
+      description: Create a VC creation system
+      options:
+        creator_channel:
+          name: channel
+          description: Channel that members join to create their VC
+
+        category:
+          name: category
+          description: Category where the temp channels will be created
+
+    remove:
+      name: remove
+      description: Remove the VC creation system
+
+    settings:
+      name: settings
+      description: Show the current temp VC settings
+
+  # ────────────── WELCOME ──────────────
+  welcome:
+    name: welcome
+    description: Set up the welcome system
+
+    channel:
+      name: channel
+      description: Sets the welcome channel
+      options:
+        channel:
+          name: channel
+          description: Set the welcome channel
+
+    message:
+      name: message
+      description: Set the welcome message
+
+    toggle:
+      name: toggle
+      description: Turn the welcome system on/off
+
+    autorole:
+      description: Set a role to be automatically assigned
+
+    template:
+      name: templates
+
+    config:
+      name: configuration
+      description: Show the current configuration
+
+    test:
+      description: Test the welcome message
+
+    placeholders:
+      name: placeholders
+      description: Show all available placeholders
+
+    export:
+      description: Export the welcome configuration
+
+    stats:
+      name: statistics
+      description: Show welcome statistics
+
+    reset:
+      description: Reset all welcome settings
