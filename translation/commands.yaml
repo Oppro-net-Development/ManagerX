@@ -132,6 +132,111 @@ de:
         name: stats_info
         description: Informationen über das erweiterte Statistik-System
         
+# ────────────── LOGGING ──────────────
+  logging:
+    name: logging
+    description: Setze die Logging Systeme
+
+    channel: 
+      name: kanal
+      description: Setzt den Log-Kanal für verschiedene Events
+      options:
+        channel:
+          name: kanal
+        log_type:
+          name: type
+
+    remove: 
+      name: entfernen
+      description: Entfernt einen Log-Kanal
+      options:
+        log_type:
+          name: type
+
+
+    status:
+      name: status
+      description: Zeigt die aktuellen Log-Einstellungen
+
+
+    backup:
+      name: backup
+      description: Erstellt ein Backup der Log-Konfiguration
+
+# ────────────── GLOBALCHAT ──────────────
+  globalchat:
+    description: Commands für den GlobalChat
+
+
+    setup:
+      name: setup
+      description: Richtet einen GlobalChat-Kanal ein
+      options:
+        channel:
+          name: kanal
+          description: Der Channel für den GlobalChat
+
+    remove:
+      name: entfernen
+      description: Entfernt den GlobalChat-Channel von diesem Server
+
+    stats:
+      name: statistiken
+      description: Zeigt GlobalChat-Statistiken
+
+    settings:
+      name: einstellung
+      description: Konfiguriert GlobalChat-Einstellungen für diesen Server
+      options:
+        filter_enabled:
+          name: filter_enabled
+          description: Content-Filter aktiviert
+
+        nsfw_filter:
+          name: nsfw_filter
+          description: NSFW-Filter aktiviert
+
+        embed_color:
+          name: embed_color
+          description: "Farbe der Embeds (Hex-Code, z.B. #FF0000)"
+
+        max_message_length:
+          name: max_message_length
+          description: Maximale Nachrichtenlänge (50-2000)
+
+        ban:
+          name: ban
+          description: "[ADMIN] Sperrt einen User oder Server vom GlobalChat"
+          options:
+            entity_type:
+              name: entity_typ
+              description: Was sperren
+
+            entity_id: 
+              name: entity_id
+              description: User-ID oder Server-ID
+
+            reason:
+              name: grund
+              description: Grund für die Sperre
+
+            duration:
+              name: duration
+              description: Dauer in Stunden (leer = permanent)
+
+        unban:
+          name: unban
+          description: "[ADMIN] Entsperrt einen User oder Server"
+          options:
+            entity_type:
+              name: entity_typ
+              description: Was entsperren
+
+            entity_id:
+              name: entity_id
+              description: User-ID oder Server-ID
+    
+
 
 # ────────────── ENGLISH ──────────────
 
@@ -139,7 +244,7 @@ en-US:
   # ────────────── TEMPVC ──────────────
   tempvc:
 
-  
+
     create:
       name: create
       description: Create a VC creation system

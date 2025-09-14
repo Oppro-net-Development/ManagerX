@@ -2,6 +2,7 @@
 # File: logging_cog.py
 
 import discord
+from discord import SlashCommandGroup
 from discord.ext import commands
 from datetime import datetime, timedelta
 from typing import Dict, Set, Optional, List
@@ -277,7 +278,9 @@ class LoggingCog(commands.Cog):
     # SLASH COMMANDS - Improved
     # =============================================================================
 
-    @discord.slash_command(name="setlogchannel", description="Setzt den Log-Channel für verschiedene Events")
+    logging = SlashCommandGroup("logging", description="Setze die Logging Systeme")
+
+    @logging.command(name="channel", description="Setzt den Log-Channel für verschiedene Events")
     @discord.default_permissions(administrator=True)
     async def set_log_channel(self, ctx, 
                               channel: discord.TextChannel,
@@ -350,7 +353,7 @@ class LoggingCog(commands.Cog):
             await ctx.respond(embed=embed, ephemeral=True)
             logger.error(f"Error in set_log_channel: {e}")
 
-    @discord.slash_command(name="removelogchannel", description="Entfernt einen Log-Channel")
+    @logging.command(name="remove", description="Entfernt einen Log-Channel")
     @discord.default_permissions(administrator=True)
     async def remove_log_channel(self, ctx,
                                  log_type: discord.Option(str,
@@ -386,7 +389,7 @@ class LoggingCog(commands.Cog):
             await ctx.respond(embed=embed, ephemeral=True)
             logger.error(f"Error in remove_log_channel: {e}")
 
-    @discord.slash_command(name="logstatus", description="Zeigt die aktuellen Log-Einstellungen")
+    @logging.command(name="status", description="Zeigt die aktuellen Log-Einstellungen")
     @discord.default_permissions(administrator=True)
     async def log_status(self, ctx):
         """Verbesserter Log-Status mit mehr Details"""
@@ -464,7 +467,7 @@ class LoggingCog(commands.Cog):
             await ctx.respond(embed=embed, ephemeral=True)
             logger.error(f"Error in log_status: {e}")
 
-    @discord.slash_command(name="logbackup", description="Erstellt ein Backup der Log-Konfiguration")
+    @logging.command(name="backup", description="Erstellt ein Backup der Log-Konfiguration")
     @discord.default_permissions(administrator=True)
     async def log_backup(self, ctx):
         """Erstellt ein Datenbank-Backup"""
