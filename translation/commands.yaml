@@ -235,8 +235,60 @@ de:
             entity_id:
               name: entity_id
               description: User-ID oder Server-ID
-    
+# ────────────── AUTODELETE ──────────────    
+  autodelete:
+    name: autodelete
+    description: Automatische Nachrichtenlöschung
 
+    setup:
+      name: setup
+      description: Richtet AutoDelete für einen Kanal ein.
+      options: 
+        channel:
+          name: kanal
+          description: Kanal
+
+        duration:
+          name: duration
+          description: "Zeit in Sekunden (min: 60, max: 604800)"
+
+        exclude_pinned:
+          name: exclude_pinned
+          description: Angepinnte Nachrichten ausschließen
+
+        exclude_bots:
+          name: exclude_bots
+          description: Bot-Nachrichten ausschließen
+
+    list:
+      name: list
+      description: Zeigt alle aktiven AutoDelete-Kanäle.
+
+    remove:
+      name: remove
+      description: Entfernt AutoDelete von einem Kanal.
+      options:
+        channel:
+          name: kanal
+          description: Kanal
+
+    stats:
+      name: stats
+      description: Zeigt Statistiken für einen AutoDelete-Kanal.
+      options:
+        channel:
+          name: kanal
+          description: Kanal
+          
+    test:
+      name: test
+      description: Testet die AutoDelete-Funktion für einen Kanal.
+      options: 
+        channel:
+          name: kanal
+          description: Kanal
+
+    
 
 # ────────────── ENGLISH ──────────────
 
