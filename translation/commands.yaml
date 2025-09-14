@@ -87,6 +87,52 @@ de:
 
 
 # ────────────── STATS ──────────────
+  stats:
+    name: stats
+    description: Hier sieht du deine Statistiken (global)
+
+    statsistics:
+      name: statistiken
+      description: Zeige deine Aktivitätsstatistiken an
+      options:
+        zeitraum:
+          description: Zeitraum für die Statistiken
+        user:
+          name: nutzer
+          description: Statistiken eines anderen Users anzeigen (optional)
+
+    globalstats:
+      name: global
+      description: Zeige deine globalen Level-Statistiken über alle Server an
+      options: 
+        user:
+          name: nutzer
+          description: Global Stats eines anderen Users anzeigen
+
+    leaderboard:
+      name: rangliste
+      description: Zeige die Top-User Rangliste an
+      options:
+        typ:
+          name: typ
+          description: Art der Rangliste
+        limit: 
+          name: limit
+          description: Anzahl der angezeigten Nutzer (max 20)
+    
+    achievements:
+      name: erfolge
+      description: Zeige deine freigeschalteten Erfolge an
+      options: 
+        user:
+          name: nutzer
+          description: Erfolge eines anderen Users anzeigen
+
+      stats_info:
+        name: stats_info
+        description: Informationen über das erweiterte Statistik-System
+        
+
 # ────────────── ENGLISH ──────────────
 
 en-US:
