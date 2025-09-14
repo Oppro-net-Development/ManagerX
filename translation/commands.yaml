@@ -139,6 +139,7 @@ en-US:
   # ────────────── TEMPVC ──────────────
   tempvc:
 
+  
     create:
       name: create
       description: Create a VC creation system
@@ -159,7 +160,7 @@ en-US:
       name: settings
       description: Show the current temp VC settings
 
-# ────────────── WELCOME ──────────────
+  # ────────────── WELCOME ──────────────
   welcome:
     name: welcome
     description: Welcome system settings
@@ -170,13 +171,13 @@ en-US:
       options:
         channel:
           name: channel
-        
+          
     message:
       name: message
       description: Sets the welcome message
-  
+    
     toggle:
-      description: Enables/disables the welcome system
+      description: Enables/disables the welcome system 
 
     embed:
       description: Enables/disables embed mode
@@ -196,11 +197,11 @@ en-US:
       options:
         template_name: 
           name: template_name
-        
+          
     config:
       name: config
       description: Shows the current configuration
-  
+    
     test:
       name: test
       description: Tests the welcome message
@@ -219,4 +220,48 @@ en-US:
     reset:
       description: Resets all welcome settings
 
-# ────────────── STATS ──────────────
+  # ────────────── STATS ──────────────
+  stats:
+    name: stats
+    description: View your statistics (global)
+
+    statistics:
+      name: statistics
+      description: Show your activity statistics
+      options:
+        period:
+          description: Time period for the statistics
+        user:
+          name: user
+          description: Show statistics for another user (optional)
+
+    globalstats:
+      name: global
+      description: Show your global level statistics across all servers
+      options: 
+        user:
+          name: user
+          description: Show global stats for another user
+
+    leaderboard:
+      name: leaderboard
+      description: Show the top users leaderboard
+      options:
+        type:
+          name: type
+          description: Type of leaderboard
+        limit: 
+          name: limit
+          description: Number of users to display (max 20)
+    
+    achievements:
+      name: achievements
+      description: Show your unlocked achievements
+      options: 
+        user:
+          name: user
+          description: Show achievements for another user
+
+    stats_info:
+      name: stats_info
+      description: Information about the advanced statistics system
