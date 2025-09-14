@@ -296,7 +296,7 @@ en-US:
   # ────────────── TEMPVC ──────────────
   tempvc:
 
-
+  
     create:
       name: create
       description: Create a VC creation system
@@ -422,3 +422,157 @@ en-US:
     stats_info:
       name: stats_info
       description: Information about the advanced statistics system
+
+  # ────────────── LOGGING ──────────────
+  logging:
+    name: logging
+    description: Set up the logging systems
+
+    channel: 
+      name: channel
+      description: Sets the log channel for various events
+      options:
+        channel:
+          name: channel
+        log_type:
+          name: type
+
+    remove: 
+      name: remove
+      description: Removes a log channel
+      options:
+        log_type:
+          name: type
+
+    status:
+      name: status
+      description: Shows the current log settings
+
+    backup:
+      name: backup
+      description: Creates a backup of the log configuration
+
+  # ────────────── GLOBALCHAT ──────────────
+  globalchat:
+    description: Commands for GlobalChat
+
+    setup:
+      name: setup
+      description: Sets up a GlobalChat channel
+      options:
+        channel:
+          name: channel
+          description: The channel for GlobalChat
+
+    remove:
+      name: remove
+      description: Removes the GlobalChat channel from this server
+
+    stats:
+      name: stats
+      description: Shows GlobalChat statistics
+
+    settings:
+      name: settings
+      description: Configures GlobalChat settings for this server
+      options:
+        filter_enabled:
+          name: filter_enabled
+          description: Content filter enabled
+
+        nsfw_filter:
+          name: nsfw_filter
+          description: NSFW filter enabled
+
+        embed_color:
+          name: embed_color
+          description: "Color of embeds (Hex code, e.g. #FF0000)"
+
+        max_message_length:
+          name: max_message_length
+          description: Maximum message length (50-2000)
+
+        ban:
+          name: ban
+          description: "[ADMIN] Bans a user or server from GlobalChat"
+          options:
+            entity_type:
+              name: entity_type
+              description: What to ban
+
+            entity_id: 
+              name: entity_id
+              description: User ID or Server ID
+
+            reason:
+              name: reason
+              description: Reason for the ban
+
+            duration:
+              name: duration
+              description: Duration in hours (empty = permanent)
+
+        unban:
+          name: unban
+          description: "[ADMIN] Unbans a user or server"
+          options:
+            entity_type:
+              name: entity_type
+              description: What to unban
+
+            entity_id:
+              name: entity_id
+              description: User ID or Server ID
+
+  # ────────────── AUTODELETE ──────────────    
+  autodelete:
+    name: autodelete
+    description: Automatic message deletion
+
+    setup:
+      name: setup
+      description: Sets up AutoDelete for a channel
+      options: 
+        channel:
+          name: channel
+          description: Channel
+
+        duration:
+          name: duration
+          description: "Time in seconds (min: 60, max: 604800)"
+
+        exclude_pinned:
+          name: exclude_pinned
+          description: Exclude pinned messages
+
+        exclude_bots:
+          name: exclude_bots
+          description: Exclude bot messages
+
+    list:
+      name: list
+      description: Shows all active AutoDelete channels
+
+    remove:
+      name: remove
+      description: Removes AutoDelete from a channel
+      options:
+        channel:
+          name: channel
+          description: Channel
+
+    stats:
+      name: stats
+      description: Shows statistics for an AutoDelete channel
+      options:
+        channel:
+          name: channel
+          description: Channel
+          
+    test:
+      name: test
+      description: Tests the AutoDelete function for a channel
+      options: 
+        channel:
+          name: channel
+          description: Channel
