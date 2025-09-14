@@ -1,4 +1,7 @@
 # Copyright (c) 2025 OPPRO.NET Network
+# =============================================================================
+# IMPORTS
+# =============================================================================
 import discord
 import os
 from dotenv import load_dotenv
@@ -17,6 +20,9 @@ from ezcord import log
 import re
 
 import yaml
+# =============================================================================
+# CODE & COMMANDS
+# =============================================================================
 
 intents = discord.Intents.default()
 intents.members = True
@@ -103,6 +109,10 @@ async def on_message(message: discord.Message):
 
 with open("translation/commands.yaml", encoding="utf-8") as file:
     commands = yaml.safe_load(file)
+
+# =============================================================================
+# BOT START
+# =============================================================================
 
 bot.add_help_command()
 if __name__ == "__main__":

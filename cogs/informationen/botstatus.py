@@ -6,6 +6,7 @@ import discord
 from discord.ext import commands, tasks
 import ezcord
 import math
+import yaml
 # ───────────────────────────────────────────────
 # >> Cogs
 # ───────────────────────────────────────────────
@@ -13,6 +14,9 @@ class StatusCog(ezcord.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.update_status.start()  # Starte den Loop direkt, er pausiert automatisch, falls der Bot nicht bereit ist
+
+    with open("configs/config.yaml", encoding="utf-8") as file:
+        status = yaml.safe_load(file)
 
     @tasks.loop(seconds=30)
     async def update_status(self):
@@ -26,9 +30,7 @@ class StatusCog(ezcord.Cog):
         latency = 0 if math.isnan(latency) else round(latency)
 
         statuses = [
-            f"🌍 {guild_count} | 👥 {member_count} | 🏓 {latency}ms",
-            "🔥ManagerX V1.2GLO",
-            "🔥ManagerX V1.2LEVEL"
+            f"🌍 {guild_count} | 👥 {member_count} | 🏓 {latency}ms"
         ]
         status_text = statuses[self.update_status.current_loop % len(statuses)]
 
