@@ -57,3 +57,14 @@ Dieser Bot wird verwaltet von OPPRO.NET Development, Urheberrecht hat jedoch OPP
 - 🔹 **Globaler Stats System**
   Finde deine Stats herraus.
 
+# Commit-Typen
+
+`HOTFIX:` Kritische Fehlerbehebung
+
+`BUGFIX:` Normaler Fehler behoben
+
+`FEATURE:` Neue Funktion hinzugefügt
+
+`DOCS:` Nur Dokumentation geändert
+
+`UPDATE:` Funktion update
