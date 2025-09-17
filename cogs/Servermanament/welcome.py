@@ -8,11 +8,12 @@ import logging
 from typing import Optional, Dict, Any
 import aiosqlite
 from datetime import datetime
+import ezcord
 
 # Logger Setup
 logger = logging.getLogger(__name__)
 
-class WelcomeSystem(commands.Cog):
+class WelcomeSystem(ezcord.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.db = WelcomeDatabase()

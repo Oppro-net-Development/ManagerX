@@ -3,12 +3,12 @@ import sqlite3
 import os
 from typing import Optional, Tuple
 from colorama import Fore, Style
+
 class TempVCDatabase:
     def __init__(self, db_path: str = "data/tempvc.db"):
         self.db_path = db_path
         os.makedirs(os.path.dirname(self.db_path), exist_ok=True)
         self.init_db()
-
 
     def init_db(self):
         conn = sqlite3.connect(self.db_path)
@@ -28,6 +28,14 @@ class TempVCDatabase:
                 owner_id INTEGER NOT NULL,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 last_activity TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        ''')
+        # New table for UI settings
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS ui_settings (
+                guild_id INTEGER PRIMARY KEY,
+                ui_enabled BOOLEAN DEFAULT 0,
+                ui_prefix TEXT DEFAULT '🔧'
             )
         ''')
         conn.commit()
@@ -61,6 +69,7 @@ class TempVCDatabase:
         cursor = conn.cursor()
         cursor.execute('DELETE FROM tempvc_settings WHERE guild_id = ?', (guild_id,))
         cursor.execute('DELETE FROM temp_channels WHERE guild_id = ?', (guild_id,))
+        cursor.execute('DELETE FROM ui_settings WHERE guild_id = ?', (guild_id,))  # Also remove UI settings
         conn.commit()
         conn.close()
 
@@ -126,11 +135,42 @@ class TempVCDatabase:
 
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
-        cursor.execute(f'''
+        cursor.execute('''
             SELECT channel_id FROM temp_channels 
             WHERE guild_id = ? 
-            AND datetime(last_activity, '+{minutes_inactive} minutes') < datetime('now')
-        ''', (guild_id,))
+            AND datetime(last_activity, ? || ' minutes') < datetime('now')
+        ''', (guild_id, str(minutes_inactive)))  # Fixed SQL injection
         result = [row[0] for row in cursor.fetchall()]
         conn.close()
         return result
+
+    # New UI Settings methods
+    def set_ui_settings(self, guild_id: int, ui_enabled: bool, ui_prefix: str = "🔧"):
+        conn = sqlite3.connect(self.db_path)
+        cursor = conn.cursor()
+        cursor.execute('''
+            INSERT OR REPLACE INTO ui_settings 
+            (guild_id, ui_enabled, ui_prefix) 
+            VALUES (?, ?, ?)
+        ''', (guild_id, ui_enabled, ui_prefix))
+        conn.commit()
+        conn.close()
+
+    def get_ui_settings(self, guild_id: int) -> Optional[Tuple[bool, str]]:
+        conn = sqlite3.connect(self.db_path)
+        cursor = conn.cursor()
+        cursor.execute('''
+            SELECT ui_enabled, ui_prefix 
+            FROM ui_settings 
+            WHERE guild_id = ?
+        ''', (guild_id,))
+        result = cursor.fetchone()
+        conn.close()
+        return result
+
+    def remove_ui_settings(self, guild_id: int):
+        conn = sqlite3.connect(self.db_path)
+        cursor = conn.cursor()
+        cursor.execute('DELETE FROM ui_settings WHERE guild_id = ?', (guild_id,))
+        conn.commit()
+        conn.close()

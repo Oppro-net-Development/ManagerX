@@ -6,6 +6,7 @@ import discord
 from discord.ext import commands, tasks
 import ezcord
 import math
+import yaml
 # ───────────────────────────────────────────────
 # >> Cogs
 # ───────────────────────────────────────────────
@@ -26,9 +27,7 @@ class StatusCog(ezcord.Cog):
         latency = 0 if math.isnan(latency) else round(latency)
 
         statuses = [
-            f"🌍 {guild_count} | 👥 {member_count} | 🏓 {latency}ms",
-            "🔥ManagerX V1.2GLO",
-            "🔥ManagerX V1.2LEVEL"
+            f"🌍 {guild_count} | 👥 {member_count} | 🏓 {latency}ms"
         ]
         status_text = statuses[self.update_status.current_loop % len(statuses)]
 

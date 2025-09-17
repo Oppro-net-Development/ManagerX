@@ -1,4 +1,7 @@
 # Copyright (c) 2025 OPPRO.NET Network
+# =============================================================================
+# IMPORTS
+# =============================================================================
 import discord
 import os
 from dotenv import load_dotenv
@@ -17,6 +20,9 @@ from ezcord import log
 import re
 
 import yaml
+# =============================================================================
+# CODE & COMMANDS
+# =============================================================================
 
 intents = discord.Intents.default()
 intents.members = True
@@ -101,9 +107,16 @@ async def on_message(message: discord.Message):
             await message.channel.send(f"⚠️ Fehler: {e}", delete_after=5)
         return  # wichtig für andere Befehle
 
+with open("translation/commands.yaml", encoding="utf-8") as file:
+    commands = yaml.safe_load(file)
+
+# =============================================================================
+# BOT START
+# =============================================================================
 
 bot.add_help_command()
 if __name__ == "__main__":
     # Cogs laden
     bot.load_cogs("cogs", subdirectories=True, custom_log_level =f"{time2} [{Style.BRIGHT}{Fore.RED}COGS LOADING{Style.RESET_ALL}")
+    bot.localize_commands(commands)
     bot.run(os.getenv("TOKEN"))

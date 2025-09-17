@@ -17,7 +17,43 @@
 </div>
 
 Dieser Bot wird verwaltet von OPPRO.NET Development, Urheberrecht hat jedoch OPPRO.NET Network
+# ⭐ Changelog
 
-# 📖  feature
+## V1.6.6
+- 🔹 **Levelsystem & Datenbank verbessert**  
+  Effizientere Speicherung und schnellere Berechnungen für ein besseres Spielerlebnis.
 
-Unsere Bot hat: TempVC, Welcome System, stats (global) system, logging system, globalchat, Moderation, AntiSpam, Wikipedia und noch viel mehr.
+## V1.6.5
+- 🔹 **Welcome-System optimiert**  
+  Freundlichere Begrüßungen und stabilere Funktionsweise beim Serverbeitritt.
+
+
+# 📖  Feature
+
+### Key Features
+
+- 🔹 **Wikipedia**  
+  Suche direkt auf Discord nach Wikipedia-Artikeln.
+
+- 🔹 **Levelsystem**  
+  Erstelle umfangreiche Levelsysteme für deinen Server.
+
+- 🔹 **Moderation & Anti-Spam**  
+  Banne, kicke oder mute Mitglieder und schütze deinen Server mit einem umfangreichen Anti-Spam-System.
+
+- 🔹 **Globalchat**  
+  Chatte mit der ganzen Welt in Echtzeit.
+
+- 🔹 **Welcome-System**  
+  Begrüße neue Mitglieder automatisch mit einem individuell anpassbaren Welcome-System.
+
+### Andere Features
+- 🔹**TempVC**
+  Lasse deine Nutzer in einen Kanal joinen und ihren eigenen haben
+
+- 🔹 **Weather**
+  Bekomme weather Infos über Städte
+
+- 🔹 **Globaler Stats System**
+  Finde deine Stats herraus.
+
