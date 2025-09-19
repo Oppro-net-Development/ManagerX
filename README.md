@@ -68,3 +68,5 @@ Dieser Bot wird verwaltet von OPPRO.NET Development, Urheberrecht hat jedoch OPP
 `DOCS:` Nur Dokumentation geändert
 
 `UPDATE:` Funktion update
+
+`DELETE:` Datei entfernt
