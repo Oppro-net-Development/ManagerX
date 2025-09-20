@@ -46,10 +46,32 @@ bot = ezcord.Bot(
     error_webhook_url=os.getenv("ERROR_WEBHOOK_URL"),
     ready_event=None
 )
+# =============================================================================
+# BOT VERSION
+# =============================================================================
+BOT_VERSION = "1.7.0"
+VERSION_URL = "https://raw.githubusercontent.com/Oppro-net-Development/ManagerX/main/version.txt"
+
+async def check_for_update():
+    try:
+        async with aiohttp.ClientSession() as session:
+            async with session.get(VERSION_URL) as resp:
+                if resp.status == 200:
+                    latest_version = (await resp.text()).strip()
+                    if latest_version != BOT_VERSION:
+                        print(f"[{Fore.YELLOW}UPDATE{Style.RESET_ALL}] Deine Version {BOT_VERSION} ist veraltet! Neueste Version: {latest_version}")
+                    else:
+                        print(f"[{Fore.GREEN}UP-TO-DATE{Style.RESET_ALL}] Du hast die neueste Version: {BOT_VERSION}")
+                else:
+                    print(f"[{Fore.RED}ERROR{Style.RESET_ALL}] Konnte die Version nicht abrufen, Status: {resp.status}")
+    except Exception as e:
+        print(f"[{Fore.RED}ERROR{Style.RESET_ALL}] Fehler beim Update-Check: {e}")
+
 
 @bot.event
 async def on_ready():
     print(f"{time} [{Style.BRIGHT}{Fore.GREEN}STARTING UP{Style.RESET_ALL}] Logged in as {bot.user}")
+    await check_for_update()
     await asyncio.sleep(1)
     init_all()
     await asyncio.sleep(1.5)
