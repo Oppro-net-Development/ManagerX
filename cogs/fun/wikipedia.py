@@ -7,11 +7,11 @@ import asyncio
 import re
 from datetime import datetime, timedelta
 from typing import Optional, List, Dict, Any
-from FastCoding import discord, ezcord, SlashCommandGroup
+from DevTools import discord, ezcord, SlashCommandGroup
 
 # Fallback für Farben falls nicht in FastCoding definiert
 try:
-    from FastCoding import INFO_COLOR, ERROR_COLOR, SUCCESS_COLOR, WARNING_COLOR
+    from DevTools import INFO_COLOR, ERROR_COLOR, SUCCESS_COLOR, WARNING_COLOR
 except ImportError:
     # Eigene Farbdefinitionen als Fallback
     INFO_COLOR = discord.Color.blue()

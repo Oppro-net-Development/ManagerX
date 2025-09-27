@@ -2,13 +2,13 @@
 # ───────────────────────────────────────────────
 # >> Imports
 # ───────────────────────────────────────────────
-from FastCoding.ui import (
+from DevTools.ui import (
     emoji_no, emoji_yes, emoji_user, emoji_warning, 
     emoji_circleinfo, emoji_addwarning, ERROR_TITLE, 
     ERROR_COLOR, SUCCESS_COLOR, AUTHOR, FLOOTER
 )
-from FastCoding.backend import WarnDatabase
-from FastCoding.backend import discord, slash_command, Option, datetime, os, ezcord
+from DevTools.backend import WarnDatabase
+from DevTools.backend import discord, slash_command, Option, datetime, os, ezcord
 import asyncio
 from typing import Optional
 

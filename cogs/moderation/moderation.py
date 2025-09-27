@@ -2,10 +2,10 @@
 # ───────────────────────────────────────────────
 # >> Imports
 # ───────────────────────────────────────────────
-from FastCoding.backend import discord, ezcord, slash_command, option, timedelta, SlashCommandGroup
-from FastCoding.backend import KICK, BAN, MODERATE
-from FastCoding.ui import emoji_yes, emoji_no, emoji_user, emoji_warning, emoji_circleinfo
-from FastCoding.ui import ERROR_TITLE, ERROR_COLOR, SUCCESS_COLOR, AUTHOR, FLOOTER
+from DevTools.backend import discord, ezcord, slash_command, option, timedelta, SlashCommandGroup
+from DevTools.backend import KICK, BAN, MODERATE
+from DevTools.ui import emoji_yes, emoji_no, emoji_user, emoji_warning, emoji_circleinfo
+from DevTools.ui import ERROR_TITLE, ERROR_COLOR, SUCCESS_COLOR, AUTHOR, FLOOTER
 
 import asyncio
 import re

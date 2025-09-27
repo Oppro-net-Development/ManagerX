@@ -10,7 +10,7 @@ import asyncio
 import logging
 
 # Import our separate database class
-from FastCoding import LoggingDatabase
+from DevTools import LoggingDatabase
 
 # Setup logging
 logger = logging.getLogger(__name__)

@@ -2,7 +2,7 @@
 import discord
 from discord.ext import commands, tasks
 from discord import slash_command, Option, SlashCommandGroup
-from FastCoding import db
+from DevTools import db
 import asyncio
 import logging
 import re

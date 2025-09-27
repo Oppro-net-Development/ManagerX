@@ -1,5 +1,5 @@
 # Copyright (c) 2025 OPPRO.NET Network
-from FastCoding.ui.emojis import emoji_no, emoji_yes, emoji_circleinfo
+from DevTools.ui.emojis import emoji_no, emoji_yes, emoji_circleinfo
 import discord
 
 

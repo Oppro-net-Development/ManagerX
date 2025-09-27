@@ -12,7 +12,7 @@ import asyncio
 import ezcord
 import logging
 from discord.ext import tasks
-from FastCoding.backend import init_all
+from DevTools.backend import init_all
 import yaml
 import aiohttp
 import random
@@ -59,13 +59,13 @@ async def check_for_update():
                 if resp.status == 200:
                     latest_version = (await resp.text()).strip()
                     if latest_version != BOT_VERSION:
-                        print(f"[{Fore.YELLOW}UPDATE{Style.RESET_ALL}] Deine Version {BOT_VERSION} ist veraltet! Neueste Version: {latest_version}")
+                        print(f"[{Fore.YELLOW}UPDATE{Style.RESET_ALL}] Your Version {BOT_VERSION} is outdated! Latest Version: {latest_version}")
                     else:
-                        print(f"[{Fore.GREEN}UP-TO-DATE{Style.RESET_ALL}] Du hast die neueste Version: {BOT_VERSION}")
+                        print(f"[{Fore.GREEN}UP-TO-DATE{Style.RESET_ALL}] You have the latest Version: {BOT_VERSION}")
                 else:
-                    print(f"[{Fore.RED}ERROR{Style.RESET_ALL}] Konnte die Version nicht abrufen, Status: {resp.status}")
+                    print(f"[{Fore.RED}ERROR{Style.RESET_ALL}] Could not retrieve version, Status: {resp.status}")
     except Exception as e:
-        print(f"[{Fore.RED}ERROR{Style.RESET_ALL}] Fehler beim Update-Check: {e}")
+        print(f"[{Fore.RED}ERROR{Style.RESET_ALL}] Error during update check: {e}")
 
 
 @bot.event
@@ -77,7 +77,7 @@ async def on_ready():
     await asyncio.sleep(1.5)
     print(f"{time} [{Style.BRIGHT}{Fore.LIGHTCYAN_EX}API{Style.RESET_ALL}] Weather API has Loaded.")
     await asyncio.sleep(1.5)
-    print(f"{time} [{Style.BRIGHT}{Fore.LIGHTYELLOW_EX}FASTCODING{Style.RESET_ALL}] Fast is ready to use!")
+    print(f"{time} [{Style.BRIGHT}{Fore.LIGHTYELLOW_EX}DEVTOOLS{Style.RESET_ALL}] DevTools is ready to use!")
 
 def parse_time(text: str) -> int:
     # Sucht nach Zahl+Einheit direkt hinter slowmode oder irgendwo im Text
@@ -89,8 +89,9 @@ def parse_time(text: str) -> int:
     if unit in ("min", "m"):
         return value * 60
     return value  # Sekunden standardmäßig
-
-
+# =============================================================================
+# MESSAGE CONTENT
+# =============================================================================
 @bot.event
 async def on_message(message: discord.Message):
     if message.author.bot:
@@ -132,9 +133,45 @@ async def on_message(message: discord.Message):
 # =============================================================================
 # BOT START
 # =============================================================================
+def main():
+    """Main bot execution function."""
+    token = os.getenv("TOKEN")
+    if not token:
+        print(f"{time} [{Fore.RED}ERROR{Style.RESET_ALL}] "
+              "Discord bot token not found in environment variables!")
+        return
+    
+    # Add help command
+    bot.add_help_command()
+    
+    # Load cog
+    try:
+        bot.load_cogs(
+            "cogs",
+            subdirectories=True,
+            custom_log_level=f"{time} [{Style.BRIGHT}{Fore.RED}COGS LOADING{Style.RESET_ALL}"
+        )
+        print(f"{time} [{Style.BRIGHT}{Fore.GREEN}COGS{Style.RESET_ALL}] "
+              "All cogs loaded successfully")
+    except Exception as error:
+        print(f"{time} [{Fore.RED}ERROR{Style.RESET_ALL}] "
+              f"Failed to load cogs: {error}")
+    
+    # Start the bot
+    print(f"{time} [{Style.BRIGHT}{Fore.BLUE}BOT{Style.RESET_ALL}] "
+          "Starting ManagerX Test...")
+    
+    try:
+        bot.run(token)
+    except discord.LoginFailure:
+        print(f"{time} [{Fore.RED}ERROR{Style.RESET_ALL}] "
+              "Invalid bot token!")
+    except KeyboardInterrupt:
+        print(f"\n{time} [{Fore.YELLOW}SHUTDOWN{Style.RESET_ALL}] "
+              "Bot shutdown requested")
+    except Exception as error:
+        print(f"{time} [{Fore.RED}ERROR{Style.RESET_ALL}] "
+              f"Unexpected error: {error}")
 
-bot.add_help_command()
 if __name__ == "__main__":
-    # Cogs laden
-    bot.load_cogs("cogs", subdirectories=True, custom_log_level =f"{time2} [{Style.BRIGHT}{Fore.RED}COGS LOADING{Style.RESET_ALL}")
-    bot.run(os.getenv("TOKEN"))
+    main()

@@ -11,7 +11,7 @@ from datetime import datetime
 logger = logging.getLogger(__name__)
 
 class WelcomeDatabase:
-    def __init__(self, db_path: str = "welcome.db"):
+    def __init__(self, db_path: str = "data/welcome.db"):
         self.db_path = db_path
         self.migration_done = False
         self.init_database()

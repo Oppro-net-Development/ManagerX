@@ -2,9 +2,9 @@
 from collections import defaultdict
 import asyncio
 
-from FastCoding.backend import discord, SlashCommandGroup, ezcord, datetime, timedelta
+from DevTools.backend import discord, SlashCommandGroup, ezcord, datetime, timedelta
 
-from FastCoding.ui import (
+from DevTools.ui import (
     emoji_yes as e_yes,
     emoji_user as e_user,
     emoji_no as e_no,
@@ -18,7 +18,7 @@ from FastCoding.ui import (
     ERROR_COLOR
 )
 
-from FastCoding.backend import SpamDB
+from DevTools.backend import SpamDB
 
 
 

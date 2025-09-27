@@ -2,9 +2,9 @@
 # ───────────────────────────────────────────────
 # >> Imports
 # ───────────────────────────────────────────────
-from FastCoding.backend import discord, SlashCommandGroup, ezcord, datetime
-from FastCoding.backend import NotesDatabase
-from FastCoding.ui import emoji_no, emoji_yes, emoji_user
+from DevTools.backend import discord, SlashCommandGroup, ezcord, datetime
+from DevTools.backend import NotesDatabase
+from DevTools.ui import emoji_no, emoji_yes, emoji_user
 # ───────────────────────────────────────────────
 # >> Cog
 # ───────────────────────────────────────────────
