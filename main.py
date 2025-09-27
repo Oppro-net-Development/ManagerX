@@ -159,7 +159,7 @@ def main():
     
     # Start the bot
     print(f"{time} [{Style.BRIGHT}{Fore.BLUE}BOT{Style.RESET_ALL}] "
-          "Starting ManagerX Test...")
+          "Starting ManagerX...")
     
     try:
         bot.run(token)
