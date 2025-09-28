@@ -15,7 +15,7 @@ import ezcord
 logger = logging.getLogger(__name__)
 
 
-class EnhancedGlobalChat(ezcord.Cog, group="globalchat"):
+class globalchat(ezcord.Cog, group="globalchat"):
     def __init__(self, bot):
         self.bot = bot
 
@@ -609,4 +609,4 @@ class EnhancedGlobalChat(ezcord.Cog, group="globalchat"):
 
 
 def setup(bot):
-    bot.add_cog(EnhancedGlobalChat(bot))
+    bot.add_cog(globalchat(bot))

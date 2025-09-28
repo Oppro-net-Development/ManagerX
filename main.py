@@ -38,7 +38,7 @@ ezcord.set_log(
 
 
 time = datetime.now().strftime(f"[{Fore.CYAN}%H:%M{Style.RESET_ALL}]")
-time2 = datetime.now().strftime(f"{Fore.CYAN}%H:%M{Style.RESET_ALL}]")
+time2 = datetime.now().strftime(f"[{Fore.CYAN}%H:%M{Style.RESET_ALL}]")
 bot = ezcord.Bot(
     intents=intents,
     language="auto", default_language="de",
@@ -134,14 +134,12 @@ async def on_message(message: discord.Message):
 # BOT START
 # =============================================================================
 def main():
-    """Main bot execution function."""
     token = os.getenv("TOKEN")
     if not token:
         print(f"{time} [{Fore.RED}ERROR{Style.RESET_ALL}] "
               "Discord bot token not found in environment variables!")
         return
     
-    # Add help command
     bot.add_help_command()
     
     # Load cog
@@ -149,15 +147,14 @@ def main():
         bot.load_cogs(
             "cogs",
             subdirectories=True,
-            custom_log_level=f"{time} [{Style.BRIGHT}{Fore.RED}COGS LOADING{Style.RESET_ALL}"
+            custom_log_level=f"{time2} [{Style.BRIGHT}{Fore.RED}COGS LOADING{Style.RESET_ALL}"
         )
-        print(f"{time} [{Style.BRIGHT}{Fore.GREEN}COGS{Style.RESET_ALL}] "
+        print(f"{time2} [{Style.BRIGHT}{Fore.GREEN}COGS{Style.RESET_ALL}] "
               "All cogs loaded successfully")
     except Exception as error:
-        print(f"{time} [{Fore.RED}ERROR{Style.RESET_ALL}] "
+        print(f"{time2} [{Fore.RED}ERROR{Style.RESET_ALL}] "
               f"Failed to load cogs: {error}")
     
-    # Start the bot
     print(f"{time} [{Style.BRIGHT}{Fore.BLUE}BOT{Style.RESET_ALL}] "
           "Starting ManagerX...")
     
