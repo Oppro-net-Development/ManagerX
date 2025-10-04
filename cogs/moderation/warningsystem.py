@@ -3,8 +3,7 @@
 # >> Imports
 # ───────────────────────────────────────────────
 from DevTools.ui import (
-    emoji_no, emoji_yes, emoji_user, emoji_warning, 
-    emoji_circleinfo, emoji_addwarning, ERROR_TITLE, 
+    emoji_no, emoji_yes, emoji_warn, emoji_member, emoji_staff, emoji_slowmode, emoji_summary, ERROR_TITLE, 
     ERROR_COLOR, SUCCESS_COLOR, AUTHOR, FLOOTER
 )
 from DevTools.backend import WarnDatabase
@@ -63,7 +62,7 @@ class WarnSystem(ezcord.Cog, group="moderation"):
         
         if action == "warn":
             embed = discord.Embed(
-                title=f"{emoji_warning} Warnung erteilt",
+                title=f"{emoji_warn} Warnung erteilt",
                 color=SUCCESS_COLOR,
                 description=f"{target.mention} wurde erfolgreich verwarnt."
             )
@@ -75,23 +74,23 @@ class WarnSystem(ezcord.Cog, group="moderation"):
             )
         else:
             embed = discord.Embed(
-                title=f"{emoji_circleinfo} {action}",
+                title=f" {action}",
                 color=SUCCESS_COLOR
             )
         
         embed.set_author(name=AUTHOR)
         
         if action == "warn":
-            embed.add_field(name=f"{emoji_user} Verwarnter User", value=target.mention, inline=True)
-            embed.add_field(name=f"{emoji_user} Verwarnt von", value=moderator.mention, inline=True)
-            embed.add_field(name=f"{emoji_circleinfo} Grund", value=reason, inline=False)
-            embed.add_field(name=f"{emoji_circleinfo} Zeitstempel", value=timestamp, inline=False)
-            embed.set_footer(text="Diese Warnung wurde in der Datenbank gespeichert.")
+            embed.add_field(name=f"{emoji_member} × Verwarnter User", value=target.mention, inline=True)
+            embed.add_field(name=f"{emoji_staff} × Verwarnt von", value=moderator.mention, inline=True)
+            embed.add_field(name=f"{emoji_summary} × Grund", value=reason, inline=False)
+            embed.add_field(name=f"{emoji_slowmode} × Zeitstempel", value=timestamp, inline=False)
+            embed.set_footer(text="Powered by ManagerX")
         
         elif action == "unwarn":
-            embed.add_field(name=f"{emoji_user} Entfernt von", value=moderator.mention, inline=True)
+            embed.add_field(name=f" Entfernt von", value=moderator.mention, inline=True)
             if warn_id:
-                embed.add_field(name=f"{emoji_circleinfo} Warnung ID", value=f"`{warn_id}`", inline=True)
+                embed.add_field(name=f" Warnung ID", value=f"`{warn_id}`", inline=True)
             embed.set_footer(text=FLOOTER)
         
         return embed
@@ -152,14 +151,14 @@ class WarnSystem(ezcord.Cog, group="moderation"):
             # Optional: DM an verwarnten User senden
             try:
                 dm_embed = discord.Embed(
-                    title=f"{emoji_warning} Du wurdest verwarnt",
+                    title=f"{emoji_warn} Du wurdest verwarnt",
                     color=ERROR_COLOR,
                     description=f"Du wurdest auf **{ctx.guild.name}** verwarnt."
                 )
-                dm_embed.add_field(name="Grund", value=reason, inline=False)
-                dm_embed.add_field(name="Moderator", value=str(ctx.author), inline=True)
-                dm_embed.add_field(name="Zeitpunkt", value=timestamp, inline=True)
-                dm_embed.set_footer(text="Bitte beachte die Serverregeln.")
+                dm_embed.add_field(name=f"{emoji_summary} × Grund", value=reason, inline=False)
+                dm_embed.add_field(name=f"{emoji_staff} × Moderator", value=str(ctx.author), inline=True)
+                dm_embed.add_field(name=f"{emoji_slowmode} × Zeitpunkt", value=timestamp, inline=True)
+                dm_embed.set_footer(text="Powered by ManagerX")
                 
                 await user.send(embed=dm_embed)
             except discord.Forbidden:
@@ -225,13 +224,13 @@ class WarnSystem(ezcord.Cog, group="moderation"):
                 ])
 
                 warnings_embed = discord.Embed(
-                    title=f"{emoji_addwarning} Verwarnungen für {target_user.display_name}",
+                    title=f"{emoji_warn} Verwarnungen für {target_user.display_name}",
                     color=ERROR_COLOR,
                     description=warn_list
                 )
                 warnings_embed.set_author(name=AUTHOR)
-                warnings_embed.add_field(name=f"{emoji_user} User", value=target_user.mention, inline=True)
-                warnings_embed.add_field(name=f"{emoji_circleinfo} Anzahl Verwarnungen", value=str(total_warnings), inline=True)
+                warnings_embed.add_field(name=f"{emoji_member} User", value=target_user.mention, inline=True)
+                warnings_embed.add_field(name=f"{emoji_summary} Anzahl Verwarnungen", value=str(total_warnings), inline=True)
                 warnings_embed.set_footer(text=FLOOTER)
 
                 await ctx.respond(embed=warnings_embed, ephemeral=True)
@@ -262,13 +261,13 @@ class WarnSystem(ezcord.Cog, group="moderation"):
         ])
 
         embed = discord.Embed(
-            title=f"{emoji_addwarning} Verwarnungen für {target_user.display_name}",
+            title=f"{emoji_warn} Verwarnungen für {target_user.display_name}",
             color=ERROR_COLOR,
             description=warn_list
         )
         embed.set_author(name=AUTHOR)
-        embed.add_field(name=f"{emoji_user} User", value=target_user.mention, inline=True)
-        embed.add_field(name=f"{emoji_circleinfo} Anzahl Verwarnungen", value=str(len(warnings)), inline=True)
+        embed.add_field(name=f"{emoji_member} User", value=target_user.mention, inline=True)
+        embed.add_field(name=f"{emoji_summary} Anzahl Verwarnungen", value=str(len(warnings)), inline=True)
         embed.set_footer(text=f"Seite {page + 1}/{total_pages} • {FLOOTER}")
 
         # View für Navigation erstellen
@@ -359,7 +358,7 @@ class WarnSystem(ezcord.Cog, group="moderation"):
             
             if warn_count == 0:
                 embed = discord.Embed(
-                    title=f"{emoji_circleinfo} Keine Verwarnungen",
+                    title=f"{emoji_summary} Keine Verwarnungen",
                     color=SUCCESS_COLOR,
                     description=f"{user.mention} hat keine Verwarnungen zum Löschen."
                 )
@@ -368,11 +367,11 @@ class WarnSystem(ezcord.Cog, group="moderation"):
 
             # Bestätigung anfordern
             confirm_embed = discord.Embed(
-                title=f"{emoji_warning} Bestätigung erforderlich",
+                title=f"{emoji_warn} Bestätigung erforderlich",
                 color=ERROR_COLOR,
                 description=f"Möchtest du wirklich **{warn_count}** Warnungen von {user.mention} löschen?\n\n**Grund:** {reason}"
             )
-            confirm_embed.set_footer(text="Diese Aktion kann nicht rückgängig gemacht werden!")
+            confirm_embed.set_footer(text="Diese Aktion kann nicht rückgängig gemacht werden! × Powered by ManagerX")
 
             view = ClearWarningsConfirmView(self, user, ctx.author, reason, warn_count)
             await ctx.respond(embed=confirm_embed, view=view, ephemeral=True)
@@ -447,13 +446,13 @@ class WarningsView(discord.ui.View):
         ])
 
         embed = discord.Embed(
-            title=f"{emoji_addwarning} Verwarnungen für {self.target_user.display_name}",
+            title=f"{emoji_warn} Verwarnungen für {self.target_user.display_name}",
             color=ERROR_COLOR,
             description=warn_list
         )
         embed.set_author(name=AUTHOR)
-        embed.add_field(name=f"{emoji_user} User", value=self.target_user.mention, inline=True)
-        embed.add_field(name=f"{emoji_circleinfo} Anzahl Verwarnungen", value=str(len(self.warnings)), inline=True)
+        embed.add_field(name=f"{emoji_member} User", value=self.target_user.mention, inline=True)
+        embed.add_field(name=f"{emoji_summary} Anzahl Verwarnungen", value=str(len(self.warnings)), inline=True)
         embed.set_footer(text=f"Seite {self.current_page + 1}/{self.total_pages} • {FLOOTER}")
 
         # Buttons aktualisieren
@@ -536,7 +535,7 @@ class ClearWarningsConfirmView(discord.ui.View):
             return
 
         cancel_embed = discord.Embed(
-            title=f"{emoji_circleinfo} Abgebrochen",
+            title=f"{emoji_yes} Abgebrochen",
             color=SUCCESS_COLOR,
             description="Das Löschen der Warnungen wurde abgebrochen."
         )
