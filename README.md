@@ -20,8 +20,8 @@ Dieser Bot wird verwaltet von OPPRO.NET Development, Urheberrecht hat jedoch OPP
 # ⭐ Changelog
 
 ## V1.7
-- 🔹 **Major Update **
-
+- 🔹 **Major Update**
+  Verbesserte funktionen sowie Updates.
 ## V1.6.6
 - 🔹 **Levelsystem & Datenbank verbessert**  
   Effizientere Speicherung und schnellere Berechnungen für ein besseres Spielerlebnis.
