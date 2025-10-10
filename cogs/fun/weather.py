@@ -1,8 +1,8 @@
 # Copyright (c) 2025 OPPRO.NET Network
 import requests
-from FastCoding.backend import discord, slash_command, ezcord
-from FastCoding.backend import WEATHER_API
-from FastCoding import DEFLAUT_COLOR
+from DevTools.backend import discord, slash_command, ezcord
+from DevTools.backend import WEATHER_API
+from DevTools import DEFLAUT_COLOR
 class Weather(ezcord.Cog, group="fun"):
     def __init__(self, bot: ezcord.Bot):
         self.bot = bot

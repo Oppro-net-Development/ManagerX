@@ -2,25 +2,25 @@
 from collections import defaultdict
 import asyncio
 
-from FastCoding.backend import discord, SlashCommandGroup, ezcord, datetime, timedelta
+from DevTools.backend import discord, SlashCommandGroup, ezcord, datetime, timedelta
 
-from FastCoding.ui import (
-    emoji_yes as e_yes,
-    emoji_user as e_user,
-    emoji_no as e_no,
-    emoji_forbidden as e_forbidden,
-    emoji_warning as e_warn,
-    emoji_log as e_log,
-    emoji_settings as e_settings,
-    emoji_circleinfo as e_circleinfo,
-    emoji_stopwatch as e_stopwatch,
-    emoji_comment as e_comment,
+from DevTools.ui import (
+    emoji_yes,
+    emoji_no,
+    emoji_forbidden,
+    emoji_warn,
+    emoji_delete,
+    emoji_member,
+    emoji_channel,
+    emoji_moderator,
+    emoji_add,
+    emoji_statistics,
+    emoji_annoattention,
+    emoji_owner,
     ERROR_COLOR
 )
 
-from FastCoding.backend import SpamDB
-
-
+from DevTools.backend import SpamDB
 
 
 class AntiSpam(ezcord.Cog):
@@ -112,8 +112,8 @@ class AntiSpam(ezcord.Cog):
 
             # Send warning message in channel
             embed = discord.Embed(
-                title=f"{e_forbidden} Anti-Spam Warnung",
-                description=f"{user} {user.mention} wurde wegen zu vieler Nachrichten {'stumm geschaltet' if timeout_applied else 'verwarnt'}.",
+                title=f"{emoji_forbidden} × Anti-Spam Warnung",
+                description=f"{user.mention} wurde wegen zu vieler Nachrichten {'stumm geschaltet' if timeout_applied else 'verwarnt'}.",
                 color=ERROR_COLOR
             )
             embed.add_field(
@@ -125,7 +125,7 @@ class AntiSpam(ezcord.Cog):
 
             # Clear user's message tracking after violation
             if guild.id in self.user_messages and user.id in self.user_messages[guild.id]:
-                self.user_messages[guild.id][user.id].clear()
+                self.user_messages[guild_id][user.id].clear()
 
             # Remove from timeout tracking after delay
             await asyncio.sleep(300)  # 5 minutes
@@ -147,32 +147,32 @@ class AntiSpam(ezcord.Cog):
 
         try:
             embed = discord.Embed(
-                title=f"{e_warn} Anti-Spam Verstoß",
+                title=f"{emoji_warn} × Anti-Spam Verstoß",
                 color=discord.Color.red(),
                 timestamp=datetime.now()
             )
             embed.add_field(
-                name=f"{e_user} Benutzer",
-                value=f"{e_user}{user.mention} ({user.id})",
+                name=f"{emoji_member} × Benutzer",
+                value=f"{user.mention} ({user.id})",
                 inline=True
             )
             embed.add_field(
-                name=f"{e_log} Kanal",
+                name=f"{emoji_channel} × Kanal",
                 value=message.channel.mention,
                 inline=True
             )
             embed.add_field(
-                name=f"{e_warn} Aktion",
+                name=f"{emoji_moderator} × Aktion",
                 value="Timeout (5 Min)" if timeout_applied else "Warnung",
                 inline=True
             )
             embed.add_field(
-                name=f"{e_circleinfo} Limit",
+                name=f"{emoji_statistics} × Limit",
                 value=f"{settings['max_messages']} Nachrichten in {settings['time_frame']}s",
                 inline=True
             )
             embed.add_field(
-                name=f"{e_comment} Nachricht (Vorschau)",
+                name=f"{emoji_annoattention} × Nachricht (Vorschau)",
                 value=f"```{message.content[:100]}{'...' if len(message.content) > 100 else ''}```",
                 inline=False
             )
@@ -208,46 +208,46 @@ class AntiSpam(ezcord.Cog):
     async def setup_antispam(self, ctx, log_channel: discord.TextChannel, max_messages: int = 5, time_frame: int = 10):
         """Richte das Anti-Spam-System mit einem Log-Channel ein."""
         if not ctx.author.guild_permissions.manage_guild:
-            await ctx.respond(f"{e_no} Du benötigst die 'Server verwalten' Berechtigung für diesen Befehl.", ephemeral=True)
+            await ctx.respond(f"{emoji_no} × Du benötigst die 'Server verwalten' Berechtigung für diesen Befehl.", ephemeral=True)
             return
 
         if max_messages < 1 or max_messages > 50:
-            await ctx.respond(f"{e_no} Maximale Nachrichten müssen zwischen 1 und 50 liegen.", ephemeral=True)
+            await ctx.respond(f"{emoji_no} × Maximale Nachrichten müssen zwischen 1 und 50 liegen.", ephemeral=True)
             return
 
         if time_frame < 1 or time_frame > 300:
-            await ctx.respond(f"{e_no} Zeitrahmen muss zwischen 1 und 300 Sekunden liegen.", ephemeral=True)
+            await ctx.respond(f"{emoji_no} × Zeitrahmen muss zwischen 1 und 300 Sekunden liegen.", ephemeral=True)
             return
 
         # Check if bot can send messages to log channel
         if not log_channel.permissions_for(ctx.guild.me).send_messages:
-            await ctx.respond(f"{e_no} Ich habe keine Berechtigung, Nachrichten in den angegebenen Log-Channel zu senden.",
+            await ctx.respond(f"{emoji_no} × Ich habe keine Berechtigung, Nachrichten in den angegebenen Log-Channel zu senden.",
                               ephemeral=True)
             return
 
         self.db.set_spam_settings(ctx.guild.id, max_messages, time_frame, log_channel.id)
 
         embed = discord.Embed(
-            title=f"{e_yes} Anti-Spam-System eingerichtet",
+            title=f"{emoji_yes} × Anti-Spam-System eingerichtet",
             color=discord.Color.green()
         )
         embed.add_field(
-            name=f"{e_log} Log-Channel",
+            name=f"{emoji_channel} × Log-Channel",
             value=log_channel.mention,
             inline=True
         )
         embed.add_field(
-            name=f"{e_comment} Nachrichtenlimit",
+            name=f"{emoji_annoattention} × Nachrichtenlimit",
             value=f"{max_messages} Nachrichten",
             inline=True
         )
         embed.add_field(
-            name=f"{e_stopwatch }Zeitrahmen",
+            name=f"{emoji_statistics} × Zeitrahmen",
             value=f"{time_frame} Sekunden",
             inline=True
         )
         embed.add_field(
-            name=f"{e_settings} Status",
+            name=f"{emoji_owner} × Status",
             value="🟢 Aktiv",
             inline=False
         )
@@ -257,13 +257,13 @@ class AntiSpam(ezcord.Cog):
     async def set_parameters(self, ctx, max_messages: int = None, time_frame: int = None):
         """Ändere die Anti-Spam-Parameter (Log-Channel bleibt unverändert)."""
         if not ctx.author.guild_permissions.manage_guild:
-            await ctx.respond(f"{e_no} Du benötigst die 'Server verwalten' Berechtigung für diesen Befehl.", ephemeral=True)
+            await ctx.respond(f"{emoji_no} × Du benötigst die 'Server verwalten' Berechtigung für diesen Befehl.", ephemeral=True)
             return
 
         # Get current settings
         current_settings = self.db.get_spam_settings(ctx.guild.id)
         if not current_settings:
-            await ctx.respond(f"{e_no} Anti-Spam-System wurde noch nicht eingerichtet. Verwende `/antispam setup` zuerst.",
+            await ctx.respond(f"{emoji_no} × Anti-Spam-System wurde noch nicht eingerichtet. Verwende `/antispam setup` zuerst.",
                               ephemeral=True)
             return
 
@@ -272,17 +272,17 @@ class AntiSpam(ezcord.Cog):
         new_time_frame = time_frame if time_frame is not None else current_settings['time_frame']
 
         if new_max_messages < 5 or new_max_messages > 50:
-            await ctx.respond(f"{e_no} Maximale Nachrichten müssen zwischen 5 und 50 liegen.", ephemeral=True)
+            await ctx.respond(f"{emoji_no} × Maximale Nachrichten müssen zwischen 5 und 50 liegen.", ephemeral=True)
             return
 
         if new_time_frame < 5 or new_time_frame > 300:
-            await ctx.respond(f"{e_no} Zeitrahmen muss zwischen 5 und 300 Sekunden liegen.", ephemeral=True)
+            await ctx.respond(f"{emoji_no} × Zeitrahmen muss zwischen 5 und 300 Sekunden liegen.", ephemeral=True)
             return
 
         self.db.set_spam_settings(ctx.guild.id, new_max_messages, new_time_frame, current_settings['log_channel_id'])
 
         embed = discord.Embed(
-            title=f"{e_settings} Anti-Spam Einstellungen aktualisiert",
+            title=f"{emoji_owner} × Anti-Spam Einstellungen aktualisiert",
             description=f"Maximal **{new_max_messages}** Nachrichten in **{new_time_frame}** Sekunden erlaubt.",
             color=discord.Color.green()
         )
@@ -292,19 +292,19 @@ class AntiSpam(ezcord.Cog):
     async def set_log_channel(self, ctx, log_channel: discord.TextChannel):
         """Ändere den Log-Channel für Anti-Spam."""
         if not ctx.author.guild_permissions.manage_guild:
-            await ctx.respond(f"{e_no} Du benötigst die 'Server verwalten' Berechtigung für diesen Befehl.", ephemeral=True)
+            await ctx.respond(f"{emoji_no} × Du benötigst die 'Server verwalten' Berechtigung für diesen Befehl.", ephemeral=True)
             return
 
         # Check if bot can send messages to log channel
         if not log_channel.permissions_for(ctx.guild.me).send_messages:
-            await ctx.respond(f"{e_no} Ich habe keine Berechtigung, Nachrichten in den angegebenen Log-Channel zu senden.",
+            await ctx.respond(f"{emoji_no} × Ich habe keine Berechtigung, Nachrichten in den angegebenen Log-Channel zu senden.",
                               ephemeral=True)
             return
 
         self.db.set_log_channel(ctx.guild.id, log_channel.id)
 
         embed = discord.Embed(
-            title=f"{e_settings} Log-Channel aktualisiert",
+            title=f"{emoji_owner} × Log-Channel aktualisiert",
             description=f"Anti-Spam-Logs werden nun in {log_channel.mention} gesendet.",
             color=discord.Color.green()
         )
@@ -317,36 +317,36 @@ class AntiSpam(ezcord.Cog):
 
         if settings and settings.get('log_channel_id'):
             log_channel = ctx.guild.get_channel(settings['log_channel_id'])
-            log_channel_display = log_channel.mention if log_channel else (f"{e_warn} Channel nicht gefunden")
+            log_channel_display = log_channel.mention if log_channel else f"{emoji_warn} × Channel nicht gefunden"
 
             embed = discord.Embed(
-                title=f"{e_settings} Anti-Spam Einstellungen",
+                title=f"{emoji_owner} × Anti-Spam Einstellungen",
                 color=discord.Color.blue()
             )
             embed.add_field(
-                name=f"{e_log} Log-Channel",
+                name=f"{emoji_channel} × Log-Channel",
                 value=log_channel_display,
                 inline=True
             )
             embed.add_field(
-                name=f"{e_comment }Nachrichtenlimit",
+                name=f"{emoji_annoattention} × Nachrichtenlimit",
                 value=f"{settings['max_messages']} Nachrichten",
                 inline=True
             )
             embed.add_field(
-                name=f"{e_stopwatch} Zeitrahmen",
+                name=f"{emoji_statistics} × Zeitrahmen",
                 value=f"{settings['time_frame']} Sekunden",
                 inline=True
             )
             embed.add_field(
-                name=f"{e_circleinfo} Status",
+                name=f"{emoji_owner} × Status",
                 value="🟢 Aktiv",
                 inline=False
             )
         else:
             embed = discord.Embed(
-                title=f"{e_settings} Anti-Spam Einstellungen",
-                description=f"{e_no} **Anti-Spam-System nicht eingerichtet**\n\nVerwende `/antispam setup` um das System zu konfigurieren.",
+                title=f"{emoji_owner} × Anti-Spam Einstellungen",
+                description=f"{emoji_no} × **Anti-Spam-System nicht eingerichtet**\n\nVerwende `/antispam setup` um das System zu konfigurieren.",
                 color=discord.Color.red()
             )
 
@@ -356,14 +356,14 @@ class AntiSpam(ezcord.Cog):
     async def view_logs(self, ctx, limit: int = 10):
         """Zeigt die Anti-Spam-Protokolle an."""
         if not ctx.author.guild_permissions.manage_guild:
-            await ctx.respond(f"{e_no} Du benötigst die 'Server verwalten' Berechtigung für diesen Befehl.", ephemeral=True)
+            await ctx.respond(f"{emoji_no} × Du benötigst die 'Server verwalten' Berechtigung für diesen Befehl.", ephemeral=True)
             return
 
         logs = self.db.get_spam_logs(ctx.guild.id, limit)
 
         if logs:
             embed = discord.Embed(
-                title=f"{e_log} Anti-Spam Protokolle",
+                title=f"{emoji_statistics} × Anti-Spam Protokolle",
                 color=discord.Color.red()
             )
 
@@ -385,7 +385,7 @@ class AntiSpam(ezcord.Cog):
             embed.set_footer(text=f"Zeige die letzten {len(logs)} Einträge")
         else:
             embed = discord.Embed(
-                title=f"{e_log} Anti-Spam Protokolle",
+                title=f"{emoji_statistics} × Anti-Spam Protokolle",
                 description="Für diesen Server wurden keine Anti-Spam-Logs gefunden.",
                 color=discord.Color.green()
             )
@@ -396,13 +396,13 @@ class AntiSpam(ezcord.Cog):
     async def clear_logs(self, ctx):
         """Löscht alle Anti-Spam-Protokolle für den Server."""
         if not ctx.author.guild_permissions.administrator:
-            await ctx.respond(f"{e_no} Du benötigst Administrator-Rechte für diesen Befehl.", ephemeral=True)
+            await ctx.respond(f"{emoji_no} × Du benötigst Administrator-Rechte für diesen Befehl.", ephemeral=True)
             return
 
         self.db.clear_spam_logs(ctx.guild.id)
 
         embed = discord.Embed(
-            title=f"{e_yes} Protokolle gelöscht",
+            title=f"{emoji_yes} × Protokolle gelöscht",
             description="Alle Anti-Spam-Protokolle für diesen Server wurden gelöscht.",
             color=discord.Color.green()
         )
@@ -412,13 +412,13 @@ class AntiSpam(ezcord.Cog):
     async def add_whitelist(self, ctx, user: discord.Member):
         """Fügt einen Benutzer zur Anti-Spam Whitelist hinzu."""
         if not ctx.author.guild_permissions.manage_guild:
-            await ctx.respond(f"{e_no} Du benötigst die 'Server verwalten' Berechtigung für diesen Befehl.", ephemeral=True)
+            await ctx.respond(f"{emoji_no} × Du benötigst die 'Server verwalten' Berechtigung für diesen Befehl.", ephemeral=True)
             return
 
         self.db.add_to_whitelist(ctx.guild.id, user.id)
 
         embed = discord.Embed(
-            title=f"{e_yes} Zur Whitelist hinzugefügt",
+            title=f"{emoji_yes} × Zur Whitelist hinzugefügt",
             description=f"{user.mention} wurde zur Anti-Spam Whitelist hinzugefügt.",
             color=discord.Color.green()
         )
@@ -428,7 +428,7 @@ class AntiSpam(ezcord.Cog):
     async def disable_antispam(self, ctx):
         """Deaktiviert das Anti-Spam-System für diesen Server."""
         if not ctx.author.guild_permissions.administrator:
-            await ctx.respond(f"{e_no} Du benötigst Administrator-Rechte für diesen Befehl.", ephemeral=True)
+            await ctx.respond(f"{emoji_no} × Du benötigst Administrator-Rechte für diesen Befehl.", ephemeral=True)
             return
 
         # Remove settings to disable the system
@@ -436,7 +436,7 @@ class AntiSpam(ezcord.Cog):
             self.db.conn.execute('DELETE FROM spam_settings WHERE guild_id = ?', (ctx.guild.id,))
 
         embed = discord.Embed(
-            title=f"{e_yes} Anti-Spam-System deaktiviert",
+            title=f"{emoji_delete} × Anti-Spam-System deaktiviert",
             description="Das Anti-Spam-System wurde für diesen Server deaktiviert.\nVerwende `/antispam setup` um es wieder zu aktivieren.",
             color=discord.Color.orange()
         )

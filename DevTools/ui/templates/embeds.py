@@ -1,5 +1,5 @@
 # Copyright (c) 2025 OPPRO.NET Network
-from FastCoding.ui.emojis import emoji_no, emoji_yes, emoji_circleinfo
+from DevTools.ui.emojis import emoji_no, emoji_yes
 import discord
 
 
@@ -14,7 +14,7 @@ SUCCESS_COLOR = discord.Color.green()
 SUCCESS_DESCRIPTION = "Die Aktion wurde erfolgreich abgeschlossen."
 
 INFO_COLOR = discord.Color.blue()
-INFO_TITLE = f"{emoji_circleinfo} × Info"
+INFO_TITLE = f" Info"
 
 DEFLAUT_COLOR = 0x5c0202
 
