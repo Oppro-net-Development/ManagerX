@@ -1,7 +1,7 @@
 # Copyright (c) 2025 OPPRO.NET Network
 from DevTools import TempVCDatabase
 from DevTools import discord, commands, option, slash_command, ezcord, SlashCommandGroup
-from DevTools import emoji_yes, emoji_no, emoji_settings, ERROR_TITLE, ERROR_COLOR, SUCCESS_COLOR, AUTHOR, FLOOTER
+from DevTools import emoji_yes, emoji_no, ERROR_TITLE, ERROR_COLOR, SUCCESS_COLOR, AUTHOR, FLOOTER
 
 db = TempVCDatabase()
 

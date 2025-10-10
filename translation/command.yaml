@@ -1,0 +1,86 @@
+de:
+# Sever -- Welcome System --
+
+  welcome:
+    name: willkommen
+
+    channel:
+      name: kanal
+      description: Setzt den Willkommenskanal
+      options: 
+        channel:
+          name: kanal
+          description: Setzt den Willkommenskanal
+
+    message:
+      name: nachricht
+      description: Setzt die Willkommensnachricht
+
+    toggle:
+      name: toggle
+      description: Schaltet das Willkommensystem ein/aus
+      
+    embed: 
+      name: embed
+      description: Aktiviert/Deaktiviert Embed Modus
+      
+    autorole:
+      name: autorole
+      description: Setzt eine Rolle die automatisch vergeben wird
+      options:
+        name: rolle
+
+    dm:
+      name: dm
+      description: Aktiviert/Konfiguriert private Willkommensnachrichten
+      options: 
+        message:
+          name: nachricht
+
+    template:
+      name: vorlage
+      description: Lädt eine Vorlage
+      options: 
+        template_name:
+          name: vorlage_name
+          
+    config:
+      name: config
+      description: Zeigt die aktuelle Konfiguration
+
+    test:
+      name: text
+      description: Testet die Willkommensnachricht
+
+    placeholders:
+      name: platzhalter
+      description: Zeigt alle verfügbaren Platzhalter
+
+    export:
+      name: export
+      description: Exportiert die Willkommenskonfiguration
+
+    stats: 
+      name: stats
+      description: Zeigt Willkommensstatistiken
+
+    reset: 
+      name: reset
+      description: Setzt alle Willkommenseinstellungen zurück
+
+# Server -- TempVC --
+
+  tempvc:
+    name: tempvc
+    description: Verwalte temporäre Voice-Kanal Systeme
+
+    create:
+      name: erstellen
+      description: Erstelle ein VC-Erstellungssystem
+      options:
+        creator_channel:
+          name: kanal
+          description: Kanal, den Mitglieder betreten, um ihren VC zu erstellen
+        category:
+          name: kategorie
+          description: Kategorie, in der die Temp-Channels erstellt werden
