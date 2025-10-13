@@ -69,3 +69,6 @@ Dieser Bot wird verwaltet von OPPRO.NET Development, Urheberrecht hat jedoch OPP
 `UPDATE:` Funktion update
 
 `DELETE:` Datei entfernt
+
+# Hosting
+<a href="https://deinserverhost.de/store/aff.php?aff=5609"><img src="https://deinserverhost.de/tca/600x150_transparent.png" width="600" height="150" border="0"></a>
