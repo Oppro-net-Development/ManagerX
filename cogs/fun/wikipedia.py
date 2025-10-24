@@ -5,9 +5,11 @@
 import wikipedia
 import asyncio
 import re
+import discord
 from datetime import datetime, timedelta
 from typing import Optional, List, Dict, Any
-from DevTools import discord, ezcord, SlashCommandGroup
+from discord import SlashCommandGroup, InteractionContextType, IntegrationType, slash_command
+import ezcord
 
 # Fallback für Farben falls nicht in FastCoding definiert
 try:
@@ -606,8 +608,14 @@ class WikipediaCog(ezcord.Cog):
         if hasattr(self, 'cleanup_task') and self.cleanup_task:
             self.cleanup_task.cancel()
 
-    wiki = SlashCommandGroup("wikipedia", "Wikipedia-Funktionen")
-    @wiki.command(name="search", description="🔍 Durchsuche Wikipedia nach Artikeln und Informationen")
+    wiki = SlashCommandGroup(
+    "wikipedia", 
+    "Wikipedia-Funktionen"
+    )
+    @wiki.command(
+            name="search", 
+            description="🔍 Durchsuche Wikipedia nach Artikeln und Informationen"
+            )
     async def wikipedia_search(
             self,
             ctx: discord.ApplicationContext,

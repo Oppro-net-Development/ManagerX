@@ -44,12 +44,13 @@ bot = ezcord.Bot(
     language="auto", default_language="de",
     logging_level=logging.DEBUG,
     error_webhook_url=os.getenv("ERROR_WEBHOOK_URL"),
-    ready_event=None
+    ready_event=None,
+    debug_guild=1428835818792947884
 )
 # =============================================================================
 # BOT VERSION
 # =============================================================================
-BOT_VERSION = "1.7.0"
+BOT_VERSION = "1.7.1"
 VERSION_URL = "https://raw.githubusercontent.com/Oppro-net-Development/ManagerX/main/version.txt"
 
 async def check_for_update():
