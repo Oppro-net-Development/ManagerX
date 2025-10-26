@@ -11,6 +11,8 @@ from typing import List, Optional, Dict
 import json
 from datetime import datetime, timedelta
 import ezcord
+
+from discord.ui import Container
 # Logger konfigurieren
 logger = logging.getLogger(__name__)
 
@@ -378,18 +380,21 @@ class globalchat(ezcord.Cog, group="globalchat"):
             self._channel_cache = []
             self._cache_last_update = 0
 
-            embed = discord.Embed(
-                title="🌍 GlobalChat eingerichtet!",
-                description=f"Der Channel {channel.mention} wurde als GlobalChat-Channel eingerichtet.\n\n"
-                            "**Wie es funktioniert:**\n"
-                            "• Nachrichten in diesem Channel werden an alle anderen GlobalChat-Server gesendet\n"
-                            "• Die ursprüngliche Nachricht wird gelöscht und als Embed neu gesendet\n"
-                            "• Rate-Limiting: 5 Nachrichten pro Minute pro User",
-                color=discord.Color.green()
+            container = Container()
+            container.add_text(
+                "## 🌍 GlobalChat eingerichtet!"
             )
-            embed.set_footer(text="Nutze /globalchat_settings für weitere Einstellungen")
-
-            await ctx.respond(embed=embed)
+            container.add_separator()
+            container.add_text(
+                f"Der Channel {channel.mention} wurde als GlobalChat-Channel eingerichtet.\n\n"
+                "**Wie es funktioniert:**\n"
+                "• Nachrichten in diesem Channel werden an alle anderen GlobalChat-Server gesendet\n"
+                "• Die ursprüngliche Nachricht wird gelöscht und als Embed neu gesendet\n"
+                "• Rate-Limiting: 5 Nachrichten pro Minute pro User\n"
+                "-# Nutze /globalchat_settings für weitere Einstellungen"
+            )
+            view = discord.ui.View(container, timeout=None)
+            await ctx.respond(view=view)
         else:
             await ctx.respond("❌ Fehler beim Einrichten des GlobalChat-Channels!", ephemeral=True)
 
@@ -410,12 +415,16 @@ class globalchat(ezcord.Cog, group="globalchat"):
             self._channel_cache = []
             self._cache_last_update = 0
 
-            embed = discord.Embed(
-                title="🗑️ GlobalChat entfernt",
-                description="Der GlobalChat-Channel wurde von diesem Server entfernt.",
-                color=discord.Color.red()
+            container = Container()
+            container.add_text(
+                "# 🗑️ GlobalChat entfernt\n"
             )
-            await ctx.respond(embed=embed)
+            container.add_separator()
+            container.add_text(
+                "Der GlobalChat-Channel wurde von diesem Server entfernt."
+            )
+            view = discord.ui.View(container, timeout=None)
+            await ctx.respond(view=view)
         else:
             await ctx.respond("❌ Kein GlobalChat-Channel auf diesem Server gefunden!", ephemeral=True)
 
