@@ -577,8 +577,8 @@ class TempVC(ezcord.Cog):
                 
                 control_view = TempChannelControlView(member.id, ui_prefix)
                 view = discord.ui.View(container, timeout=None)
-                view.add_view(control_view)
                 await temp_channel.send(view=view)
+                await temp_channel.send(view=control_view)
 
         except discord.Forbidden:
             print(f"Missing permissions to create voice channel in guild {guild.id}")
