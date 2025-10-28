@@ -7,7 +7,7 @@
 [![Version](https://img.shields.io/badge/Version-1.7.1-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://github.com/Oppro-net-Development/ManagerX)
 [![Next Release](https://img.shields.io/badge/Next_Release-v1.7.2-00D9FF?style=for-the-badge&logo=rocket&logoColor=white)](https://github.com/Oppro-net-Development/ManagerX)
 [![Last Commit](https://img.shields.io/github/last-commit/Oppro-net-Development/ManagerX?style=for-the-badge&logo=git&logoColor=white&color=F05032)](https://github.com/Oppro-net-Development/ManagerX/commits)
-[![License](https://img.shields.io/badge/License-Proprietary-yellow?style=for-the-badge&logo=shield&logoColor=white)](LICENSE)
+[![License](https://img.shields.io/badge/License-GPL--3.0-blue?style=for-the-badge&logo=opensourceinitiative&logoColor=white)](LICENSE)
 
 ---
 
