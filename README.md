@@ -214,11 +214,6 @@ Wir nutzen folgende Präfixe für Commits:
 ## 📄 Lizenz & Urheberrecht
 
 **Copyright © 2024 OPPRO.NET Network**  
-Entwickelt und verwaltet von OPPRO.NET Development
-
-Alle Rechte vorbehalten. Dieses Projekt ist proprietäre Software und darf ohne ausdrückliche Genehmigung nicht kommerziell genutzt, kopiert oder verbreitet werden.
-
-> 📧 Für Lizenzanfragen: [oppro.help@gmail.com](mailto:oppro.help@gmail.com)
 
 ---
 
