@@ -440,29 +440,26 @@ class globalchat(ezcord.Cog, group="globalchat"):
             await ctx.respond("❌ Fehler beim Abrufen der Statistiken!", ephemeral=True)
             return
 
-        embed = discord.Embed(
-            title="🌍 GlobalChat Statistiken",
-            color=discord.Color.blue()
+        container = Container()
+        container.add_text(
+            "# 🌍 GlobalChat Statistiken"
         )
-
-        embed.add_field(
-            name="📊 Server & Nachrichten",
-            value=f"**Aktive Server:** {stats.get('active_guilds', 0):,}\n"
-                  f"**Nachrichten insgesamt:** {stats.get('total_messages', 0):,}\n"
-                  f"**Nachrichten heute:** {stats.get('today_messages', 0):,}",
-            inline=False
+        container.add_separator()
+        container.add_text(
+            "### 📊 Server & Nachrichten:\n"
+            f"**Aktive Server:** {stats.get('active_guilds', 0):,}\n"
+            f"**Nachrichten insgesamt:** {stats.get('total_messages', 0):,}\n"
+            f"**Nachrichten heute:** {stats.get('today_messages', 0):,}"
         )
-
-        embed.add_field(
-            name="🚫 Moderation",
-            value=f"**Gesperrte User:** {stats.get('banned_users', 0):,}\n"
-                  f"**Gesperrte Server:** {stats.get('banned_guilds', 0):,}",
-            inline=False
+        container.add_separator()
+        container.add_text(
+            "### 🚫 Moderation\n"
+            f"**Gesperrte User:** {stats.get('banned_users', 0):,}\n"
+            f"**Gesperrte Server:** {stats.get('banned_guilds', 0):,}\n"
+            f"Stand: {datetime.now().strftime('%d.%m.%Y %H:%M')}"
         )
-
-        embed.set_footer(text=f"Stand: {datetime.now().strftime('%d.%m.%Y %H:%M')}")
-
-        await ctx.respond(embed=embed)
+        view = discord.ui.View(container, timeout=None)
+        await ctx.respond(view=view)
 
     @globalchat.command(
         name="settings",
@@ -537,7 +534,6 @@ class globalchat(ezcord.Cog, group="globalchat"):
                 value=f"**Embed-Farbe:** {current_settings.get('embed_color', '#5865F2')}",
                 inline=False
             )
-
         await ctx.respond(embed=embed)
 
     # --- Admin Commands (nur für Bot-Owner) ---

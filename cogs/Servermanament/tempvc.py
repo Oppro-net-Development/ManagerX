@@ -560,7 +560,7 @@ class TempVC(ezcord.Cog):
                 
                 container = Container()
                 container.add_text(
-                    f"🎛️ **Channel-Kontrolle**\n"
+                    f"## 🎛️ **Channel-Kontrolle**\n"
                     f"**{member.display_name}**, du bist der Besitzer dieses Channels!\n"
                     "Verwende die Buttons unten, um deinen Channel zu verwalten."
                 )

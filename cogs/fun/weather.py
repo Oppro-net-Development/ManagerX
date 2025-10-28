@@ -33,23 +33,6 @@ class Weather(ezcord.Cog, group="fun"):
         location = data['location']
         current = data['current']
 
-        embed = discord.Embed(
-            title=f"Wetter in {location['name']}, {location['country']}",
-            description=f"Zeitzone: {location['tz_id']}\nLetzte Aktualisierung: {current['last_updated']}",
-            color=DEFLAUT_COLOR
-        )
-
-        embed.add_field(name="🌡️ Temperatur", value=f"{current['temp_c']}°C", inline=True)
-        embed.add_field(name="💧 Luftfeuchtigkeit", value=f"{current['humidity']}%", inline=True)
-        embed.add_field(name="🌬️ Wind", value=f"{current['wind_kph']} km/h ({current['wind_dir']})", inline=True)
-        embed.add_field(name="☁️ Zustand", value=current['condition']['text'], inline=False)
-        embed.add_field(name="🌫️ Sichtweite", value=f"{current['vis_km']} km", inline=True)
-        embed.add_field(name="🌡️ Luftdruck", value=f"{current['pressure_mb']} hPa", inline=True)
-        embed.add_field(name="🌅 Sonnenauf-/untergang", value=f"{current.get('astro', {}).get('sunrise', 'N/A')} / {current.get('astro', {}).get('sunset', 'N/A')}", inline=False)
-
-        embed.set_thumbnail(url="http:" + current['condition']['icon'])
-        embed.set_footer(text="Weather data provided by WeatherAPI")
-
         container = Container()
         container.add_text(
             f"## Wetter in {location['name']}, {location['country']} \n"
