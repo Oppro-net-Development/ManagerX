@@ -2,8 +2,6 @@
 # ───────────────────────────────────────────────
 # >> Imports
 # ───────────────────────────────────────────────
-from DevTools.backend import discord, ezcord, slash_command, option, timedelta, SlashCommandGroup
-from DevTools.backend import KICK, BAN, MODERATE
 from DevTools.ui import emoji_yes, emoji_no, emoji_member, emoji_warn, emoji_summary, emoji_staff, emoji_slowmode
 from DevTools.ui import ERROR_TITLE, ERROR_COLOR, SUCCESS_COLOR, AUTHOR, FLOOTER
 
@@ -13,6 +11,11 @@ from datetime import datetime, timezone
 from typing import Optional, Dict, List
 import logging
 
+import discord
+import ezcord
+from discord import slash_command, option, SlashCommandGroup
+import timedelta
+from discord.ui import Container
 # ───────────────────────────────────────────────
 # >> Cogs
 # ───────────────────────────────────────────────
@@ -25,7 +28,7 @@ class Moderation(ezcord.Cog):
         self._active_votes: Dict[int, Dict] = {}
         self.logger = logging.getLogger(__name__)
 
-    moderation = SlashCommandGroup("moderation", "Erweiterte Moderationsbefehle")
+    moderation = SlashCommandGroup("mod", "Erweiterte Moderationsbefehle")
 
     def _has_permission(self, member: discord.Member, permission: str) -> bool:
         """Überprüft ob ein Member eine bestimmte Berechtigung hat"""

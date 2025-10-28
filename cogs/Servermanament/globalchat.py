@@ -11,6 +11,8 @@ from typing import List, Optional, Dict
 import json
 from datetime import datetime, timedelta
 import ezcord
+
+from discord.ui import Container
 # Logger konfigurieren
 logger = logging.getLogger(__name__)
 
@@ -378,18 +380,21 @@ class globalchat(ezcord.Cog, group="globalchat"):
             self._channel_cache = []
             self._cache_last_update = 0
 
-            embed = discord.Embed(
-                title="🌍 GlobalChat eingerichtet!",
-                description=f"Der Channel {channel.mention} wurde als GlobalChat-Channel eingerichtet.\n\n"
-                            "**Wie es funktioniert:**\n"
-                            "• Nachrichten in diesem Channel werden an alle anderen GlobalChat-Server gesendet\n"
-                            "• Die ursprüngliche Nachricht wird gelöscht und als Embed neu gesendet\n"
-                            "• Rate-Limiting: 5 Nachrichten pro Minute pro User",
-                color=discord.Color.green()
+            container = Container()
+            container.add_text(
+                "## 🌍 GlobalChat eingerichtet!"
             )
-            embed.set_footer(text="Nutze /globalchat_settings für weitere Einstellungen")
-
-            await ctx.respond(embed=embed)
+            container.add_separator()
+            container.add_text(
+                f"Der Channel {channel.mention} wurde als GlobalChat-Channel eingerichtet.\n\n"
+                "**Wie es funktioniert:**\n"
+                "• Nachrichten in diesem Channel werden an alle anderen GlobalChat-Server gesendet\n"
+                "• Die ursprüngliche Nachricht wird gelöscht und als Embed neu gesendet\n"
+                "• Rate-Limiting: 5 Nachrichten pro Minute pro User\n"
+                "-# Nutze /globalchat_settings für weitere Einstellungen"
+            )
+            view = discord.ui.View(container, timeout=None)
+            await ctx.respond(view=view)
         else:
             await ctx.respond("❌ Fehler beim Einrichten des GlobalChat-Channels!", ephemeral=True)
 
@@ -410,12 +415,16 @@ class globalchat(ezcord.Cog, group="globalchat"):
             self._channel_cache = []
             self._cache_last_update = 0
 
-            embed = discord.Embed(
-                title="🗑️ GlobalChat entfernt",
-                description="Der GlobalChat-Channel wurde von diesem Server entfernt.",
-                color=discord.Color.red()
+            container = Container()
+            container.add_text(
+                "# 🗑️ GlobalChat entfernt\n"
             )
-            await ctx.respond(embed=embed)
+            container.add_separator()
+            container.add_text(
+                "Der GlobalChat-Channel wurde von diesem Server entfernt."
+            )
+            view = discord.ui.View(container, timeout=None)
+            await ctx.respond(view=view)
         else:
             await ctx.respond("❌ Kein GlobalChat-Channel auf diesem Server gefunden!", ephemeral=True)
 
@@ -431,29 +440,26 @@ class globalchat(ezcord.Cog, group="globalchat"):
             await ctx.respond("❌ Fehler beim Abrufen der Statistiken!", ephemeral=True)
             return
 
-        embed = discord.Embed(
-            title="🌍 GlobalChat Statistiken",
-            color=discord.Color.blue()
+        container = Container()
+        container.add_text(
+            "# 🌍 GlobalChat Statistiken"
         )
-
-        embed.add_field(
-            name="📊 Server & Nachrichten",
-            value=f"**Aktive Server:** {stats.get('active_guilds', 0):,}\n"
-                  f"**Nachrichten insgesamt:** {stats.get('total_messages', 0):,}\n"
-                  f"**Nachrichten heute:** {stats.get('today_messages', 0):,}",
-            inline=False
+        container.add_separator()
+        container.add_text(
+            "### 📊 Server & Nachrichten:\n"
+            f"**Aktive Server:** {stats.get('active_guilds', 0):,}\n"
+            f"**Nachrichten insgesamt:** {stats.get('total_messages', 0):,}\n"
+            f"**Nachrichten heute:** {stats.get('today_messages', 0):,}"
         )
-
-        embed.add_field(
-            name="🚫 Moderation",
-            value=f"**Gesperrte User:** {stats.get('banned_users', 0):,}\n"
-                  f"**Gesperrte Server:** {stats.get('banned_guilds', 0):,}",
-            inline=False
+        container.add_separator()
+        container.add_text(
+            "### 🚫 Moderation\n"
+            f"**Gesperrte User:** {stats.get('banned_users', 0):,}\n"
+            f"**Gesperrte Server:** {stats.get('banned_guilds', 0):,}\n"
+            f"Stand: {datetime.now().strftime('%d.%m.%Y %H:%M')}"
         )
-
-        embed.set_footer(text=f"Stand: {datetime.now().strftime('%d.%m.%Y %H:%M')}")
-
-        await ctx.respond(embed=embed)
+        view = discord.ui.View(container, timeout=None)
+        await ctx.respond(view=view)
 
     @globalchat.command(
         name="settings",
@@ -528,7 +534,6 @@ class globalchat(ezcord.Cog, group="globalchat"):
                 value=f"**Embed-Farbe:** {current_settings.get('embed_color', '#5865F2')}",
                 inline=False
             )
-
         await ctx.respond(embed=embed)
 
     # --- Admin Commands (nur für Bot-Owner) ---

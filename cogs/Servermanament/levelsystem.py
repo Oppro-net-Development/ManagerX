@@ -9,6 +9,7 @@ import asyncio
 import io
 import csv
 from typing import Optional
+from discord.ui import Container
 
 
 class PrestigeConfirmView(discord.ui.View):

@@ -2,6 +2,7 @@
 from DevTools import TempVCDatabase
 from DevTools import discord, commands, option, slash_command, ezcord, SlashCommandGroup
 from DevTools import emoji_yes, emoji_no, ERROR_TITLE, ERROR_COLOR, SUCCESS_COLOR, AUTHOR, FLOOTER
+from discord.ui import Container
 
 db = TempVCDatabase()
 
@@ -21,8 +22,9 @@ class TempChannelControlView(discord.ui.View):
     @discord.ui.button(label="🔧 Umbenennen", style=discord.ButtonStyle.primary, custom_id="tempvc_rename")
     async def rename_button(self, button: discord.ui.Button, interaction: discord.Interaction):
         if interaction.user.id != self.channel_owner_id:
-            await interaction.response.send_message("❌ Du bist nicht der Besitzer dieses Channels!", ephemeral=True)
-            return
+            container = Container()
+            container.add_text(f"{emoji_no} Keine Berechtigung\nDu bist nicht der Besitzer dieses Channels!")
+            return await interaction.response.send_message(view=container, ephemeral=True)
         
         modal = RenameChannelModal(interaction.channel)
         await interaction.response.send_modal(modal)
@@ -30,8 +32,9 @@ class TempChannelControlView(discord.ui.View):
     @discord.ui.button(label="🔧 Limit", style=discord.ButtonStyle.primary, custom_id="tempvc_limit")
     async def limit_button(self, button: discord.ui.Button, interaction: discord.Interaction):
         if interaction.user.id != self.channel_owner_id:
-            await interaction.response.send_message("❌ Du bist nicht der Besitzer dieses Channels!", ephemeral=True)
-            return
+            container = Container()
+            container.add_text(f"{emoji_no} Keine Berechtigung\nDu bist nicht der Besitzer dieses Channels!")
+            return await interaction.response.send_message(view=container, ephemeral=True)
             
         modal = UserLimitModal(interaction.channel)
         await interaction.response.send_modal(modal)
@@ -39,8 +42,9 @@ class TempChannelControlView(discord.ui.View):
     @discord.ui.button(label="🔧 Sperren", style=discord.ButtonStyle.secondary, custom_id="tempvc_lock")
     async def lock_button(self, button: discord.ui.Button, interaction: discord.Interaction):
         if interaction.user.id != self.channel_owner_id:
-            await interaction.response.send_message("❌ Du bist nicht der Besitzer dieses Channels!", ephemeral=True)
-            return
+            container = Container()
+            container.add_text(f"{emoji_no} Keine Berechtigung\nDu bist nicht der Besitzer dieses Channels!")
+            return await interaction.response.send_message(view=container, ephemeral=True)
         
         channel = interaction.channel
         overwrites = channel.overwrites
@@ -60,15 +64,21 @@ class TempChannelControlView(discord.ui.View):
             button.style = discord.ButtonStyle.danger if is_locked else discord.ButtonStyle.secondary
             
             await interaction.response.edit_message(view=self)
-            await interaction.followup.send(f"Channel wurde {status}!", ephemeral=True)
+            
+            container = Container()
+            container.add_text(f"Channel wurde {status}!")
+            await interaction.followup.send(view=container, ephemeral=True)
         except discord.Forbidden:
-            await interaction.response.send_message("❌ Fehlende Berechtigungen!", ephemeral=True)
+            container = Container()
+            container.add_text(f"{emoji_no} Fehler\nFehlende Berechtigungen!")
+            await interaction.response.send_message(view=container, ephemeral=True)
 
     @discord.ui.button(label="🔧 Kick", style=discord.ButtonStyle.danger, custom_id="tempvc_kick")
     async def kick_button(self, button: discord.ui.Button, interaction: discord.Interaction):
         if interaction.user.id != self.channel_owner_id:
-            await interaction.response.send_message("❌ Du bist nicht der Besitzer dieses Channels!", ephemeral=True)
-            return
+            container = Container()
+            container.add_text(f"{emoji_no} Keine Berechtigung\nDu bist nicht der Besitzer dieses Channels!")
+            return await interaction.response.send_message(view=container, ephemeral=True)
             
         modal = KickUserModal(interaction.channel)
         await interaction.response.send_modal(modal)
@@ -93,30 +103,36 @@ class RenameChannelModal(discord.ui.Modal):
         
         # Validate name
         if len(new_name) < 1:
-            await interaction.response.send_message("❌ Name darf nicht leer sein!", ephemeral=True)
-            return
+            container = Container()
+            container.add_text(f"{emoji_no} Ungültiger Name\nName darf nicht leer sein!")
+            return await interaction.response.send_message(view=container, ephemeral=True)
             
         # Check for forbidden characters
         forbidden_chars = ['@', '#', ':', '`', '```']
         if any(char in new_name for char in forbidden_chars):
-            await interaction.response.send_message("❌ Name enthält ungültige Zeichen!", ephemeral=True)
-            return
+            container = Container()
+            container.add_text(f"{emoji_no} Ungültige Zeichen\nName enthält ungültige Zeichen!")
+            return await interaction.response.send_message(view=container, ephemeral=True)
         
         try:
             old_name = self.channel.name
             await self.channel.edit(name=new_name)
             
-            embed = discord.Embed(
-                title="✅ Channel umbenannt",
-                color=SUCCESS_COLOR,
-                description=f"**{old_name}** → **{new_name}**"
+            container = Container()
+            container.add_text(
+                f"{emoji_yes} Channel umbenannt\n"
+                f"**{old_name}** → **{new_name}**"
             )
-            await interaction.response.send_message(embed=embed, ephemeral=True)
+            await interaction.response.send_message(view=container, ephemeral=True)
             
         except discord.Forbidden:
-            await interaction.response.send_message("❌ Fehlende Berechtigungen zum Umbenennen!", ephemeral=True)
+            container = Container()
+            container.add_text(f"{emoji_no} Fehler\nFehlende Berechtigungen zum Umbenennen!")
+            await interaction.response.send_message(view=container, ephemeral=True)
         except discord.HTTPException as e:
-            await interaction.response.send_message(f"❌ Fehler beim Umbenennen: {str(e)}", ephemeral=True)
+            container = Container()
+            container.add_text(f"{emoji_no} Fehler\nFehler beim Umbenennen: {str(e)}")
+            await interaction.response.send_message(view=container, ephemeral=True)
 
 
 class UserLimitModal(discord.ui.Modal):
@@ -140,8 +156,9 @@ class UserLimitModal(discord.ui.Modal):
             limit = int(self.limit_input.value.strip())
             
             if limit < 0 or limit > 99:
-                await interaction.response.send_message("❌ Limit muss zwischen 0 und 99 liegen!", ephemeral=True)
-                return
+                container = Container()
+                container.add_text(f"{emoji_no} Ungültiges Limit\nLimit muss zwischen 0 und 99 liegen!")
+                return await interaction.response.send_message(view=container, ephemeral=True)
                 
             # 0 means no limit in Discord
             limit = None if limit == 0 else limit
@@ -150,19 +167,25 @@ class UserLimitModal(discord.ui.Modal):
             
             limit_text = "Kein Limit" if limit is None else f"{limit} User"
             
-            embed = discord.Embed(
-                title="✅ User-Limit geändert",
-                color=SUCCESS_COLOR,
-                description=f"Neues Limit: **{limit_text}**"
+            container = Container()
+            container.add_text(
+                f"{emoji_yes} User-Limit geändert\n"
+                f"Neues Limit: **{limit_text}**"
             )
-            await interaction.response.send_message(embed=embed, ephemeral=True)
+            await interaction.response.send_message(view=container, ephemeral=True)
             
         except ValueError:
-            await interaction.response.send_message("❌ Bitte gib eine gültige Zahl ein!", ephemeral=True)
+            container = Container()
+            container.add_text(f"{emoji_no} Ungültige Eingabe\nBitte gib eine gültige Zahl ein!")
+            await interaction.response.send_message(view=container, ephemeral=True)
         except discord.Forbidden:
-            await interaction.response.send_message("❌ Fehlende Berechtigungen!", ephemeral=True)
+            container = Container()
+            container.add_text(f"{emoji_no} Fehler\nFehlende Berechtigungen!")
+            await interaction.response.send_message(view=container, ephemeral=True)
         except discord.HTTPException as e:
-            await interaction.response.send_message(f"❌ Fehler beim Setzen des Limits: {str(e)}", ephemeral=True)
+            container = Container()
+            container.add_text(f"{emoji_no} Fehler\nFehler beim Setzen des Limits: {str(e)}")
+            await interaction.response.send_message(view=container, ephemeral=True)
 
 
 class KickUserModal(discord.ui.Modal):
@@ -221,35 +244,43 @@ class KickUserModal(discord.ui.Modal):
                         break
         
         if not target_user:
-            await interaction.response.send_message("❌ User nicht gefunden!", ephemeral=True)
-            return
+            container = Container()
+            container.add_text(f"{emoji_no} Fehler\nUser nicht gefunden!")
+            return await interaction.response.send_message(view=container, ephemeral=True)
             
         if target_user not in self.channel.members:
-            await interaction.response.send_message("❌ User ist nicht in diesem Channel!", ephemeral=True)
-            return
+            container = Container()
+            container.add_text(f"{emoji_no} Fehler\nUser ist nicht in diesem Channel!")
+            return await interaction.response.send_message(view=container, ephemeral=True)
             
         if target_user.id == db.get_temp_channel_owner(self.channel.id):
-            await interaction.response.send_message("❌ Du kannst dich nicht selbst kicken!", ephemeral=True)
-            return
+            container = Container()
+            container.add_text(f"{emoji_no} Fehler\nDu kannst dich nicht selbst kicken!")
+            return await interaction.response.send_message(view=container, ephemeral=True)
             
         if target_user.bot:
-            await interaction.response.send_message("❌ Bots können nicht gekickt werden!", ephemeral=True)
-            return
+            container = Container()
+            container.add_text(f"{emoji_no} Fehler\nBots können nicht gekickt werden!")
+            return await interaction.response.send_message(view=container, ephemeral=True)
         
         try:
             await target_user.move_to(None)  # Disconnect from voice
             
-            embed = discord.Embed(
-                title="✅ User gekickt",
-                color=SUCCESS_COLOR,
-                description=f"**{target_user.display_name}** wurde aus dem Channel gekickt."
+            container = Container()
+            container.add_text(
+                f"{emoji_yes} User gekickt\n"
+                f"**{target_user.display_name}** wurde aus dem Channel gekickt."
             )
-            await interaction.response.send_message(embed=embed, ephemeral=True)
+            await interaction.response.send_message(view=container, ephemeral=True)
             
         except discord.Forbidden:
-            await interaction.response.send_message("❌ Fehlende Berechtigungen zum Kicken!", ephemeral=True)
+            container = Container()
+            container.add_text(f"{emoji_no} Fehler\nFehlende Berechtigungen zum Kicken!")
+            await interaction.response.send_message(view=container, ephemeral=True)
         except discord.HTTPException as e:
-            await interaction.response.send_message(f"❌ Fehler beim Kicken: {str(e)}", ephemeral=True)
+            container = Container()
+            container.add_text(f"{emoji_no} Fehler\nFehler beim Kicken: {str(e)}")
+            await interaction.response.send_message(view=container, ephemeral=True)
 
 
 class TempVC(ezcord.Cog):
@@ -266,174 +297,151 @@ class TempVC(ezcord.Cog):
     async def tempvc_create(self, ctx: discord.ApplicationContext, creator_channel: discord.VoiceChannel,
                             category: discord.CategoryChannel):
         if not ctx.author.guild_permissions.administrator:
-            no_perm_embed = discord.Embed(
-                title=ERROR_TITLE,
-                color=ERROR_COLOR
+            container = Container()
+            container.add_text(
+                f"{emoji_no} Keine Berechtigung\n"
+                "Du brauchst Administratorrechte."
             )
-            no_perm_embed.set_author(name=AUTHOR)
-            no_perm_embed.add_field(name=f"{emoji_no} Keine Berechtigung", value="Du brauchst Administratorrechte.",
-                                    inline=False)
-            no_perm_embed.set_footer(text=FLOOTER)
-            return await ctx.respond(embed=no_perm_embed, ephemeral=True)
+            return await ctx.respond(view=container, ephemeral=True)
 
         try:
             db.set_tempvc_settings(ctx.guild.id, creator_channel.id, category.id)
-
-            success_embed = discord.Embed(
-                title=f"{emoji_yes} Temp-VC System aktiviert",
-                color=SUCCESS_COLOR,
-                description="Das temporäre Voice-Channel System wurde erfolgreich eingerichtet!"
+            
+            container = Container()
+            container.add_text(
+                f"{emoji_yes} Temp-VC System aktiviert\n"
+                "Das temporäre Voice-Channel System wurde erfolgreich eingerichtet!"
             )
-            success_embed.set_author(name=AUTHOR)
-            success_embed.add_field(name="🎤 Ersteller-Channel", value=creator_channel.mention, inline=True)
-            success_embed.add_field(name="📁 Kategorie", value=category.mention, inline=True)
-            success_embed.add_field(name="ℹ️ Information",
-                                    value="Mitglieder können nun den Ersteller-Channel betreten, um automatisch einen eigenen temporären Voice-Channel zu erhalten.",
-                                    inline=False)
-            success_embed.set_footer(text=FLOOTER)
-
-            await ctx.respond(embed=success_embed, ephemeral=True)
+            container.add_separator()
+            container.add_text(
+                f"**🎤 Ersteller-Channel:** {creator_channel.mention}\n"
+                f"**📁 Kategorie:** {category.mention}\n"
+                "**ℹ️ Information:** Mitglieder können nun den Ersteller-Channel betreten, um automatisch einen eigenen temporären Voice-Channel zu erhalten."
+            )
+            view = discord.ui.View(container, timeout=None)
+            await ctx.respond(view=view, ephemeral=True)
         except Exception as e:
-            error_embed = discord.Embed(
-                title=ERROR_TITLE,
-                color=ERROR_COLOR
+            container = Container()
+            container.add_text(
+                f"{emoji_no} Fehler beim Erstellen\n"
+                f"```{str(e)}```"
             )
-            error_embed.set_author(name=AUTHOR)
-            error_embed.add_field(name=f"{emoji_no} Fehler beim Erstellen", value=f"```{str(e)}```", inline=False)
-            error_embed.set_footer(text=FLOOTER)
-            await ctx.respond(embed=error_embed, ephemeral=True)
+            view = discord.ui.View(container, timeout=None)
+            await ctx.respond(view=view, ephemeral=True)
 
     @tempvc.command(name="remove", description="Entferne das VC-Erstellungssystem")
     async def tempvc_remove(self, ctx: discord.ApplicationContext):
         if not ctx.author.guild_permissions.administrator:
-            no_perm_embed = discord.Embed(
-                title=ERROR_TITLE,
-                color=ERROR_COLOR
+            container = Container()
+            container.add_text(
+                f"{emoji_no} Keine Berechtigung\n"
+                "Du brauchst Administratorrechte."
             )
-            no_perm_embed.set_author(name=AUTHOR)
-            no_perm_embed.add_field(name=f"{emoji_no} Keine Berechtigung", value="Du brauchst Administratorrechte.",
-                                    inline=False)
-            no_perm_embed.set_footer(text=FLOOTER)
-            return await ctx.respond(embed=no_perm_embed, ephemeral=True)
+            view = discord.ui.View(container, timeout=None)
+            return await ctx.respond(view=view, ephemeral=True)
 
         try:
             settings = db.get_tempvc_settings(ctx.guild.id)
             if not settings:
-                no_system_embed = discord.Embed(
-                    title=f"{emoji_no} Kein System aktiv",
-                    color=ERROR_COLOR,
-                    description="Es ist derzeit kein Temp-VC System auf diesem Server aktiv."
+                container = Container()
+                container.add_text(
+                    f"{emoji_no} Kein System aktiv\n"
+                    "Es ist derzeit kein Temp-VC System auf diesem Server aktiv."
                 )
-                no_system_embed.set_author(name=AUTHOR)
-                no_system_embed.set_footer(text=FLOOTER)
-                return await ctx.respond(embed=no_system_embed, ephemeral=True)
+                view = discord.ui.View(container, timeout=None)
+                return await ctx.respond(view=view, ephemeral=True)
 
             db.remove_tempvc_settings(ctx.guild.id)
 
-            removal_embed = discord.Embed(
-                title=f"{emoji_yes} System deaktiviert",
-                color=SUCCESS_COLOR,
-                description="Das Temp-VC System wurde erfolgreich deaktiviert!"
+            container = Container()
+            container.add_text(
+                f"{emoji_yes} System deaktiviert\n"
+                "Das Temp-VC System wurde erfolgreich deaktiviert!"
             )
-            removal_embed.set_author(name=AUTHOR)
-            removal_embed.add_field(name="ℹ️ Information",
-                                    value="Bestehende temporäre Channels bleiben bestehen, aber es werden keine neuen mehr erstellt.",
-                                    inline=False)
-            removal_embed.set_footer(text=FLOOTER)
-
-            await ctx.respond(embed=removal_embed, ephemeral=True)
+            container.add_separator()
+            container.add_text(
+                "**ℹ️ Information:** Bestehende temporäre Channels bleiben bestehen, aber es werden keine neuen mehr erstellt."
+            )
+            view = discord.ui.View(container, timeout=None)
+            await ctx.respond(view=view, ephemeral=True)
         except Exception as e:
-            error_embed = discord.Embed(
-                title=ERROR_TITLE,
-                color=ERROR_COLOR
+            container = Container()
+            container.add_text(
+                f"{emoji_no} Fehler beim Entfernen\n"
+                f"```{str(e)}```"
             )
-            error_embed.set_author(name=AUTHOR)
-            error_embed.add_field(name=f"{emoji_no} Fehler beim Entfernen", value=f"```{str(e)}```", inline=False)
-            error_embed.set_footer(text=FLOOTER)
-            await ctx.respond(embed=error_embed, ephemeral=True)
+            view = discord.ui.View(container, timeout=None)
+            await ctx.respond(view=view, ephemeral=True)
 
     @tempvc.command(name="settings", description="Zeige die aktuellen Temp-VC Einstellungen")
     async def tempvc_settings(self, ctx: discord.ApplicationContext):
         if not ctx.author.guild_permissions.administrator:
-            no_perm_embed = discord.Embed(
-                title=ERROR_TITLE,
-                color=ERROR_COLOR
+            container = Container()
+            container.add_text(
+                f"{emoji_no} Keine Berechtigung\n"
+                "Du brauchst Administratorrechte."
             )
-            no_perm_embed.set_author(name=AUTHOR)
-            no_perm_embed.add_field(name=f"{emoji_no} Keine Berechtigung", value="Du brauchst Administratorrechte.",
-                                    inline=False)
-            no_perm_embed.set_footer(text=FLOOTER)
-            return await ctx.respond(embed=no_perm_embed, ephemeral=True)
+            view = discord.ui.View(container, timeout=None)
+            return await ctx.respond(view=view, ephemeral=True)
 
         settings = db.get_tempvc_settings(ctx.guild.id)
         if not settings:
-            no_system_embed = discord.Embed(
-                title=f"{emoji_no} Kein System aktiv",
-                color=ERROR_COLOR,
-                description="Es ist derzeit kein Temp-VC System auf diesem Server aktiv."
+            container = Container()
+            container.add_text(
+                f"{emoji_no} Kein System aktiv\n"
+                "Es ist derzeit kein Temp-VC System auf diesem Server aktiv."
             )
-            no_system_embed.set_author(name=AUTHOR)
-            no_system_embed.add_field(name="💡 Tipp", value="Verwende `/tempvc create` um ein Temp-VC System einzurichten.",
-                                      inline=False)
-            no_system_embed.set_footer(text=FLOOTER)
-            return await ctx.respond(embed=no_system_embed, ephemeral=True)
+            container.add_separator()
+            container.add_text(
+                "**💡 Tipp:** Verwende `/tempvc create` um ein Temp-VC System einzurichten."
+            )
+            view = discord.ui.View(container, timeout=None)
+            return await ctx.respond(view=view, ephemeral=True)
 
         creator_channel_id, category_id, auto_delete_time = settings
         creator_channel = ctx.guild.get_channel(creator_channel_id)
         category = ctx.guild.get_channel(category_id)
 
-        embed = discord.Embed(
-            title=f"{emoji_settings} Temp-VC Einstellungen",
-            color=discord.Color.blue(),
-            description="Aktuelle Konfiguration des temporären Voice-Channel Systems"
+        container = Container()
+        container.add_text("🎛️ **Temp-VC Einstellungen**\nAktuelle Konfiguration des temporären Voice-Channel Systems")
+        container.add_separator()
+        
+        container.add_text(
+            f"**🎤 Ersteller-Channel:**\n"
+            f"{creator_channel.mention if creator_channel else f'{emoji_no} Channel nicht gefunden (ID: {creator_channel_id})'}"
         )
-        embed.set_author(name=AUTHOR)
-        embed.add_field(
-            name="🎤 Ersteller-Channel",
-            value=creator_channel.mention if creator_channel else f"{emoji_no} Channel nicht gefunden (ID: {creator_channel_id})",
-            inline=True
+        container.add_separator()
+        
+        container.add_text(
+            f"**📁 Kategorie:**\n"
+            f"{category.mention if category else f'{emoji_no} Kategorie nicht gefunden (ID: {category_id})'}"
         )
-        embed.add_field(
-            name="📁 Kategorie",
-            value=category.mention if category else f"{emoji_no} Kategorie nicht gefunden (ID: {category_id})",
-            inline=True
-        )
-        embed.add_field(
-            name="⏰ Auto-Löschzeit",
-            value=f"{auto_delete_time} Minuten",
-            inline=True
-        )
+        container.add_separator()
+        
+        container.add_text(f"**⏰ Auto-Löschzeit:**\n{auto_delete_time} Minuten")
+        container.add_separator()
         
         # UI Settings
         ui_settings = db.get_ui_settings(ctx.guild.id)
         if ui_settings:
             ui_enabled, ui_prefix = ui_settings
-            embed.add_field(
-                name="🖥️ Control-UI",
-                value=f"{'✅ Aktiviert' if ui_enabled else '❌ Deaktiviert'}",
-                inline=True
+            container.add_text(
+                f"**🖥️ Control-UI:**\n"
+                f"{'✅ Aktiviert' if ui_enabled else '❌ Deaktiviert'}"
             )
             if ui_enabled:
-                embed.add_field(
-                    name="🏷️ UI-Prefix",
-                    value=ui_prefix,
-                    inline=True
-                )
+                container.add_separator()
+                container.add_text(f"**🏷️ UI-Prefix:**\n{ui_prefix}")
         else:
-            embed.add_field(
-                name="🖥️ Control-UI",
-                value="❌ Deaktiviert",
-                inline=True
-            )
+            container.add_text("**🖥️ Control-UI:**\n❌ Deaktiviert")
         
-        embed.add_field(
-            name="ℹ️ Status",
-            value=f"{emoji_yes} System aktiv" if creator_channel and category else f"{emoji_no} Fehlerhafte Konfiguration",
-            inline=False
+        container.add_separator()
+        container.add_text(
+            f"**ℹ️ Status:**\n"
+            f"{emoji_yes + ' System aktiv' if creator_channel and category else emoji_no + ' Fehlerhafte Konfiguration'}"
         )
-        embed.set_footer(text=FLOOTER)
-
-        await ctx.respond(embed=embed, ephemeral=True)
+        view = discord.ui.View(container, timeout=None)
+        await ctx.respond(view=view, ephemeral=True)
 
     @tempvc.command(name="ui", description="Konfiguriere das Control-UI für Temp-Channels")
     @option("enabled", description="Soll das UI aktiviert sein?", choices=[
@@ -443,64 +451,62 @@ class TempVC(ezcord.Cog):
     @option("prefix", description="Prefix für UI-Buttons (Emoji oder Text)", required=False, default="🔧")
     async def tempvc_ui(self, ctx: discord.ApplicationContext, enabled: str, prefix: str = "🔧"):
         if not ctx.author.guild_permissions.administrator:
-            no_perm_embed = discord.Embed(
-                title=ERROR_TITLE,
-                color=ERROR_COLOR
+            container = Container()
+            container.add_text(
+                f"{emoji_no} Keine Berechtigung\n"
+                "Du brauchst Administratorrechte."
             )
-            no_perm_embed.set_author(name=AUTHOR)
-            no_perm_embed.add_field(name=f"{emoji_no} Keine Berechtigung", value="Du brauchst Administratorrechte.",
-                                    inline=False)
-            no_perm_embed.set_footer(text=FLOOTER)
-            return await ctx.respond(embed=no_perm_embed, ephemeral=True)
+            return await ctx.respond(view=container, ephemeral=True)
 
         # Check if TempVC system exists
         settings = db.get_tempvc_settings(ctx.guild.id)
         if not settings:
-            no_system_embed = discord.Embed(
-                title=f"{emoji_no} Kein System aktiv",
-                color=ERROR_COLOR,
-                description="Du musst zuerst ein Temp-VC System erstellen!"
+            container = Container()
+            container.add_text(
+                f"{emoji_no} Kein System aktiv\n"
+                "Du musst zuerst ein Temp-VC System erstellen!"
             )
-            no_system_embed.set_author(name=AUTHOR)
-            no_system_embed.add_field(name="💡 Tipp", value="Verwende `/tempvc create` um ein Temp-VC System einzurichten.",
-                                      inline=False)
-            no_system_embed.set_footer(text=FLOOTER)
-            return await ctx.respond(embed=no_system_embed, ephemeral=True)
+            container.add_separator()
+            container.add_text(
+                "**💡 Tipp:** Verwende `/tempvc create` um ein Temp-VC System einzurichten."
+            )
+            view = discord.ui.View(container, timeout=None)
+            return await ctx.respond(view=view, ephemeral=True)
 
         ui_enabled = enabled == "true"
         
         # Validate prefix
         if len(prefix) > 10:
-            await ctx.respond("❌ Prefix darf maximal 10 Zeichen lang sein!", ephemeral=True)
-            return
+            container = Container()
+            container.add_text(f"{emoji_no} Ungültiger Prefix\nPrefix darf maximal 10 Zeichen lang sein!")
+            return await ctx.respond(view=container, ephemeral=True)
 
         try:
             db.set_ui_settings(ctx.guild.id, ui_enabled, prefix)
             
-            embed = discord.Embed(
-                title=f"{emoji_yes} UI-Einstellungen gespeichert",
-                color=SUCCESS_COLOR
+            container = Container()
+            container.add_text(f"{emoji_yes} UI-Einstellungen gespeichert")
+            container.add_separator()
+            container.add_text(
+                f"**🖥️ Control-UI:** {'✅ Aktiviert' if ui_enabled else '❌ Deaktiviert'}"
             )
-            embed.set_author(name=AUTHOR)
-            embed.add_field(name="🖥️ Control-UI", value="✅ Aktiviert" if ui_enabled else "❌ Deaktiviert", inline=True)
             if ui_enabled:
-                embed.add_field(name="🏷️ Prefix", value=prefix, inline=True)
-                embed.add_field(name="ℹ️ Information", 
-                               value="Das Control-UI wird nun in neu erstellten Temp-Channels angezeigt.", 
-                               inline=False)
-            embed.set_footer(text=FLOOTER)
-            
-            await ctx.respond(embed=embed, ephemeral=True)
+                container.add_separator()
+                container.add_text(f"**🏷️ Prefix:** {prefix}")
+                container.add_separator()
+                container.add_text(
+                    "**ℹ️ Information:** Das Control-UI wird nun in neu erstellten Temp-Channels angezeigt."
+                )
+            view = discord.ui.View(container, timeout=None)
+            await ctx.respond(view=view, ephemeral=True)
             
         except Exception as e:
-            error_embed = discord.Embed(
-                title=ERROR_TITLE,
-                color=ERROR_COLOR
+            container = Container()
+            container.add_text(
+                f"{emoji_no} Fehler beim Speichern\n"
+                f"```{str(e)}```"
             )
-            error_embed.set_author(name=AUTHOR)
-            error_embed.add_field(name=f"{emoji_no} Fehler beim Speichern", value=f"```{str(e)}```", inline=False)
-            error_embed.set_footer(text=FLOOTER)
-            await ctx.respond(embed=error_embed, ephemeral=True)
+            await ctx.respond(view=container, ephemeral=True)
 
     @commands.Cog.listener()
     async def on_voice_state_update(self, member, before, after):
@@ -552,21 +558,27 @@ class TempVC(ezcord.Cog):
             if ui_settings and ui_settings[0]:  # UI enabled
                 ui_enabled, ui_prefix = ui_settings
                 
-                embed = discord.Embed(
-                    title=f"🎛️ Channel-Kontrolle",
-                    color=discord.Color.blue(),
-                    description=f"**{member.display_name}**, du bist der Besitzer dieses Channels!\nVerwende die Buttons unten, um deinen Channel zu verwalten."
+                container = Container()
+                container.add_text(
+                    f"## 🎛️ **Channel-Kontrolle**\n"
+                    f"**{member.display_name}**, du bist der Besitzer dieses Channels!\n"
+                    "Verwende die Buttons unten, um deinen Channel zu verwalten."
                 )
-                embed.add_field(name="🔧 Verfügbare Aktionen:", 
-                               value="• **Umbenennen** - Ändere den Channel-Namen\n"
-                                     "• **Limit** - Setze ein User-Limit\n"
-                                     "• **Sperren** - Sperre/Entsperre den Channel\n"
-                                     "• **Kick** - Kicke User aus dem Channel", 
-                               inline=False)
-                embed.set_footer(text="Diese Buttons funktionieren nur für den Channel-Besitzer.")
+                container.add_separator()
+                container.add_text(
+                    "**🔧 Verfügbare Aktionen:**\n"
+                    "• **Umbenennen** - Ändere den Channel-Namen\n"
+                    "• **Limit** - Setze ein User-Limit\n"
+                    "• **Sperren** - Sperre/Entsperre den Channel\n"
+                    "• **Kick** - Kicke User aus dem Channel"
+                )
+                container.add_separator()
+                container.add_text("Diese Buttons funktionieren nur für den Channel-Besitzer.")
                 
-                view = TempChannelControlView(member.id, ui_prefix)
-                await temp_channel.send(embed=embed, view=view)
+                control_view = TempChannelControlView(member.id, ui_prefix)
+                view = discord.ui.View(container, timeout=None)
+                await temp_channel.send(view=view)
+                await temp_channel.send(view=control_view)
 
         except discord.Forbidden:
             print(f"Missing permissions to create voice channel in guild {guild.id}")

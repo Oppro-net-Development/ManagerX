@@ -44,7 +44,8 @@ bot = ezcord.Bot(
     language="auto", default_language="de",
     logging_level=logging.DEBUG,
     error_webhook_url=os.getenv("ERROR_WEBHOOK_URL"),
-    ready_event=None
+    ready_event=None,
+    debug_guild=1428835818792947884
 )
 # =============================================================================
 # BOT VERSION

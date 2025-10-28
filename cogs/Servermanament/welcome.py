@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from FastCoding import WelcomeDatabase  # Korrigierter Import
+from DevTools import WelcomeDatabase  # Korrigierter Import
 import asyncio
 import json
 import io
