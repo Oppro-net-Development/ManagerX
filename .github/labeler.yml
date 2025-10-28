@@ -1,0 +1,15 @@
+name: Labeler
+
+on:
+  pull_request_target:
+    branches:
+      - main
+
+jobs:
+  label:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/labeler@v4
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
