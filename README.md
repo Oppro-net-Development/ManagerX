@@ -138,9 +138,8 @@ cd ManagerX
 pip install -r requirements.txt
 
 # Konfiguration anpassen
-cp config.example.json config.json
-# Token und Einstellungen in config.json eintragen
-
+.env
+# TOKEN Anpassung mehr in unserer Dokumention
 # Bot starten
 python main.py
 ```
