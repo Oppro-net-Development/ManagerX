@@ -50,7 +50,7 @@ bot = ezcord.Bot(
 # =============================================================================
 # BOT VERSION
 # =============================================================================
-BOT_VERSION = "1.7.1"
+BOT_VERSION = "1.7.2"
 VERSION_URL = "https://raw.githubusercontent.com/Oppro-net-Development/ManagerX/main/version.txt"
 
 async def check_for_update():
