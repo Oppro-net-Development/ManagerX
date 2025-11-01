@@ -91,31 +91,12 @@ ManagerX ist ein leistungsstarker, vielseitiger Discord-Bot, der speziell für u
 ---
 
 ## 📋 Changelog
-
-### 🚀 Version 1.7.1 (Aktuell)
-
-#### ✨ Major Update
-- Umfassende Performance-Optimierungen
-- Verbesserte Stabiliät und Fehlerbehandlung
-- Erweiterte Konfigurationsmöglichkeiten
-- UI/UX Verbesserungen für alle Commands
-
 ### 📦 Version 1.7.2 (In Entwicklung)
 
-- 🔜 Neue Moderation-Dashboard Features
-- 🔜 Erweiterte Levelsystem-Anpassungen
-- 🔜 Optimierte Datenbank-Performance
-- 🔜 Weitere Quality-of-Life Verbesserungen
-
-### 🔄 Version 1.6.6
-
-#### 🎯 Levelsystem & Datenbank
-- Effizientere Datenspeicherung mit optimierten Queries
-- Schnellere XP-Berechnungen und Level-Updates
-- Verbesserte Caching-Mechanismen
-- Reduzierte Datenbankbelastung bei hoher Aktivität
-
-> 📜 [Vollständiger Changelog](CHANGELOG.md)
+- 🔜 Container 
+- 🔜 FIXES
+- 
+### 🚀 Version 1.7.1 (Aktuell)
 
 ---
 
