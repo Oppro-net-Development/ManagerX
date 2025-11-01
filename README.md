@@ -131,19 +131,6 @@ Eine ausführliche Installationsanleitung findest du in unserer [Dokumentation](
 
 ---
 
-## 🛠️ Konfiguration
-
-ManagerX bietet umfangreiche Konfigurationsmöglichkeiten über die `config.json`:
-
-- **Moderation:** Schwellenwerte, Aktionen, Logs
-- **Levelsystem:** XP-Raten, Belohnungen, Level-Kurve
-- **Welcome:** Nachrichten, Channels, Rollen
-- **Globalchat:** Moderation, Blacklists, Kanäle
-
-> 📘 [Vollständige Konfigurationsdoku](docs/CONFIG.md)
-
----
-
 ## 📝 Commit-Konventionen
 
 Wir nutzen folgende Präfixe für Commits:
