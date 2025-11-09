@@ -9,6 +9,9 @@ from typing import Optional, Dict, Any
 import aiosqlite
 from datetime import datetime
 import ezcord
+from discord.ui import Container
+from DevTools import emoji_yes, emoji_no, emoji_add
+
 
 # Logger Setup
 logger = logging.getLogger(__name__)
@@ -303,19 +306,26 @@ class WelcomeSystem(ezcord.Cog):
         self.invalidate_cache(ctx.guild.id)
         
         if success:
-            embed = discord.Embed(
-                title="✅ Welcome Channel gesetzt",
-                description=f"Welcome Messages werden nun in {channel.mention} gesendet.",
-                color=discord.Color.green()
+            container = Container()
+            container.add_text(
+                f"{emoji_yes} Welcome Channel gesetzt"
             )
+            container.add_separator()
+            container.add_text(
+                f"Welcome Messages werden nun in {channel.mention} gesendet."
+            )
+            view = discord.ui.View(container, timeout=None)
         else:
-            embed = discord.Embed(
-                title="❌ Fehler",
-                description="Der Welcome Channel konnte nicht gesetzt werden.",
-                color=discord.Color.red()
+            container = Container()
+            container.add_text(
+                f"{emoji_no} Fehler"
             )
-        
-        await ctx.respond(embed=embed)
+            container.add_separator()
+            container.add_text(
+                "Der Welcome Channel konnte nicht gesetzt werden."
+            ) 
+            view = discord.ui.View(container, timeout=None)
+        await ctx.respond(view=view)
     
     @welcome.command(name="message", description="Setzt die Welcome Message über ein Modal")
     @commands.has_permissions(manage_guild=True)
@@ -360,36 +370,29 @@ class WelcomeSystem(ezcord.Cog):
                     # Vorschau erstellen
                     preview = self.cog.replace_placeholders(message, interaction.user, interaction.guild)
                     
-                    embed = discord.Embed(
-                        title="✅ Welcome Message gesetzt",
-                        color=discord.Color.green()
+                    container = Container()
+                    container.add_text(
+                        "# ✅ Welcome Message gesetzt"
                     )
-                    
-                    embed.add_field(
-                        name="💬 Neue Message",
-                        value=f"```{message[:500]}{'...' if len(message) > 500 else ''}```",
-                        inline=False
+                    container.add_separator()
+                    container.add_text(
+                        "## 💬 Neue Message\n\n"
+                        f"```{message[:500]}{'...' if len(message) > 500 else ''}```"
                     )
-                    
-                    embed.add_field(
-                        name="👀 Vorschau (mit deinen Daten)",
-                        value=preview[:500] + ("..." if len(preview) > 500 else ""),
-                        inline=False
+                    container.add_separator()
+                    container.add_text(
+                        "## 👀 Vorschau (mit deinen Daten)\n\n"
+                        f"{preview[:500] + ("..." if len(preview) > 500 else "")}\n\n"
+                        "-# 💡 Tipp Verwende `/welcome test` für eine vollständige Vorschau oder `/welcome placeholders` für alle verfügbaren Optionen."
                     )
-                    
-                    embed.add_field(
-                        name="💡 Tipp",
-                        value="Verwende `/welcome test` für eine vollständige Vorschau oder `/welcome placeholders` für alle verfügbaren Optionen.",
-                        inline=False
-                    )
+                    view = discord.ui.View(container, timeout=None)
                 else:
-                    embed = discord.Embed(
-                        title="❌ Fehler",
-                        description="Die Welcome Message konnte nicht gesetzt werden.",
-                        color=discord.Color.red()
+                    container = Container()
+                    container.add_text(
+                        "# ❌ Fehler\nDie Welcome Message konnte nicht gesetzt werden."
                     )
-                
-                await interaction.response.send_message(embed=embed)
+                    view = discord.ui.View(container, timeout=None)
+                await interaction.response.send_message(view=view)
         
         modal = WelcomeMessageModal(self, current_message)
         await ctx.send_modal(modal)
@@ -402,20 +405,23 @@ class WelcomeSystem(ezcord.Cog):
         self.invalidate_cache(ctx.guild.id)
         
         if new_state is None:
-            embed = discord.Embed(
-                title="❌ Fehler",
-                description="Es sind noch keine Welcome Einstellungen vorhanden. Setze zuerst einen Channel.",
-                color=discord.Color.red()
+            container = Container()
+            container.add_text(
+                "# ❌ Fehler\nEs sind noch keine Welcome Einstellungen vorhanden. Setze zuerst einen Channel."
             )
+            view = discord.ui.View(container, timeout=None)
         else:
             status = "aktiviert" if new_state else "deaktiviert"
-            embed = discord.Embed(
-                title=f"✅ Welcome System {status}",
-                description=f"Das Welcome System wurde **{status}**.",
-                color=discord.Color.green() if new_state else discord.Color.orange()
+            container = Container()
+            container.add_text(
+                f"# ✅ Welcome System {status}"
             )
-        
-        await ctx.respond(embed=embed)
+            container.add_separator()
+            container.add_text(
+                f"Das Welcome System wurde **{status}**."
+            )
+            view = discord.ui.View(container, timeout=None)
+        await ctx.respond(view=view)
     
     @welcome.command(name="embed", description="Aktiviert/Deaktiviert Embed Modus")
     @commands.has_permissions(manage_guild=True)
@@ -426,19 +432,21 @@ class WelcomeSystem(ezcord.Cog):
         
         if success:
             status = "aktiviert" if enabled else "deaktiviert"
-            embed = discord.Embed(
-                title=f"✅ Embed Modus {status}",
-                description=f"Welcome Messages werden nun {'als Embed' if enabled else 'als normale Nachricht'} gesendet.",
-                color=discord.Color.green()
+            container = Container(
+                f"# ✅ Embed Modus {status}"
             )
+            container.add_separator()
+            container.add_text(
+                f"Welcome Messages werden nun {'als Embed' if enabled else 'als normale Nachricht'} gesendet."
+            )
+            view = discord.ui.View(container, timeout=None)
         else:
-            embed = discord.Embed(
-                title="❌ Fehler",
-                description="Der Embed Modus konnte nicht geändert werden.",
-                color=discord.Color.red()
+            container = Container()
+            container.add_text(
+                "# ❌ Fehler\nDer Embed Modus konnte nicht geändert werden."
             )
-        
-        await ctx.respond(embed=embed)
+            view = discord.ui.View(container, timeout=None)
+        await ctx.respond(view=view)
     
     # Neue Commands
     @welcome.command(name="autorole", description="Setzt eine Rolle die automatisch vergeben wird")
@@ -450,39 +458,47 @@ class WelcomeSystem(ezcord.Cog):
             success = await self.db.update_welcome_settings(ctx.guild.id, auto_role_id=None)
             self.invalidate_cache(ctx.guild.id)
             
-            embed = discord.Embed(
-                title="✅ Auto-Role entfernt",
-                description="Neue Mitglieder erhalten keine automatische Rolle mehr.",
-                color=discord.Color.orange()
+            container = Container()
+            container.add_text(
+                "# ✅ Auto-Role entfernt"
             )
+            container.add_separator()
+            container.add_text(
+                "Neue Mitglieder erhalten keine automatische Rolle mehr."
+            )
+            view = discord.ui.View(container, timeout=None)
+
         else:
             # Rolle validieren
             if role >= ctx.guild.me.top_role:
-                embed = discord.Embed(
-                    title="❌ Fehler",
-                    description="Diese Rolle ist höher als meine höchste Rolle. Ich kann sie nicht vergeben.",
-                    color=discord.Color.red()
+                container = Container()
+                container.add_text(
+                    "# ❌ Fehler\nDiese Rolle ist höher als meine höchste Rolle. Ich kann sie nicht vergeben. "
                 )
-                await ctx.respond(embed=embed)
+                view = discord.ui.View(container, timeout=None)
+                await ctx.respond(view=view)
                 return
             
             success = await self.db.update_welcome_settings(ctx.guild.id, auto_role_id=role.id)
             self.invalidate_cache(ctx.guild.id)
             
             if success:
-                embed = discord.Embed(
-                    title="✅ Auto-Role gesetzt",
-                    description=f"Neue Mitglieder erhalten automatisch die Rolle {role.mention}.",
-                    color=discord.Color.green()
+                container = Container()
+                container.add_text(
+                    "# ✅ Auto-Role gesetzt"
                 )
+                container.add_separator()
+                container.add_text(
+                    f"Neue Mitglieder erhalten automatisch die Rolle {role.mention}."
+                )
+                view = discord.ui.View(container, timeout=None)
             else:
-                embed = discord.Embed(
-                    title="❌ Fehler",
-                    description="Die Auto-Role konnte nicht gesetzt werden.",
-                    color=discord.Color.red()
+                container = Container()
+                container.add_text(
+                    "# ❌ Fehler\nDie Auto-Role konnte nicht gesetzt werden."
                 )
-        
-        await ctx.respond(embed=embed)
+                view = discord.ui.View(container, timeout=None)
+        await ctx.respond(view=view)
     
     @welcome.command(name="dm", description="Aktiviert/Konfiguriert private Willkommensnachrichten")
     @commands.has_permissions(manage_guild=True)
@@ -504,19 +520,22 @@ class WelcomeSystem(ezcord.Cog):
             else:
                 description = "Private Welcome Messages deaktiviert."
             
-            embed = discord.Embed(
-                title="✅ DM Einstellungen aktualisiert",
-                description=description,
-                color=discord.Color.green()
+            container = Container()
+            container.add_text(
+                "# ✅ DM Einstellungen aktualisiert"
             )
+            container.add_separator()
+            container.add_text(
+                f"{description}"
+            )
+            view = discord.ui.View(container, timeout=None)
         else:
-            embed = discord.Embed(
-                title="❌ Fehler",
-                description="Die DM Einstellungen konnten nicht aktualisiert werden.",
-                color=discord.Color.red()
+            container = Container()
+            container.add_text(
+                "# ❌ Fehler\nDie DM Einstellungen konnten nicht aktualisiert werden."
             )
-        
-        await ctx.respond(embed=embed)
+            view = discord.ui.View(container, timeout=None)
+        await ctx.respond(view=view)
     
     @welcome.command(name="template", description="Lädt eine Vorlage")
     @commands.has_permissions(manage_guild=True)
@@ -599,83 +618,67 @@ class WelcomeSystem(ezcord.Cog):
         settings = await self.get_cached_settings(ctx.guild.id)
         
         if not settings:
-            embed = discord.Embed(
-                title="❌ Keine Konfiguration gefunden",
-                description="Es sind noch keine Welcome Einstellungen vorhanden.",
-                color=discord.Color.red()
+            container = Container()
+            container.add_text(
+                "# ❌ Keine Konfiguration gefunden\nEs sind noch keine Welcome Einstellungen vorhanden."
             )
-            await ctx.respond(embed=embed)
+            view = discord.ui.View(container, timeout=None)
+            await ctx.respond(view=view)
             return
         
         channel = self.bot.get_channel(settings.get('channel_id')) if settings.get('channel_id') else None
         auto_role = ctx.guild.get_role(settings.get('auto_role_id')) if settings.get('auto_role_id') else None
-        
-        embed = discord.Embed(
-            title="⚙️ Welcome System Konfiguration",
-            color=discord.Color.blue()
+        container = Container()
+        container.add_text(
+            "# ⚙️ Welcome System Konfiguration"
         )
-        
-        # Basis Einstellungen
-        embed.add_field(
-            name="📊 Status",
-            value="✅ Aktiviert" if settings.get('enabled') else "❌ Deaktiviert",
-            inline=True
+        container.add_separator()
+        container.add_text(
+            "## 📊 Status\n"
+            f"{'✅ Aktiviert' if settings.get('enabled') else '❌ Deaktiviert'}"
         )
-        
-        embed.add_field(
-            name="📢 Channel",
-            value=channel.mention if channel else "❌ Nicht gesetzt",
-            inline=True
+
+        container.add_text(
+            "## 📢 Channel\n"
+            f"{channel.mention if channel else '❌ Nicht gesetzt'}"
         )
-        
-        embed.add_field(
-            name="🎨 Embed Modus",
-            value="✅ Aktiviert" if settings.get('embed_enabled') else "❌ Deaktiviert",
-            inline=True
+
+        container.add_text(
+            "## 🎨 Embed Modus\n"
+            f"{'✅ Aktiviert' if settings.get('embed_enabled') else '❌ Deaktiviert'}"
         )
-        
-        # Erweiterte Einstellungen (nur wenn verfügbar)
-        if settings.get('auto_role_id'):
-            embed.add_field(
-                name="🏷️ Auto-Role",
-                value=auto_role.mention if auto_role else "❌ Rolle nicht gefunden",
-                inline=True
-            )
-        
+
+        container.add_text(
+            "## 🏷️ Auto-Role\n"
+            f"{auto_role.mention if auto_role else '❌ Rolle nicht gefunden'}"
+        )
+
         if settings.get('join_dm_enabled'):
-            embed.add_field(
-                name="💌 Private Nachricht",
-                value="✅ Aktiviert",
-                inline=True
+            container.add_text(
+                "## 💌 Private Nachricht\n✅ Aktiviert"
             )
-        
+
         if settings.get('template_name'):
-            embed.add_field(
-                name="📋 Vorlage",
-                value=settings.get('template_name').title(),
-                inline=True
+            container.add_text(
+                "## 📋 Vorlage\n"
+                f"{settings.get('template_name').title()}"
             )
-        
-        # Welcome Message
+
         message = settings.get('welcome_message', 'Nicht gesetzt')
-        if message and len(message) > 100:
+        if len(message) > 100:
             message = message[:100] + "..."
-        
-        embed.add_field(
-            name="💬 Welcome Message",
-            value=f"```{message or 'Standard Embed'}```",
-            inline=False
+        container.add_text(
+            "## 💬 Welcome Message\n"
+            f"{message}"
         )
-        
-        # Zusätzliche Info
+
         if settings.get('delete_after', 0) > 0:
-            embed.add_field(
-                name="🗑️ Auto-Delete",
-                value=f"{settings.get('delete_after')} Sekunden",
-                inline=True
+            container.add_text(
+                "## 🗑️ Auto-Delete\n"
+                f"{settings.get('delete_after')} Sekunden"
             )
-        
-        await ctx.respond(embed=embed)
+        view = discord.ui.View(container, timeout=None)
+        await ctx.respond(view=view)
     
     @welcome.command(name="test", description="Testet die Welcome Message")
     @commands.has_permissions(manage_messages=True)
@@ -684,19 +687,18 @@ class WelcomeSystem(ezcord.Cog):
         settings = await self.get_cached_settings(ctx.guild.id)
         
         if not settings:
-            embed = discord.Embed(
-                title="❌ Fehler",
-                description="Es sind noch keine Welcome Einstellungen vorhanden.",
-                color=discord.Color.red()
+            container = Container()
+            container.add_text(
+                "# ❌ Fehler\nEs sind noch keine Welcome Einstellungen vorhanden."
             )
-            await ctx.respond(embed=embed, ephemeral=True)
+            view = discord.ui.View(container, timeout=None)
+            await ctx.respond(view=view, ephemeral=True)
             return
         
         if not settings.get('channel_id'):
-            embed = discord.Embed(
-                title="❌ Fehler",
-                description="Es ist kein Welcome Channel gesetzt.",
-                color=discord.Color.red()
+            container = Container()
+            container.add_text(
+                "# ❌ Fehler\nEs ist kein Welcome Channel gesetzt."
             )
             await ctx.respond(embed=embed, ephemeral=True)
             return
