@@ -180,7 +180,8 @@ Wir nutzen folgende Präfixe für Commits:
 
 ## 📄 Lizenz & Urheberrecht
 
-**Copyright © 2024 OPPRO.NET Network**  
+**Copyright © 2024 OPPRO.NET Development**
+**Copyright © 2025-present OPPRO.NET Network**
 
 ---
 
