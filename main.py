@@ -50,23 +50,77 @@ bot = ezcord.Bot(
 # =============================================================================
 # BOT VERSION
 # =============================================================================
-BOT_VERSION = "1.7.2"
+import aiohttp
+from colorama import Fore, Style
+import re
+
+BOT_VERSION = "1.7.2-dev"
 VERSION_URL = "https://raw.githubusercontent.com/Oppro-net-Development/ManagerX/main/version.txt"
 
+
+def parse_version(v: str):
+    """Zerlegt Version in (major, minor, patch, type)"""
+    match = re.match(r"(\d+)\.(\d+)\.(\d+)(?:[-_]?(dev|beta))?", v)
+    if match:
+        major, minor, patch, vtype = match.groups()
+        return int(major), int(minor), int(patch), vtype or "stable"
+    return 0, 0, 0, "unknown"
+
+
 async def check_for_update():
+    """Überprüft, ob eine neuere Version verfügbar ist oder ob du eine Dev-/Beta-Version nutzt."""
     try:
         async with aiohttp.ClientSession() as session:
-            async with session.get(VERSION_URL) as resp:
-                if resp.status == 200:
-                    latest_version = (await resp.text()).strip()
-                    if latest_version != BOT_VERSION:
-                        print(f"[{Fore.YELLOW}UPDATE{Style.RESET_ALL}] Your Version {BOT_VERSION} is outdated! Latest Version: {latest_version}")
-                    else:
-                        print(f"[{Fore.GREEN}UP-TO-DATE{Style.RESET_ALL}] You have the latest Version: {BOT_VERSION}")
+            async with session.get(VERSION_URL, timeout=aiohttp.ClientTimeout(total=10)) as resp:
+                if resp.status != 200:
+                    print(f"[{Fore.RED}ERROR{Style.RESET_ALL}] Update check failed (HTTP {resp.status})")
+                    return None
+
+                latest_version = (await resp.text()).strip()
+                if not latest_version:
+                    print(f"[{Fore.RED}ERROR{Style.RESET_ALL}] Empty response from version server!")
+                    return None
+
+                # Versionen parsen
+                current = parse_version(BOT_VERSION)
+                latest = parse_version(latest_version)
+
+                # --- Vergleich ---
+                if current[:3] == latest[:3] and current[3] == latest[3]:
+                    print(f"[{Fore.GREEN}UP-TO-DATE{Style.RESET_ALL}] Running latest version: {BOT_VERSION}")
+
+                elif current[:3] > latest[:3]:
+                    print(
+                        f"[{Fore.CYAN}DEV BUILD{Style.RESET_ALL}] "
+                        f"Your version ({BOT_VERSION}) is newer than the latest public release ({latest_version})!"
+                    )
+
+                elif current[:3] == latest[:3] and current[3] in ("dev", "beta"):
+                    print(
+                        f"[{Fore.MAGENTA}PRE-RELEASE{Style.RESET_ALL}] "
+                        f"You are using a {current[3].upper()} version ({BOT_VERSION}) — "
+                        f"latest stable: {latest_version}"
+                    )
+
                 else:
-                    print(f"[{Fore.RED}ERROR{Style.RESET_ALL}] Could not retrieve version, Status: {resp.status}")
+                    print(
+                        f"[{Fore.YELLOW}UPDATE AVAILABLE{Style.RESET_ALL}] "
+                        f"Installed: {BOT_VERSION} → Latest: {latest_version}\n"
+                        f"Get the latest version here: {Fore.CYAN}https://github.com/Oppro-net-Development/ManagerX{Style.RESET_ALL}"
+                    )
+
+                return latest_version
+
+    except aiohttp.ClientConnectorError:
+        print(f"[{Fore.RED}ERROR{Style.RESET_ALL}] Could not connect to GitHub (network issue).")
+    except aiohttp.ServerTimeoutError:
+        print(f"[{Fore.RED}ERROR{Style.RESET_ALL}] Connection to version server timed out.")
     except Exception as e:
-        print(f"[{Fore.RED}ERROR{Style.RESET_ALL}] Error during update check: {e}")
+        print(f"[{Fore.RED}ERROR{Style.RESET_ALL}] Unexpected error: {e}")
+
+    return None
+
+
 
 
 @bot.event
@@ -130,6 +184,18 @@ async def on_message(message: discord.Message):
         except Exception as e:
             await message.channel.send(f"⚠️ Fehler: {e}", delete_after=5)
         return  # wichtig für andere Befehle
+# =============================================================================
+# Übersetzung
+# =============================================================================
+
+with open("translation/messages/de.yaml", encoding="utf-8") as file:
+    de = yaml.safe_load(file)
+
+with open("translation/messages/en.yaml", encoding="utf-8") as file:
+    en = yaml.safe_load(file)
+
+ezcord.I18N({"de": de, "en": en}, prefer_user_locale=True, fallback_locale="en")
+
 
 # =============================================================================
 # BOT START
