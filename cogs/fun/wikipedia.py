@@ -5,28 +5,28 @@
 import wikipedia
 import asyncio
 import re
-import discord
 from datetime import datetime, timedelta
 from typing import Optional, List, Dict, Any
-from discord import SlashCommandGroup, InteractionContextType, IntegrationType, slash_command
+import discord
 import ezcord
+from discord import slash_command, SelectOption
+from discord.ui import Container, Button, Select
 
-# Fallback für Farben falls nicht in FastCoding definiert
+# Fallback für Farben
 try:
     from DevTools import INFO_COLOR, ERROR_COLOR, SUCCESS_COLOR, WARNING_COLOR
 except ImportError:
-    # Eigene Farbdefinitionen als Fallback
     INFO_COLOR = discord.Color.blue()
     ERROR_COLOR = discord.Color.red()
     SUCCESS_COLOR = discord.Color.green()
     WARNING_COLOR = discord.Color.orange()
+
 # ───────────────────────────────────────────────
 # >> Settings & Configuration
 # ───────────────────────────────────────────────
 wikipedia.set_lang("de")
 wikipedia.set_rate_limiting(True)
 
-# Erweiterte Konfiguration
 WIKI_CONFIG = {
     'languages': {
         'de': {'name': 'Deutsch', 'flag': '🇩🇪', 'domain': 'de.wikipedia.org'},
@@ -41,9 +41,8 @@ WIKI_CONFIG = {
     'max_categories': 3,
     'max_similar_articles': 6,
     'timeout': 600,
-    'cache_duration': 300  # 5 Minuten
+    'cache_duration': 300
 }
-
 
 # ───────────────────────────────────────────────
 # >> Cache System
@@ -58,7 +57,6 @@ class WikiCache:
             if datetime.now() - self.timestamps[key] < timedelta(seconds=WIKI_CONFIG['cache_duration']):
                 return self.cache[key]
             else:
-                # Cache abgelaufen
                 del self.cache[key]
                 del self.timestamps[key]
         return None
@@ -77,10 +75,7 @@ class WikiCache:
             self.cache.pop(key, None)
             self.timestamps.pop(key, None)
 
-
-# Globaler Cache
 wiki_cache = WikiCache()
-
 
 # ───────────────────────────────────────────────
 # >> Utility Functions
@@ -90,14 +85,12 @@ def clean_text(text: str, max_length: int = None) -> str:
     if not text:
         return "Keine Beschreibung verfügbar."
 
-    # HTML-Tags und Sonderzeichen entfernen
     text = re.sub(r'<[^>]+>', '', text)
-    text = re.sub(r'\[.*?\]', '', text)  # Referenzen entfernen
+    text = re.sub(r'\[.*?\]', '', text)
     text = re.sub(r'\s+', ' ', text).strip()
 
     max_length = max_length or WIKI_CONFIG['max_summary_length']
     if len(text) > max_length:
-        # Bei Satzende abschneiden wenn möglich
         truncated = text[:max_length - 3]
         last_sentence = truncated.rfind('.')
         if last_sentence > max_length // 2:
@@ -106,7 +99,6 @@ def clean_text(text: str, max_length: int = None) -> str:
             text = truncated + "..."
 
     return text
-
 
 def format_page_info(page, language: str = 'de') -> Dict[str, Any]:
     """Erweiterte Seiteninformationen mit Fehlerbehandlung"""
@@ -123,13 +115,11 @@ def format_page_info(page, language: str = 'de') -> Dict[str, Any]:
             'references': []
         }
 
-        # Summary sicher laden
         try:
             info['summary'] = clean_text(wikipedia.summary(page.title, sentences=4))
         except:
             info['summary'] = "Zusammenfassung nicht verfügbar."
 
-        # Zusätzliche Informationen sicher laden
         try:
             info['categories'] = getattr(page, 'categories', [])[:WIKI_CONFIG['max_categories']]
         except:
@@ -145,7 +135,6 @@ def format_page_info(page, language: str = 'de') -> Dict[str, Any]:
         except:
             pass
 
-        # Koordinaten extrahieren falls vorhanden
         try:
             content = getattr(page, 'content', '')
             coord_match = re.search(r'(\d+\.?\d*)[°]\s*N.*?(\d+\.?\d*)[°]\s*[EW]', content)
@@ -168,21 +157,123 @@ def format_page_info(page, language: str = 'de') -> Dict[str, Any]:
             'references': []
         }
 
+# ───────────────────────────────────────────────
+# >> Container Creation Functions
+# ───────────────────────────────────────────────
+def create_article_container(info: Dict[str, Any], user: discord.User, similar_articles: List[str] = None, 
+                            search_term: str = "", language: str = 'de', cog_instance=None) -> Container:
+    """Erstellt einen Container für einen Wikipedia-Artikel"""
+    container = Container()
+    
+    # Header mit Titel
+    lang_info = WIKI_CONFIG['languages'].get(language, {'name': 'Deutsch', 'flag': '🇩🇪'})
+    header_text = f"📖 **{info['title']}**\n{lang_info['flag']} {lang_info['name']} • Wikipedia"
+    container.add_text(header_text)
+    
+    container.add_separator()
+    
+    # Zusammenfassung
+    summary_text = info['summary'][:800] + ("..." if len(info['summary']) > 800 else "")
+    container.add_text(summary_text)
+    
+    # Kategorien falls vorhanden
+    if info.get('categories'):
+        container.add_separator()
+        categories_text = "📂 **Kategorien:** " + ", ".join(info['categories'][:3])
+        if len(info['categories']) > 3:
+            categories_text += f" (+{len(info['categories']) - 3} weitere)"
+        container.add_text(categories_text)
+    
+    # Koordinaten falls vorhanden
+    if info.get('coordinates'):
+        lat, lon = info['coordinates']
+        container.add_text(f"🗺️ **Standort:** {lat:.2f}°N, {lon:.2f}°E")
+    
+    container.add_separator()
+    
+    # Link zum vollständigen Artikel
+    if info.get('url'):
+        link_button = Button(
+            label="🔗 Vollständigen Artikel lesen",
+            url=info['url'],
+            style=discord.ButtonStyle.link
+        )
+        container.add_item(link_button)
+    
+    # Sprachauswahl
+    if cog_instance:
+        lang_select = LanguageSelectContainer(search_term, language, cog_instance)
+        container.add_item(lang_select)
+    
+    # Ähnliche Artikel als Buttons
+    if similar_articles:
+        container.add_separator()
+        container.add_text("📚 **Ähnliche Artikel:**")
+        for article in similar_articles[:4]:
+            article_btn = ArticleButtonContainer(article, "similar", cog_instance)
+            container.add_item(article_btn)
+    
+    container.add_separator()
+    
+    # Action Buttons
+    random_btn = RandomArticleButton(language, cog_instance)
+    container.add_item(random_btn)
+    
+    info_btn = ArticleInfoButton(info, language)
+    container.add_item(info_btn)
+    
+    refresh_btn = RefreshArticleButton(search_term, language, cog_instance)
+    container.add_item(refresh_btn)
+    
+    # Footer
+    container.add_separator()
+    footer_text = f"👤 Angefragt von {user.display_name}"
+    container.add_text(footer_text)
+    
+    return container
 
-def create_loading_embed(title: str = "Lade Wikipedia-Artikel...") -> discord.Embed:
-    """Erstellt einen Lade-Embed"""
-    embed = discord.Embed(
-        title=f"⏳ {title}",
-        description="Dies kann einen Moment dauern...",
-        color=discord.Color.blue()
-    )
-    return embed
+def create_error_container(title: str, description: str) -> Container:
+    """Erstellt einen Fehler-Container"""
+    container = Container()
+    container.add_text(f"❌ **{title}**")
+    container.add_separator()
+    container.add_text(description)
+    container.add_separator()
+    container.add_text("Wikipedia Bot • Fehler aufgetreten")
+    return container
 
+def create_disambiguation_container(term: str, options: List[str], language: str = 'de') -> Container:
+    """Erstellt einen Mehrdeutigkeits-Container"""
+    container = Container()
+    
+    lang_info = WIKI_CONFIG['languages'].get(language, {'name': 'Deutsch'})
+    container.add_text(f"🔀 **Mehrdeutige Suche**")
+    container.add_separator()
+    container.add_text(f"**'{term}'** kann mehrere Bedeutungen haben in {lang_info['name']}:")
+    
+    container.add_separator()
+    container.add_text("📋 **Mögliche Optionen:**")
+    
+    options_text = "\n".join([f"• {opt}" for opt in options[:10]])
+    container.add_text(options_text)
+    
+    container.add_separator()
+    container.add_text("💡 Versuche eine spezifischere Suche oder wähle eine der Optionen.")
+    
+    return container
+
+def create_loading_container(title: str = "Lade Wikipedia-Artikel...") -> Container:
+    """Erstellt einen Lade-Container"""
+    container = Container()
+    container.add_text(f"⏳ **{title}**")
+    container.add_separator()
+    container.add_text("Dies kann einen Moment dauern...")
+    return container
 
 # ───────────────────────────────────────────────
-# >> Advanced UI Components
+# >> Button Components
 # ───────────────────────────────────────────────
-class LanguageSelect(discord.ui.Select):
+class LanguageSelectContainer(Select):
     def __init__(self, current_term: str, current_lang: str = 'de', cog_instance=None):
         self.current_term = current_term
         self.current_lang = current_lang
@@ -190,7 +281,7 @@ class LanguageSelect(discord.ui.Select):
 
         options = []
         for code, info in WIKI_CONFIG['languages'].items():
-            options.append(discord.SelectOption(
+            options.append(SelectOption(
                 label=info['name'],
                 value=code,
                 emoji=info['flag'],
@@ -210,10 +301,12 @@ class LanguageSelect(discord.ui.Select):
 
         selected_lang = self.values[0]
         if selected_lang == self.current_lang:
-            await interaction.followup.send("Diese Sprache ist bereits ausgewählt.", ephemeral=True)
+            error_container = Container()
+            error_container.add_text("Diese Sprache ist bereits ausgewählt.")
+            view = discord.ui.View(error_container, timeout=60)
+            await interaction.followup.send(view=view, ephemeral=True)
             return
 
-        # Sprache wechseln und neu suchen
         original_lang = self.cog.current_language if self.cog else 'de'
         if selected_lang != original_lang:
             wikipedia.set_lang(selected_lang)
@@ -221,53 +314,55 @@ class LanguageSelect(discord.ui.Select):
                 self.cog.current_language = selected_lang
 
         try:
-            loading_embed = create_loading_embed(
+            loading_container = create_loading_container(
                 f"Lade Artikel in {WIKI_CONFIG['languages'][selected_lang]['name']}...")
-            await interaction.edit_original_response(embed=loading_embed, view=None)
+            view = discord.ui.View(loading_container, timeout=None)
+            await interaction.edit_original_response(view=view)
 
             page = wikipedia.page(self.current_term)
             info = format_page_info(page, selected_lang)
 
-            embed = create_main_embed(info, interaction.user)
-            view = EnhancedWikiView(info, self.current_term, selected_lang, cog_instance=self.cog)
+            similar_articles = wikipedia.search(self.current_term, results=6)
+            similar_articles = [a for a in similar_articles if a.lower() != info['title'].lower()]
 
-            await interaction.edit_original_response(embed=embed, view=view)
+            container = create_article_container(info, interaction.user, similar_articles[:4], 
+                                                self.current_term, selected_lang, cog_instance=self.cog)
+            view = discord.ui.View(container, timeout=WIKI_CONFIG['timeout'])
+            await interaction.edit_original_response(view=view)
 
         except wikipedia.DisambiguationError as e:
-            embed = create_disambiguation_embed(self.current_term, e.options[:10], selected_lang)
-            await interaction.edit_original_response(embed=embed, view=None)
+            container = create_disambiguation_container(self.current_term, e.options[:10], selected_lang)
+            view = discord.ui.View(container, timeout=None)
+            await interaction.edit_original_response(view=view)
         except wikipedia.PageError:
-            embed = create_error_embed(
+            container = create_error_container(
                 "Artikel nicht gefunden",
                 f"'{self.current_term}' existiert nicht in {WIKI_CONFIG['languages'][selected_lang]['name']}."
             )
-            await interaction.edit_original_response(embed=embed, view=None)
+            view = discord.ui.View(container, timeout=None)
+            await interaction.edit_original_response(view=view)
         except Exception as e:
-            embed = create_error_embed("Unerwarteter Fehler", str(e))
-            await interaction.edit_original_response(embed=embed, view=None)
+            container = create_error_container("Unerwarteter Fehler", str(e)[:500])
+            view = discord.ui.View(container, timeout=None)
+            await interaction.edit_original_response(view=view)
         finally:
             if selected_lang != original_lang:
                 wikipedia.set_lang(original_lang)
                 if self.cog:
                     self.cog.current_language = original_lang
 
-
-class ArticleButton(discord.ui.Button):
+class ArticleButtonContainer(Button):
     def __init__(self, article_title: str, button_type: str = "similar", cog_instance=None):
         self.article_title = article_title
         self.button_type = button_type
         self.cog = cog_instance
 
-        # Button-Styling basierend auf Typ
         if button_type == "similar":
             emoji = "📖"
             style = discord.ButtonStyle.secondary
         elif button_type == "category":
             emoji = "📂"
             style = discord.ButtonStyle.primary
-        elif button_type == "link":
-            emoji = "🔗"
-            style = discord.ButtonStyle.success
         else:
             emoji = "📄"
             style = discord.ButtonStyle.secondary
@@ -282,7 +377,6 @@ class ArticleButton(discord.ui.Button):
         await interaction.response.defer(ephemeral=True)
 
         try:
-            # Cache-Check
             current_lang = self.cog.current_language if self.cog else 'de'
             cache_key = f"{self.article_title}_{current_lang}"
             cached_info = wiki_cache.get(cache_key)
@@ -294,239 +388,158 @@ class ArticleButton(discord.ui.Button):
                 info = format_page_info(page, current_lang)
                 wiki_cache.set(cache_key, info)
 
-            embed = create_main_embed(info, interaction.user, ephemeral=True)
-
-            # Ähnliche Artikel für neue View
-            similar_articles = wikipedia.search(self.article_title, results=8)
+            similar_articles = wikipedia.search(self.article_title, results=6)
             similar_articles = [a for a in similar_articles if a.lower() != info['title'].lower()]
 
-            view = EnhancedWikiView(info, self.article_title, current_lang, similar_articles[:4], cog_instance=self.cog)
-            await interaction.followup.send(embed=embed, view=view, ephemeral=True)
+            container = create_article_container(info, interaction.user, similar_articles[:4], 
+                                                self.article_title, current_lang, cog_instance=self.cog)
+            view = discord.ui.View(container, timeout=WIKI_CONFIG['timeout'])
+            await interaction.followup.send(view=view, ephemeral=True)
 
         except wikipedia.DisambiguationError as e:
-            embed = create_disambiguation_embed(self.article_title, e.options[:8])
-            await interaction.followup.send(embed=embed, ephemeral=True)
+            container = create_disambiguation_container(self.article_title, e.options[:8])
+            view = discord.ui.View(container, timeout=None)
+            await interaction.followup.send(view=view, ephemeral=True)
         except wikipedia.PageError:
-            embed = create_error_embed("Artikel nicht gefunden", f"'{self.article_title}' existiert nicht.")
-            await interaction.followup.send(embed=embed, ephemeral=True)
+            container = create_error_container("Artikel nicht gefunden", 
+                                              f"'{self.article_title}' existiert nicht.")
+            view = discord.ui.View(container, timeout=None)
+            await interaction.followup.send(view=view, ephemeral=True)
         except Exception as e:
-            embed = create_error_embed("Fehler beim Laden", str(e)[:500])
-            await interaction.followup.send(embed=embed, ephemeral=True)
+            container = create_error_container("Fehler beim Laden", str(e)[:500])
+            view = discord.ui.View(container, timeout=None)
+            await interaction.followup.send(view=view, ephemeral=True)
 
-
-class EnhancedWikiView(discord.ui.View):
-    def __init__(self, info: Dict[str, Any], search_term: str, language: str = 'de',
-                 similar_articles: List[str] = None, timeout: float = None, cog_instance=None):
-        super().__init__(timeout=timeout or WIKI_CONFIG['timeout'])
-
-        self.info = info
-        self.search_term = search_term
+class RandomArticleButton(Button):
+    def __init__(self, language: str, cog_instance=None):
         self.language = language
         self.cog = cog_instance
-        self.message = None  # Will be set later
+        super().__init__(
+            label="🎲 Zufälliger Artikel",
+            style=discord.ButtonStyle.success
+        )
 
-        # Hauptlink zur Wikipedia-Seite
-        if info.get('url'):
-            self.add_item(discord.ui.Button(
-                label="🔗 Vollständigen Artikel lesen",
-                url=info['url'],
-                style=discord.ButtonStyle.link
-            ))
-
-        # Ähnliche Artikel
-        if similar_articles:
-            for article in similar_articles[:4]:
-                self.add_item(ArticleButton(article, "similar", cog_instance=self.cog))
-
-        # Sprachauswahl
-        self.add_item(LanguageSelect(search_term, language, cog_instance=self.cog))
-
-        # Kategorien als Buttons (falls Platz)
-        if info.get('categories') and len(self.children) < 20:
-            for category in info['categories'][:2]:
-                if len(self.children) < 24:  # Platz für andere Buttons lassen
-                    self.add_item(ArticleButton(category, "category", cog_instance=self.cog))
-
-    @discord.ui.button(label="🎲 Zufälliger Artikel", style=discord.ButtonStyle.success, row=4)
-    async def random_article(self, button: discord.ui.Button, interaction: discord.Interaction):
+    async def callback(self, interaction: discord.Interaction):
         await interaction.response.defer()
 
         try:
-            loading_embed = create_loading_embed("Lade zufälligen Artikel...")
-            await interaction.edit_original_response(embed=loading_embed, view=None)
+            loading_container = create_loading_container("Lade zufälligen Artikel...")
+            view = discord.ui.View(loading_container, timeout=None)
+            await interaction.edit_original_response(view=view)
 
             random_title = wikipedia.random()
             page = wikipedia.page(random_title)
             info = format_page_info(page, self.language)
 
-            embed = create_main_embed(info, interaction.user)
-            embed.title = f"🎲 Zufälliger Artikel: {info['title']}"
-
             similar_articles = wikipedia.search(random_title, results=6)
             similar_articles = [a for a in similar_articles if a.lower() != info['title'].lower()]
 
-            new_view = EnhancedWikiView(info, random_title, self.language, similar_articles[:4], cog_instance=self.cog)
-            await interaction.edit_original_response(embed=embed, view=new_view)
+            container = create_article_container(info, interaction.user, similar_articles[:4], 
+                                                random_title, self.language, cog_instance=self.cog)
+            
+            # Header anpassen für zufälligen Artikel
+            container_new = Container()
+            container_new.add_text(f"🎲 **Zufälliger Artikel: {info['title']}**")
+            # Restlichen Inhalt kopieren (vereinfachte Version - in Produktion würde man den Container besser strukturieren)
+            
+            view = discord.ui.View(container, timeout=WIKI_CONFIG['timeout'])
+            await interaction.edit_original_response(view=view)
 
         except Exception as e:
-            embed = create_error_embed("Fehler beim Laden", f"Zufälliger Artikel konnte nicht geladen werden: {e}")
-            await interaction.edit_original_response(embed=embed, view=None)
+            container = create_error_container("Fehler beim Laden", 
+                                              f"Zufälliger Artikel konnte nicht geladen werden: {str(e)[:300]}")
+            view = discord.ui.View(container, timeout=None)
+            await interaction.edit_original_response(view=view)
 
-    @discord.ui.button(label="📊 Artikel-Info", style=discord.ButtonStyle.primary, row=4)
-    async def article_info(self, button: discord.ui.Button, interaction: discord.Interaction):
-        await interaction.response.defer(ephemeral=True)
-
-        embed = discord.Embed(
-            title=f"📊 Informationen zu '{self.info['title']}'",
-            color=INFO_COLOR
+class ArticleInfoButton(Button):
+    def __init__(self, info: Dict[str, Any], language: str):
+        self.info = info
+        self.language = language
+        super().__init__(
+            label="📊 Artikel-Info",
+            style=discord.ButtonStyle.primary
         )
 
-        # Grundlegende Infos
-        embed.add_field(name="🌐 Sprache", value=WIKI_CONFIG['languages'][self.language]['name'], inline=True)
-        embed.add_field(name="📂 Kategorien", value=str(len(self.info.get('categories', []))), inline=True)
-        embed.add_field(name="🔗 Verweise", value=str(len(self.info.get('links', []))), inline=True)
+    async def callback(self, interaction: discord.Interaction):
+        await interaction.response.defer(ephemeral=True)
 
-        # Zusätzliche Infos falls verfügbar
+        container = Container()
+        container.add_text(f"📊 **Informationen zu '{self.info['title']}'**")
+        container.add_separator()
+        
+        # Statistiken
+        stats_text = f"🌐 **Sprache:** {WIKI_CONFIG['languages'][self.language]['name']}\n"
+        stats_text += f"📂 **Kategorien:** {len(self.info.get('categories', []))}\n"
+        stats_text += f"🔗 **Verweise:** {len(self.info.get('links', []))}"
+        container.add_text(stats_text)
+        
         if self.info.get('coordinates'):
             lat, lon = self.info['coordinates']
-            embed.add_field(name="🗺️ Koordinaten", value=f"{lat:.2f}°N, {lon:.2f}°E", inline=True)
-
+            container.add_text(f"🗺️ **Koordinaten:** {lat:.2f}°N, {lon:.2f}°E")
+        
         if self.info.get('images'):
-            embed.add_field(name="🖼️ Bilder", value=str(len(self.info['images'])), inline=True)
-
-        # Kategorien auflisten falls vorhanden
+            container.add_text(f"🖼️ **Bilder:** {len(self.info['images'])}")
+        
+        # Kategorien auflisten
         if self.info.get('categories'):
+            container.add_separator()
+            container.add_text("📚 **Hauptkategorien:**")
             categories_text = "\n".join([f"• {cat}" for cat in self.info['categories'][:5]])
-            embed.add_field(name="📚 Hauptkategorien", value=categories_text, inline=False)
+            container.add_text(categories_text)
+        
+        container.add_separator()
+        container.add_text("Wikipedia • Artikel-Statistiken")
+        
+        view = discord.ui.View(container, timeout=300)
+        await interaction.followup.send(view=view, ephemeral=True)
 
-        embed.set_footer(text="Wikipedia • Artikel-Statistiken")
-        await interaction.followup.send(embed=embed, ephemeral=True)
+class RefreshArticleButton(Button):
+    def __init__(self, search_term: str, language: str, cog_instance=None):
+        self.search_term = search_term
+        self.language = language
+        self.cog = cog_instance
+        super().__init__(
+            label="🔄 Aktualisieren",
+            style=discord.ButtonStyle.secondary
+        )
 
-    @discord.ui.button(label="🔄 Aktualisieren", style=discord.ButtonStyle.secondary, row=4)
-    async def refresh_article(self, button: discord.ui.Button, interaction: discord.Interaction):
+    async def callback(self, interaction: discord.Interaction):
         await interaction.response.defer()
 
         try:
-            # Cache leeren für diesen Artikel
+            # Cache leeren
             cache_key = f"{self.search_term}_{self.language}"
             if cache_key in wiki_cache.cache:
                 del wiki_cache.cache[cache_key]
                 del wiki_cache.timestamps[cache_key]
 
-            loading_embed = create_loading_embed("Aktualisiere Artikel...")
-            await interaction.edit_original_response(embed=loading_embed, view=None)
+            loading_container = create_loading_container("Aktualisiere Artikel...")
+            view = discord.ui.View(loading_container, timeout=None)
+            await interaction.edit_original_response(view=view)
 
-            # Artikel neu laden
             page = wikipedia.page(self.search_term)
             info = format_page_info(page, self.language)
 
-            embed = create_main_embed(info, interaction.user)
             similar_articles = wikipedia.search(self.search_term, results=6)
             similar_articles = [a for a in similar_articles if a.lower() != info['title'].lower()]
 
-            new_view = EnhancedWikiView(info, self.search_term, self.language, similar_articles[:4],
-                                        cog_instance=self.cog)
-            await interaction.edit_original_response(embed=embed, view=new_view)
+            container = create_article_container(info, interaction.user, similar_articles[:4], 
+                                                self.search_term, self.language, cog_instance=self.cog)
+            view = discord.ui.View(container, timeout=WIKI_CONFIG['timeout'])
+            await interaction.edit_original_response(view=view)
 
         except Exception as e:
-            embed = create_error_embed("Aktualisierung fehlgeschlagen", str(e))
-            await interaction.edit_original_response(embed=embed, view=None)
-
-    async def on_timeout(self):
-        # Nur interaktive Buttons deaktivieren, Links beibehalten
-        for item in self.children:
-            if hasattr(item, 'disabled') and not (hasattr(item, 'url') and item.url):
-                item.disabled = True
-
-        try:
-            if self.message:
-                await self.message.edit(view=self)
-        except:
-            pass
-
-
-# ───────────────────────────────────────────────
-# >> Embed Creation Functions
-# ───────────────────────────────────────────────
-def create_main_embed(info: Dict[str, Any], user: discord.User, ephemeral: bool = False) -> discord.Embed:
-    """Erstellt das Haupt-Embed für einen Wikipedia-Artikel"""
-    embed = discord.Embed(
-        title=f"📖 {info['title']}",
-        description=info['summary'],
-        url=info.get('url', ''),
-        color=INFO_COLOR,
-        timestamp=datetime.now()
-    )
-
-    # Zusätzliche Informationen
-    if info.get('categories'):
-        categories_text = ", ".join(info['categories'][:3])
-        if len(info['categories']) > 3:
-            categories_text += f" (+{len(info['categories']) - 3} weitere)"
-        embed.add_field(name="📂 Kategorien", value=categories_text, inline=False)
-
-    # Koordinaten falls verfügbar
-    if info.get('coordinates'):
-        lat, lon = info['coordinates']
-        embed.add_field(name="🗺️ Standort", value=f"{lat:.2f}°N, {lon:.2f}°E", inline=True)
-
-    # Footer mit Benutzerinfo
-    lang_info = WIKI_CONFIG['languages'].get(info.get('language', 'de'), {'name': 'Deutsch', 'flag': '🇩🇪'})
-    footer_text = f"Wikipedia ({lang_info['name']}) • Angefragt von {user.display_name}"
-    if ephemeral:
-        footer_text += " • Nur für dich sichtbar"
-
-    embed.set_footer(
-        text=footer_text,
-        icon_url=user.avatar.url if user.avatar else None
-    )
-
-    # Thumbnail
-    if info.get('images'):
-        try:
-            embed.set_thumbnail(url=info['images'][0])
-        except:
-            pass
-
-    return embed
-
-
-def create_error_embed(title: str, description: str) -> discord.Embed:
-    """Erstellt ein Fehler-Embed"""
-    embed = discord.Embed(
-        title=f"❌ {title}",
-        description=description,
-        color=ERROR_COLOR
-    )
-    embed.set_footer(text="Wikipedia Bot • Fehler aufgetreten")
-    return embed
-
-
-def create_disambiguation_embed(term: str, options: List[str], language: str = 'de') -> discord.Embed:
-    """Erstellt ein Mehrdeutigkeits-Embed"""
-    lang_info = WIKI_CONFIG['languages'].get(language, {'name': 'Deutsch'})
-
-    embed = discord.Embed(
-        title="🔀 Mehrdeutige Suche",
-        description=f"**'{term}'** kann mehrere Bedeutungen haben in {lang_info['name']}:",
-        color=WARNING_COLOR
-    )
-
-    options_text = "\n".join([f"• **{opt}**" for opt in options[:10]])
-    embed.add_field(name="📋 Mögliche Optionen:", value=options_text, inline=False)
-    embed.set_footer(text="Versuche eine spezifischere Suche oder wähle eine der Optionen.")
-
-    return embed
-
+            container = create_error_container("Aktualisierung fehlgeschlagen", str(e)[:500])
+            view = discord.ui.View(container, timeout=None)
+            await interaction.edit_original_response(view=view)
 
 # ───────────────────────────────────────────────
 # >> Autocomplete Functions
 # ───────────────────────────────────────────────
 async def enhanced_wiki_autocomplete(ctx: discord.AutocompleteContext):
-    """Erweiterte Autocomplete mit Caching und besserer Suche"""
+    """Erweiterte Autocomplete mit Caching"""
     suchwert = ctx.value or ""
 
-    # Standard-Vorschläge für leere Suche
     if len(suchwert) < 2:
         return [
             "Künstliche Intelligenz", "Python (Programmiersprache)", "Discord",
@@ -534,46 +547,36 @@ async def enhanced_wiki_autocomplete(ctx: discord.AutocompleteContext):
         ]
 
     try:
-        # Cache-Check für Autocomplete
-        cache_key = f"autocomplete_{suchwert}_de"  # Verwende 'de' als Standard
+        cache_key = f"autocomplete_{suchwert}_de"
         cached_results = wiki_cache.get(cache_key)
 
         if cached_results:
             return cached_results.get('suggestions', [])
 
-        # Neue Suche
         vorschlaege = wikipedia.search(suchwert, results=15)
 
-        # Relevanz-Sortierung verbessern
         def relevance_score(suggestion):
             suggestion_lower = suggestion.lower()
             suchwert_lower = suchwert.lower()
 
-            # Exakte Übereinstimmung = höchste Priorität
             if suchwert_lower == suggestion_lower:
                 return 0
-            # Beginnt mit Suchwert = hohe Priorität
             elif suggestion_lower.startswith(suchwert_lower):
                 return 1
-            # Enthält Suchwert = mittlere Priorität
             elif suchwert_lower in suggestion_lower:
                 return 2
-            # Sonstige = niedrige Priorität, sortiert nach Länge
             else:
                 return 3 + len(suggestion)
 
         vorschlaege.sort(key=relevance_score)
-        final_suggestions = vorschlaege[:25]  # Discord Limit
+        final_suggestions = vorschlaege[:25]
 
-        # Ergebnis cachen
         wiki_cache.set(cache_key, {'suggestions': final_suggestions})
 
         return final_suggestions
 
     except Exception:
-        # Fallback bei Fehlern
         return ["Fehler bei der Suche - bitte erneut versuchen"]
-
 
 # ───────────────────────────────────────────────
 # >> Main Cog Class
@@ -581,7 +584,7 @@ async def enhanced_wiki_autocomplete(ctx: discord.AutocompleteContext):
 class WikipediaCog(ezcord.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.current_language = 'de'  # Aktuelle Sprache tracken
+        self.current_language = 'de'
         self.cleanup_task = None
         self.stats = {
             'searches': 0,
@@ -599,7 +602,7 @@ class WikipediaCog(ezcord.Cog):
         """Regelmäßige Cache-Bereinigung"""
         while True:
             try:
-                await asyncio.sleep(300)  # Alle 5 Minuten
+                await asyncio.sleep(300)
                 wiki_cache.clear_expired()
             except:
                 pass
@@ -608,14 +611,7 @@ class WikipediaCog(ezcord.Cog):
         if hasattr(self, 'cleanup_task') and self.cleanup_task:
             self.cleanup_task.cancel()
 
-    wiki = SlashCommandGroup(
-    "wikipedia", 
-    "Wikipedia-Funktionen"
-    )
-    @wiki.command(
-            name="search", 
-            description="🔍 Durchsuche Wikipedia nach Artikeln und Informationen"
-            )
+    @slash_command(name="wiki_search", description="🔍 Durchsuche Wikipedia nach Artikeln und Informationen")
     async def wikipedia_search(
             self,
             ctx: discord.ApplicationContext,
@@ -643,18 +639,15 @@ class WikipediaCog(ezcord.Cog):
     ):
         await ctx.defer()
 
-        # Statistiken aktualisieren
         self.stats['searches'] += 1
         self.stats['languages_used'].add(sprache)
 
-        # Sprache temporär wechseln
         original_lang = self.current_language
         if sprache != original_lang:
             wikipedia.set_lang(sprache)
             self.current_language = sprache
 
         try:
-            # Cache-Check
             cache_key = f"{suchbegriff}_{sprache}"
             cached_info = wiki_cache.get(cache_key)
 
@@ -665,143 +658,48 @@ class WikipediaCog(ezcord.Cog):
                 info = format_page_info(page, sprache)
                 wiki_cache.set(cache_key, info)
 
-            # Statistiken
             self.stats['articles_viewed'] += 1
 
-            # Hauptembed erstellen
-            embed = create_main_embed(info, ctx.author)
-
-            # Ähnliche Artikel finden
             similar_articles = wikipedia.search(suchbegriff, results=8)
             similar_articles = [a for a in similar_articles if a.lower() != info['title'].lower()]
 
-            # Enhanced View erstellen
-            view = EnhancedWikiView(info, suchbegriff, sprache, similar_articles[:6], cog_instance=self)
+            container = create_article_container(info, ctx.author, similar_articles[:6], 
+                                                suchbegriff, sprache, cog_instance=self)
+            view = discord.ui.View(container, timeout=WIKI_CONFIG['timeout'])
 
-            # FIXED: Directly use ctx.respond() return value as message
-            message = await ctx.respond(embed=embed, view=view)
-            view.message = message
+            await ctx.respond(view=view)
 
         except wikipedia.DisambiguationError as e:
-            embed = create_disambiguation_embed(suchbegriff, e.options[:12], sprache)
-            await ctx.respond(embed=embed)
+            container = create_disambiguation_container(suchbegriff, e.options[:12], sprache)
+            view = discord.ui.View(container, timeout=None)
+            await ctx.respond(view=view)
 
         except wikipedia.PageError:
-            embed = create_error_embed(
-                "Artikel nicht gefunden",
-                f"Kein Wikipedia-Artikel für **'{suchbegriff}'** in {WIKI_CONFIG['languages'][sprache]['name']} gefunden."
-            )
-
-            # Suchvorschläge hinzufügen
+            error_text = f"Kein Wikipedia-Artikel für **'{suchbegriff}'** in {WIKI_CONFIG['languages'][sprache]['name']} gefunden."
+            
             try:
                 suggestions = wikipedia.search(suchbegriff, results=5)
                 if suggestions:
-                    suggestions_text = "\n".join([f"• **{s}**" for s in suggestions])
-                    embed.add_field(name="💡 Meintest du vielleicht:", value=suggestions_text, inline=False)
+                    error_text += "\n\n💡 **Meintest du vielleicht:**\n"
+                    error_text += "\n".join([f"• {s}" for s in suggestions])
             except:
                 pass
 
-            await ctx.respond(embed=embed)
+            container = create_error_container("Artikel nicht gefunden", error_text)
+            view = discord.ui.View(container, timeout=None)
+            await ctx.respond(view=view)
 
         except Exception as e:
-            embed = create_error_embed("Unerwarteter Fehler", f"```py\n{str(e)[:800]}\n```")
-            await ctx.respond(embed=embed)
+            container = create_error_container("Unerwarteter Fehler", f"```py\n{str(e)[:800]}\n```")
+            view = discord.ui.View(container, timeout=None)
+            await ctx.respond(view=view)
 
-        finally:
-            # Sprache zurücksetzen
-            if sprache != original_lang:
-                wikipedia.set_lang(original_lang)
-                self.current_language = original_lang
-
-    @wiki.command(name="multisearch", description="🔍 Erweiterte Wikipedia-Suche mit mehreren Ergebnissen")
-    async def wiki_multi_search(
-            self,
-            ctx: discord.ApplicationContext,
-            suchbegriff: discord.Option(str, "Suchbegriff für erweiterte Suche", max_length=100),
-            anzahl: discord.Option(int, "Anzahl der Ergebnisse (1-15)", min_value=1, max_value=15, default=8),
-            sprache: discord.Option(
-                str,
-                "Sprache für die Suche",
-                choices=[
-                    discord.OptionChoice(name="Deutsch", value="de"),
-                    discord.OptionChoice(name="English", value="en"),
-                    discord.OptionChoice(name="Français", value="fr"),
-                    discord.OptionChoice(name="Español", value="es"),
-                    discord.OptionChoice(name="Italiano", value="it"),
-                    discord.OptionChoice(name="日本語", value="ja"),
-                    discord.OptionChoice(name="Русский", value="ru"),
-                ],
-                default="de",
-                required=False
-            )
-    ):
-        await ctx.defer()
-
-        # Sprache wechseln
-        original_lang = self.current_language
-        if sprache != original_lang:
-            wikipedia.set_lang(sprache)
-            self.current_language = sprache
-
-        try:
-            results = wikipedia.search(suchbegriff, results=anzahl)
-
-            if not results:
-                embed = create_error_embed(
-                    "Keine Ergebnisse",
-                    f"Keine Artikel für **'{suchbegriff}'** in {WIKI_CONFIG['languages'][sprache]['name']} gefunden."
-                )
-                await ctx.respond(embed=embed)
-                return
-
-            lang_info = WIKI_CONFIG['languages'][sprache]
-            embed = discord.Embed(
-                title=f"🔍 Suchergebnisse für '{suchbegriff}'",
-                description=f"**{len(results)} Ergebnisse** in {lang_info['flag']} {lang_info['name']}:",
-                color=INFO_COLOR,
-                timestamp=datetime.now()
-            )
-
-            # Ergebnisse mit Vorschau
-            for i, result in enumerate(results, 1):
-                try:
-                    summary = wikipedia.summary(result, sentences=1)
-                    summary = clean_text(summary, 150)
-                except:
-                    summary = "Keine Vorschau verfügbar."
-
-                embed.add_field(
-                    name=f"{i}. {result}",
-                    value=summary,
-                    inline=False
-                )
-
-            embed.set_footer(text=f"Wikipedia • {len(results)} Ergebnisse • Sprache: {lang_info['name']}")
-
-            # View mit Buttons für die ersten Ergebnisse
-            first_results = results[:4]  # Erste 4 als interaktive Buttons
-            view = EnhancedWikiView({
-                'title': f'Suchergebnisse für "{suchbegriff}"',
-                'url': f'https://{lang_info["domain"]}/wiki/Special:Search/{suchbegriff}',
-                'summary': f'{len(results)} Artikel gefunden',
-                'categories': [],
-                'links': results,
-                'images': [],
-                'language': sprache
-            }, suchbegriff, sprache, first_results, cog_instance=self)
-
-            message = await ctx.respond(embed=embed, view=view)
-            view.message = message
-
-        except Exception as e:
-            embed = create_error_embed("Suchfehler", f"Fehler bei der Suche: {str(e)[:500]}")
-            await ctx.respond(embed=embed)
         finally:
             if sprache != original_lang:
                 wikipedia.set_lang(original_lang)
                 self.current_language = original_lang
 
-    @wiki.command(name="random", description="🎲 Zeige einen zufälligen Wikipedia-Artikel")
+    @slash_command(name="wiki_random", description="🎲 Zeige einen zufälligen Wikipedia-Artikel")
     async def wiki_random(
             self,
             ctx: discord.ApplicationContext,
@@ -831,30 +729,79 @@ class WikipediaCog(ezcord.Cog):
 
         try:
             if anzahl == 1:
-                # Einzelner zufälliger Artikel
                 random_title = wikipedia.random()
                 page = wikipedia.page(random_title)
                 info = format_page_info(page, sprache)
 
-                embed = create_main_embed(info, ctx.author)
-                embed.title = f"🎲 Zufälliger Artikel: {info['title']}"
-
                 similar_articles = wikipedia.search(random_title, results=6)
                 similar_articles = [a for a in similar_articles if a.lower() != info['title'].lower()]
 
-                view = EnhancedWikiView(info, random_title, sprache, similar_articles[:4], cog_instance=self)
-                message = await ctx.respond(embed=embed, view=view)
-                view.message = message
+                container = create_article_container(info, ctx.author, similar_articles[:4], 
+                                                    random_title, sprache, cog_instance=self)
+                
+                # Titel für zufälligen Artikel anpassen
+                container_random = Container()
+                container_random.add_text(f"🎲 **Zufälliger Artikel: {info['title']}**")
+                lang_info = WIKI_CONFIG['languages'].get(sprache, {'name': 'Deutsch', 'flag': '🇩🇪'})
+                container_random.add_text(f"{lang_info['flag']} {lang_info['name']} • Wikipedia")
+                container_random.add_separator()
+                
+                # Zusammenfassung und Rest vom Original-Container
+                summary_text = info['summary'][:800] + ("..." if len(info['summary']) > 800 else "")
+                container_random.add_text(summary_text)
+                
+                if info.get('categories'):
+                    container_random.add_separator()
+                    categories_text = "📂 **Kategorien:** " + ", ".join(info['categories'][:3])
+                    if len(info['categories']) > 3:
+                        categories_text += f" (+{len(info['categories']) - 3} weitere)"
+                    container_random.add_text(categories_text)
+                
+                if info.get('coordinates'):
+                    lat, lon = info['coordinates']
+                    container_random.add_text(f"🗺️ **Standort:** {lat:.2f}°N, {lon:.2f}°E")
+                
+                container_random.add_separator()
+                
+                if info.get('url'):
+                    link_button = Button(label="🔗 Vollständigen Artikel lesen", url=info['url'], 
+                                       style=discord.ButtonStyle.link)
+                    container_random.add_item(link_button)
+                
+                lang_select = LanguageSelectContainer(random_title, sprache, self)
+                container_random.add_item(lang_select)
+                
+                if similar_articles:
+                    container_random.add_separator()
+                    container_random.add_text("📚 **Ähnliche Artikel:**")
+                    for article in similar_articles[:4]:
+                        article_btn = ArticleButtonContainer(article, "similar", self)
+                        container_random.add_item(article_btn)
+                
+                container_random.add_separator()
+                
+                random_btn = RandomArticleButton(sprache, self)
+                container_random.add_item(random_btn)
+                
+                info_btn = ArticleInfoButton(info, sprache)
+                container_random.add_item(info_btn)
+                
+                refresh_btn = RefreshArticleButton(random_title, sprache, self)
+                container_random.add_item(refresh_btn)
+                
+                container_random.add_separator()
+                container_random.add_text(f"👤 Angefragt von {ctx.author.display_name}")
+                
+                view = discord.ui.View(container_random, timeout=WIKI_CONFIG['timeout'])
+                await ctx.respond(view=view)
 
             else:
                 # Mehrere zufällige Artikel
                 lang_info = WIKI_CONFIG['languages'][sprache]
-                embed = discord.Embed(
-                    title=f"🎲 {anzahl} Zufällige Artikel",
-                    description=f"Entdecke neue Themen in {lang_info['flag']} {lang_info['name']}:",
-                    color=SUCCESS_COLOR,
-                    timestamp=datetime.now()
-                )
+                container = Container()
+                container.add_text(f"🎲 **{anzahl} Zufällige Artikel**")
+                container.add_text(f"Entdecke neue Themen in {lang_info['flag']} {lang_info['name']}:")
+                container.add_separator()
 
                 random_articles = []
                 for i in range(anzahl):
@@ -863,86 +810,158 @@ class WikipediaCog(ezcord.Cog):
                         summary = clean_text(wikipedia.summary(random_title, sentences=1), 200)
                         random_articles.append(random_title)
 
-                        embed.add_field(
-                            name=f"{i + 1}. {random_title}",
-                            value=summary,
-                            inline=False
-                        )
+                        container.add_text(f"**{i + 1}. {random_title}**")
+                        container.add_text(summary)
+                        container.add_separator()
                     except:
-                        embed.add_field(
-                            name=f"{i + 1}. Artikel nicht verfügbar",
-                            value="Dieser Artikel konnte nicht geladen werden.",
-                            inline=False
-                        )
+                        container.add_text(f"**{i + 1}. Artikel nicht verfügbar**")
+                        container.add_text("Dieser Artikel konnte nicht geladen werden.")
+                        container.add_separator()
 
-                embed.set_footer(text=f"Wikipedia • {anzahl} zufällige Artikel")
+                # Buttons für die ersten Artikel
+                if random_articles:
+                    container.add_text("📚 **Artikel öffnen:**")
+                    for article in random_articles[:4]:
+                        article_btn = ArticleButtonContainer(article, "similar", self)
+                        container.add_item(article_btn)
+                
+                container.add_separator()
+                container.add_text(f"Wikipedia • {anzahl} zufällige Artikel")
 
-                # View mit den zufälligen Artikeln als Buttons
-                view = EnhancedWikiView({
-                    'title': f'{anzahl} Zufällige Artikel',
-                    'url': f'https://{lang_info["domain"]}/wiki/Special:Random',
-                    'summary': f'{anzahl} zufällig ausgewählte Artikel',
-                    'categories': [],
-                    'links': random_articles,
-                    'images': [],
-                    'language': sprache
-                }, "random", sprache, random_articles[:4], cog_instance=self)
-
-                message = await ctx.respond(embed=embed, view=view)
-                view.message = message
+                view = discord.ui.View(container, timeout=WIKI_CONFIG['timeout'])
+                await ctx.respond(view=view)
 
         except Exception as e:
-            embed = create_error_embed("Fehler beim Laden", f"Zufällige Artikel konnten nicht geladen werden: {e}")
-            await ctx.respond(embed=embed)
+            container = create_error_container("Fehler beim Laden", 
+                                              f"Zufällige Artikel konnten nicht geladen werden: {str(e)[:500]}")
+            view = discord.ui.View(container, timeout=None)
+            await ctx.respond(view=view)
         finally:
             if sprache != original_lang:
                 wikipedia.set_lang(original_lang)
                 self.current_language = original_lang
 
-    @wiki.command(name="stats", description="📊 Zeige Bot-Statistiken und Wikipedia-Informationen")
+    @slash_command(name="wiki_multisearch", description="🔍 Erweiterte Wikipedia-Suche mit mehreren Ergebnissen")
+    async def wiki_multi_search(
+            self,
+            ctx: discord.ApplicationContext,
+            suchbegriff: discord.Option(str, "Suchbegriff für erweiterte Suche", max_length=100),
+            anzahl: discord.Option(int, "Anzahl der Ergebnisse (1-15)", min_value=1, max_value=15, default=8),
+            sprache: discord.Option(
+                str,
+                "Sprache für die Suche",
+                choices=[
+                    discord.OptionChoice(name="Deutsch", value="de"),
+                    discord.OptionChoice(name="English", value="en"),
+                    discord.OptionChoice(name="Français", value="fr"),
+                    discord.OptionChoice(name="Español", value="es"),
+                    discord.OptionChoice(name="Italiano", value="it"),
+                    discord.OptionChoice(name="日本語", value="ja"),
+                    discord.OptionChoice(name="Русский", value="ru"),
+                ],
+                default="de",
+                required=False
+            )
+    ):
+        await ctx.defer()
+
+        original_lang = self.current_language
+        if sprache != original_lang:
+            wikipedia.set_lang(sprache)
+            self.current_language = sprache
+
+        try:
+            results = wikipedia.search(suchbegriff, results=anzahl)
+
+            if not results:
+                container = create_error_container(
+                    "Keine Ergebnisse",
+                    f"Keine Artikel für **'{suchbegriff}'** in {WIKI_CONFIG['languages'][sprache]['name']} gefunden."
+                )
+                view = discord.ui.View(container, timeout=None)
+                await ctx.respond(view=view)
+                return
+
+            lang_info = WIKI_CONFIG['languages'][sprache]
+            container = Container()
+            container.add_text(f"🔍 **Suchergebnisse für '{suchbegriff}'**")
+            container.add_text(f"**{len(results)} Ergebnisse** in {lang_info['flag']} {lang_info['name']}:")
+            container.add_separator()
+
+            for i, result in enumerate(results, 1):
+                try:
+                    summary = wikipedia.summary(result, sentences=1)
+                    summary = clean_text(summary, 150)
+                except:
+                    summary = "Keine Vorschau verfügbar."
+
+                container.add_text(f"**{i}. {result}**")
+                container.add_text(summary)
+                container.add_separator()
+
+            # Erste Ergebnisse als Buttons
+            container.add_text("📚 **Artikel öffnen:**")
+            for result in results[:4]:
+                article_btn = ArticleButtonContainer(result, "similar", self)
+                container.add_item(article_btn)
+
+            container.add_separator()
+            container.add_text(f"Wikipedia • {len(results)} Ergebnisse • Sprache: {lang_info['name']}")
+
+            view = discord.ui.View(container, timeout=WIKI_CONFIG['timeout'])
+            await ctx.respond(view=view)
+
+        except Exception as e:
+            container = create_error_container("Suchfehler", f"Fehler bei der Suche: {str(e)[:500]}")
+            view = discord.ui.View(container, timeout=None)
+            await ctx.respond(view=view)
+        finally:
+            if sprache != original_lang:
+                wikipedia.set_lang(original_lang)
+                self.current_language = original_lang
+
+    @slash_command(name="wiki_stats", description="📊 Zeige Bot-Statistiken und Wikipedia-Informationen")
     async def wiki_statistics(self, ctx: discord.ApplicationContext):
-        # Uptime berechnen
         uptime = datetime.now() - self.stats['start_time']
         uptime_str = f"{uptime.days}d {uptime.seconds // 3600}h {(uptime.seconds // 60) % 60}m"
 
-        embed = discord.Embed(
-            title="📊 Wikipedia Bot Statistiken",
-            color=INFO_COLOR,
-            timestamp=datetime.now()
-        )
-
-        # Grundlegende Statistiken
-        embed.add_field(name="🔍 Suchanfragen", value=f"{self.stats['searches']:,}", inline=True)
-        embed.add_field(name="📖 Artikel angezeigt", value=f"{self.stats['articles_viewed']:,}", inline=True)
-        embed.add_field(name="⏱️ Laufzeit", value=uptime_str, inline=True)
-
-        # Sprach-Statistiken
+        container = Container()
+        container.add_text("📊 **Wikipedia Bot Statistiken**")
+        container.add_separator()
+        
+        stats_text = f"🔍 **Suchanfragen:** {self.stats['searches']:,}\n"
+        stats_text += f"📖 **Artikel angezeigt:** {self.stats['articles_viewed']:,}\n"
+        stats_text += f"⏱️ **Laufzeit:** {uptime_str}"
+        container.add_text(stats_text)
+        
+        container.add_separator()
+        
         lang_names = [WIKI_CONFIG['languages'][lang]['name'] for lang in self.stats['languages_used']]
-        embed.add_field(
-            name="🌐 Verwendete Sprachen",
-            value=", ".join(lang_names) if lang_names else "Keine",
-            inline=False
-        )
-
-        # Verfügbare Sprachen
+        if lang_names:
+            container.add_text(f"🌐 **Verwendete Sprachen:** {', '.join(lang_names)}")
+        else:
+            container.add_text("🌐 **Verwendete Sprachen:** Keine")
+        
+        container.add_separator()
+        
         all_langs = [f"{info['flag']} {info['name']}" for info in WIKI_CONFIG['languages'].values()]
-        embed.add_field(
-            name="📚 Verfügbare Sprachen",
-            value=", ".join(all_langs),
-            inline=False
-        )
+        container.add_text("📚 **Verfügbare Sprachen:**")
+        container.add_text(", ".join(all_langs))
+        
+        container.add_separator()
+        
+        tech_text = f"💾 **Cache-Einträge:** {len(wiki_cache.cache)}\n"
+        tech_text += f"⚡ **Rate Limiting:** Aktiviert\n"
+        tech_text += f"🔧 **Features:** Suche, Zufällig, Multi-Sprache, Cache"
+        container.add_text(tech_text)
+        
+        container.add_separator()
+        container.add_text("Wikipedia Bot • Erweiterte Funktionen verfügbar")
 
-        # Cache-Statistiken
-        embed.add_field(name="💾 Cache-Einträge", value=f"{len(wiki_cache.cache)}", inline=True)
-        embed.add_field(name="⚡ Rate Limiting", value="Aktiviert", inline=True)
-        embed.add_field(name="🔧 Features", value="Suche, Zufällig, Multi-Sprache, Cache", inline=True)
+        view = discord.ui.View(container, timeout=None)
+        await ctx.respond(view=view)
 
-        embed.set_footer(text="Wikipedia Bot • Erweiterte Funktionen verfügbar")
-        embed.set_thumbnail(url=ctx.bot.user.avatar.url)
-
-        await ctx.respond(embed=embed)
-
-    @wiki.command(name="category", description="📂 Durchsuche Wikipedia-Kategorien")
+    @slash_command(name="wiki_category", description="📂 Durchsuche Wikipedia-Kategorien")
     async def wiki_category(
             self,
             ctx: discord.ApplicationContext,
@@ -971,28 +990,25 @@ class WikipediaCog(ezcord.Cog):
             self.current_language = sprache
 
         try:
-            # Suche nach Artikeln, die zur Kategorie passen
             search_results = wikipedia.search(f"Kategorie:{kategorie}", results=10)
             if not search_results:
                 search_results = wikipedia.search(kategorie, results=10)
 
             if not search_results:
-                embed = create_error_embed(
+                container = create_error_container(
                     "Kategorie nicht gefunden",
                     f"Keine Artikel in der Kategorie **'{kategorie}'** gefunden."
                 )
-                await ctx.respond(embed=embed)
+                view = discord.ui.View(container, timeout=None)
+                await ctx.respond(view=view)
                 return
 
             lang_info = WIKI_CONFIG['languages'][sprache]
-            embed = discord.Embed(
-                title=f"📂 Kategorie: {kategorie}",
-                description=f"Artikel in dieser Kategorie ({lang_info['flag']} {lang_info['name']}):",
-                color=INFO_COLOR,
-                timestamp=datetime.now()
-            )
+            container = Container()
+            container.add_text(f"📂 **Kategorie: {kategorie}**")
+            container.add_text(f"Artikel in dieser Kategorie ({lang_info['flag']} {lang_info['name']}):")
+            container.add_separator()
 
-            # Erste 8 Ergebnisse anzeigen
             for i, result in enumerate(search_results[:8], 1):
                 try:
                     summary = wikipedia.summary(result, sentences=1)
@@ -1000,37 +1016,33 @@ class WikipediaCog(ezcord.Cog):
                 except:
                     summary = "Keine Beschreibung verfügbar."
 
-                embed.add_field(
-                    name=f"{i}. {result}",
-                    value=summary,
-                    inline=False
-                )
+                container.add_text(f"**{i}. {result}**")
+                container.add_text(summary)
+                container.add_separator()
 
-            embed.set_footer(text=f"Wikipedia • Kategorie-Suche • {len(search_results)} Ergebnisse")
+            # Artikel als Buttons
+            container.add_text("📚 **Artikel öffnen:**")
+            for result in search_results[:4]:
+                article_btn = ArticleButtonContainer(result, "category", self)
+                container.add_item(article_btn)
 
-            # View mit Kategorie-Artikeln
-            view = EnhancedWikiView({
-                'title': f'Kategorie: {kategorie}',
-                'url': f'https://{lang_info["domain"]}/wiki/Category:{kategorie}',
-                'summary': f'Artikel aus der Kategorie {kategorie}',
-                'categories': [kategorie],
-                'links': search_results,
-                'images': [],
-                'language': sprache
-            }, kategorie, sprache, search_results[:4], cog_instance=self)
+            container.add_separator()
+            container.add_text(f"Wikipedia • Kategorie-Suche • {len(search_results)} Ergebnisse")
 
-            message = await ctx.respond(embed=embed, view=view)
-            view.message = message
+            view = discord.ui.View(container, timeout=WIKI_CONFIG['timeout'])
+            await ctx.respond(view=view)
 
         except Exception as e:
-            embed = create_error_embed("Kategorie-Fehler", f"Fehler beim Laden der Kategorie: {str(e)[:500]}")
-            await ctx.respond(embed=embed)
+            container = create_error_container("Kategorie-Fehler", 
+                                              f"Fehler beim Laden der Kategorie: {str(e)[:500]}")
+            view = discord.ui.View(container, timeout=None)
+            await ctx.respond(view=view)
         finally:
             if sprache != original_lang:
                 wikipedia.set_lang(original_lang)
                 self.current_language = original_lang
 
-    @wiki.command(name="cache", description="🗑️ Cache-Management (nur für Administratoren)")
+    @slash_command(name="wiki_cache", description="🗑️ Cache-Management (nur für Administratoren)")
     @discord.default_permissions(administrator=True)
     async def wiki_cache_management(
             self,
@@ -1046,8 +1058,10 @@ class WikipediaCog(ezcord.Cog):
             )
     ):
         if not ctx.author.guild_permissions.administrator:
-            embed = create_error_embed("Berechtigung verweigert", "Nur Administratoren können Cache-Befehle verwenden.")
-            await ctx.respond(embed=embed, ephemeral=True)
+            container = create_error_container("Berechtigung verweigert", 
+                                              "Nur Administratoren können Cache-Befehle verwenden.")
+            view = discord.ui.View(container, timeout=None)
+            await ctx.respond(view=view, ephemeral=True)
             return
 
         await ctx.defer(ephemeral=True)
@@ -1061,28 +1075,31 @@ class WikipediaCog(ezcord.Cog):
                 if now - timestamp >= timedelta(seconds=WIKI_CONFIG['cache_duration']):
                     expired_count += 1
 
-            embed = discord.Embed(
-                title="💾 Cache-Status",
-                color=INFO_COLOR
-            )
-            embed.add_field(name="📊 Gesamt-Einträge", value=f"{total_entries}", inline=True)
-            embed.add_field(name="⏰ Abgelaufene Einträge", value=f"{expired_count}", inline=True)
-            embed.add_field(name="✅ Aktive Einträge", value=f"{total_entries - expired_count}", inline=True)
-            embed.add_field(name="⚙️ Cache-Dauer", value=f"{WIKI_CONFIG['cache_duration']} Sekunden", inline=True)
+            container = Container()
+            container.add_text("💾 **Cache-Status**")
+            container.add_separator()
+            
+            status_text = f"📊 **Gesamt-Einträge:** {total_entries}\n"
+            status_text += f"⏰ **Abgelaufene Einträge:** {expired_count}\n"
+            status_text += f"✅ **Aktive Einträge:** {total_entries - expired_count}\n"
+            status_text += f"⚙️ **Cache-Dauer:** {WIKI_CONFIG['cache_duration']} Sekunden"
+            container.add_text(status_text)
 
-            await ctx.respond(embed=embed, ephemeral=True)
+            view = discord.ui.View(container, timeout=None)
+            await ctx.respond(view=view, ephemeral=True)
 
         elif aktion == "clear":
             old_count = len(wiki_cache.cache)
             wiki_cache.cache.clear()
             wiki_cache.timestamps.clear()
 
-            embed = discord.Embed(
-                title="🗑️ Cache geleert",
-                description=f"**{old_count}** Einträge wurden entfernt.",
-                color=SUCCESS_COLOR
-            )
-            await ctx.respond(embed=embed, ephemeral=True)
+            container = Container()
+            container.add_text("🗑️ **Cache geleert**")
+            container.add_separator()
+            container.add_text(f"**{old_count}** Einträge wurden entfernt.")
+
+            view = discord.ui.View(container, timeout=None)
+            await ctx.respond(view=view, ephemeral=True)
 
         elif aktion == "cleanup":
             old_count = len(wiki_cache.cache)
@@ -1090,49 +1107,13 @@ class WikipediaCog(ezcord.Cog):
             new_count = len(wiki_cache.cache)
             removed = old_count - new_count
 
-            embed = discord.Embed(
-                title="⏰ Cache bereinigt",
-                description=f"**{removed}** abgelaufene Einträge entfernt.\n**{new_count}** Einträge verbleiben.",
-                color=SUCCESS_COLOR
-            )
-            await ctx.respond(embed=embed, ephemeral=True)
+            container = Container()
+            container.add_text("⏰ **Cache bereinigt**")
+            container.add_separator()
+            container.add_text(f"**{removed}** abgelaufene Einträge entfernt.\n**{new_count}** Einträge verbleiben.")
 
-    # Context Menu Commands für erweiterte Funktionen
-    @discord.message_command(name="Wikipedia Suche")
-    async def context_wiki_search(self, ctx: discord.ApplicationContext, message: discord.Message):
-        """Kontext-Menü für Wikipedia-Suche aus Nachrichten"""
-        if not message.content or len(message.content) > 100:
-            await ctx.respond("❌ Nachricht ist leer oder zu lang für eine Suche.", ephemeral=True)
-            return
-
-        # Ersten Begriff aus der Nachricht extrahieren
-        words = message.content.split()
-        search_term = " ".join(words[:3])  # Erste 3 Wörter
-
-        await ctx.defer(ephemeral=True)
-
-        try:
-            page = wikipedia.page(search_term)
-            info = format_page_info(page, 'de')
-
-            embed = create_main_embed(info, ctx.author, ephemeral=True)
-            embed.title = f"📖 Schnellsuche: {info['title']}"
-
-            similar_articles = wikipedia.search(search_term, results=4)
-            similar_articles = [a for a in similar_articles if a.lower() != info['title'].lower()]
-
-            view = EnhancedWikiView(info, search_term, 'de', similar_articles[:3], cog_instance=self)
-            await ctx.respond(embed=embed, view=view, ephemeral=True)
-
-        except wikipedia.DisambiguationError as e:
-            embed = create_disambiguation_embed(search_term, e.options[:6])
-            await ctx.respond(embed=embed, ephemeral=True)
-        except wikipedia.PageError:
-            embed = create_error_embed("Nicht gefunden", f"Kein Artikel für '{search_term}' gefunden.")
-            await ctx.respond(embed=embed, ephemeral=True)
-        except Exception as e:
-            embed = create_error_embed("Fehler", f"Suche fehlgeschlagen: {str(e)[:200]}")
-            await ctx.respond(embed=embed, ephemeral=True)
+            view = discord.ui.View(container, timeout=None)
+            await ctx.respond(view=view, ephemeral=True)
 
 
 def setup(bot):
