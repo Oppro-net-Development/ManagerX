@@ -344,7 +344,14 @@ class ManagerXBot(ezcord.Bot):
             return
         
         # Process commands
-        await self.process_commands(message)
+        # Some frameworks (commands.Bot) implement process_commands for text commands.
+        # ezcord.Bot may not provide it — call it only when available to avoid AttributeError.
+        proc = getattr(self, 'process_commands', None)
+        if callable(proc):
+            try:
+                await proc(message)
+            except Exception as e:
+                ColoredOutput.error("COMMANDS", f"process_commands raised: {e}")
     
     def load_all_cogs(self):
         """Lädt alle Cogs"""

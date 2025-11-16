@@ -9,11 +9,12 @@ import logging
 import re
 import time
 from typing import List, Optional, Dict, Tuple
+import aiohttp
+import io
 import json
 from datetime import datetime, timedelta
 import ezcord
 from collections import defaultdict
-
 from discord.ui import Container
 
 # Logger konfigurieren
@@ -22,26 +23,114 @@ logger = logging.getLogger(__name__)
 
 class GlobalChatConfig:
     """Zentrale Konfiguration für GlobalChat"""
-    RATE_LIMIT_MESSAGES = 5
+    RATE_LIMIT_MESSAGES = 15
     RATE_LIMIT_SECONDS = 60
     CACHE_DURATION = 180  # 3 Minuten
     CLEANUP_DAYS = 30
-    MIN_MESSAGE_LENGTH = 2
+    MIN_MESSAGE_LENGTH = 0  # Erlaube Nachrichten ohne Text (nur Medien)
     DEFAULT_MAX_MESSAGE_LENGTH = 1900
     DEFAULT_EMBED_COLOR = '#5865F2'
     
+    # Medien-Limits
+    MAX_FILE_SIZE_MB = 25  # Discord-Standard
+    MAX_ATTACHMENTS = 10
+    ALLOWED_IMAGE_FORMATS = ['png', 'jpg', 'jpeg', 'gif', 'webp', 'bmp']
+    ALLOWED_VIDEO_FORMATS = ['mp4', 'mov', 'webm', 'avi', 'mkv']
+    ALLOWED_AUDIO_FORMATS = ['mp3', 'wav', 'ogg', 'm4a', 'flac']
+    ALLOWED_DOCUMENT_FORMATS = ['pdf', 'txt', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'zip', 'rar', '7z']
+    
     # Bot Owner IDs
-    BOT_OWNERS = [1093555256689959005]
+    BOT_OWNERS = [1093555256689959005, 1427994077332373554]
     
     # Content Filter Patterns
     DISCORD_INVITE_PATTERN = r'(?i)\b(discord\.gg|discord\.com/invite|discordapp\.com/invite)/[a-zA-Z0-9]+\b'
     URL_PATTERN = r'(?i)\bhttps?://(?:[a-zA-Z0-9]|[$-_@.&+]|[!*\\(\\),]|(?:%[0-9a-fA-F]{2}))+\b'
     
-    # NSFW Keywords (erweitert)
+    # NSFW Keywords
     NSFW_KEYWORDS = [
         'nsfw', 'porn', 'sex', 'xxx', 'nude', 'hentai', 
         'dick', 'pussy', 'cock', 'tits', 'ass', 'fuck'
     ]
+
+
+class MediaHandler:
+    """Verarbeitet alle Arten von Medien und Anhängen"""
+    
+    def __init__(self, config: GlobalChatConfig):
+        self.config = config
+    
+    def validate_attachments(self, attachments: List[discord.Attachment]) -> Tuple[bool, str, List[discord.Attachment]]:
+        """Validiert Attachments und gibt valide zurück"""
+        if not attachments:
+            return True, "", []
+        
+        if len(attachments) > self.config.MAX_ATTACHMENTS:
+            return False, f"Zu viele Anhänge (max. {self.config.MAX_ATTACHMENTS})", []
+        
+        valid_attachments = []
+        max_size_bytes = self.config.MAX_FILE_SIZE_MB * 1024 * 1024
+        
+        for attachment in attachments:
+            # Größe prüfen
+            if attachment.size > max_size_bytes:
+                return False, f"Datei '{attachment.filename}' ist zu groß (max. {self.config.MAX_FILE_SIZE_MB}MB)", []
+            
+            # Dateiformat prüfen
+            file_ext = attachment.filename.split('.')[-1].lower() if '.' in attachment.filename else ''
+            
+            all_allowed = (
+                self.config.ALLOWED_IMAGE_FORMATS +
+                self.config.ALLOWED_VIDEO_FORMATS +
+                self.config.ALLOWED_AUDIO_FORMATS +
+                self.config.ALLOWED_DOCUMENT_FORMATS
+            )
+            
+            if file_ext and file_ext not in all_allowed:
+                return False, f"Dateiformat '.{file_ext}' nicht erlaubt", []
+            
+            valid_attachments.append(attachment)
+        
+        return True, "", valid_attachments
+    
+    def categorize_attachment(self, attachment: discord.Attachment) -> str:
+        """Kategorisiert einen Anhang nach Typ"""
+        if not attachment.filename or '.' not in attachment.filename:
+            return 'other'
+        
+        file_ext = attachment.filename.split('.')[-1].lower()
+        
+        if file_ext in self.config.ALLOWED_IMAGE_FORMATS:
+            return 'image'
+        elif file_ext in self.config.ALLOWED_VIDEO_FORMATS:
+            return 'video'
+        elif file_ext in self.config.ALLOWED_AUDIO_FORMATS:
+            return 'audio'
+        elif file_ext in self.config.ALLOWED_DOCUMENT_FORMATS:
+            return 'document'
+        else:
+            return 'other'
+    
+    def get_attachment_icon(self, attachment: discord.Attachment) -> str:
+        """Gibt passendes Icon für Attachment-Typ zurück"""
+        category = self.categorize_attachment(attachment)
+        
+        icons = {
+            'image': '🖼️',
+            'video': '🎥',
+            'audio': '🎵',
+            'document': '📄',
+            'other': '📎'
+        }
+        
+        return icons.get(category, '📎')
+    
+    def format_file_size(self, size_bytes: int) -> str:
+        """Formatiert Dateigröße leserlich"""
+        for unit in ['B', 'KB', 'MB']:
+            if size_bytes < 1024.0:
+                return f"{size_bytes:.1f} {unit}"
+            size_bytes /= 1024.0
+        return f"{size_bytes:.1f} GB"
 
 
 class MessageValidator:
@@ -49,6 +138,7 @@ class MessageValidator:
     
     def __init__(self, config: GlobalChatConfig):
         self.config = config
+        self.media_handler = MediaHandler(config)
         self._compile_patterns()
     
     def _compile_patterns(self):
@@ -69,20 +159,27 @@ class MessageValidator:
         if db.is_blacklisted('guild', message.guild.id):
             return False, "Guild auf Blacklist"
         
-        # Leere Nachrichten
-        if not message.content and not message.attachments:
+        # Leere Nachrichten (ohne Text UND ohne Anhänge/Sticker)
+        if not message.content and not message.attachments and not message.stickers:
             return False, "Leere Nachricht"
         
-        # Nachrichtenlänge
+        # Nachrichtenlänge (nur wenn Text vorhanden)
         if message.content:
             content_length = len(message.content.strip())
             
-            if content_length < self.config.MIN_MESSAGE_LENGTH:
+            # Mindestlänge nur bei reinen Text-Nachrichten
+            if content_length < self.config.MIN_MESSAGE_LENGTH and not message.attachments and not message.stickers:
                 return False, "Zu kurze Nachricht"
             
             max_length = settings.get('max_message_length', self.config.DEFAULT_MAX_MESSAGE_LENGTH)
             if content_length > max_length:
                 return False, f"Nachricht zu lang (max. {max_length} Zeichen)"
+        
+        # Attachments validieren
+        if message.attachments:
+            valid, reason, _ = self.media_handler.validate_attachments(message.attachments)
+            if not valid:
+                return False, f"Ungültige Anhänge: {reason}"
         
         # Content Filter
         if settings.get('filter_enabled', True):
@@ -106,10 +203,6 @@ class MessageValidator:
         if self.invite_pattern.search(content):
             return True, "Discord Invite"
         
-        # Optional: URLs filtern (auskommentiert, da manchmal gewünscht)
-        # if self.url_pattern.search(content):
-        #     return True, "URL"
-        
         return False, ""
     
     def check_nsfw_content(self, content: str) -> bool:
@@ -121,7 +214,6 @@ class MessageValidator:
         
         # Keyword-Check mit Wortgrenzen
         for keyword in self.config.NSFW_KEYWORDS:
-            # Mit Wortgrenzen für bessere Genauigkeit
             pattern = r'\b' + re.escape(keyword) + r'\b'
             if re.search(pattern, content_lower):
                 return True
@@ -144,21 +236,36 @@ class MessageValidator:
 
 
 class EmbedBuilder:
-    """Erstellt formatierte Embeds für GlobalChat"""
+    """Erstellt formatierte Embeds für GlobalChat mit vollständigem Medien-Support"""
     
-    def __init__(self, config: GlobalChatConfig):
+    def __init__(self, config: GlobalChatConfig, bot=None):
         self.config = config
+        self.media_handler = MediaHandler(config)
+        self.bot = bot  # Bot für Message-Fetching
     
-    async def create_message_embed(self, message: discord.Message, settings: Dict) -> discord.Embed:
-        """Erstellt ein verbessertes Embed für GlobalChat-Nachrichten"""
+    async def create_message_embed(self, message: discord.Message, settings: Dict, attachment_data: List[Tuple[str, bytes, str]] = None) -> Tuple[discord.Embed, List[Tuple[str, bytes]]]:
+        """Erstellt ein verbessertes Embed mit vollständigem Medien-Support
+        
+        attachment_data: Liste von (filename, bytes, content_type) - schon heruntergeladene Dateien
+        Gibt (embed, [(filename, bytes), ...]) zurück - Bytes statt discord.File!
+        """
+        if attachment_data is None:
+            attachment_data = []
+        
         content = self._clean_content(message.content)
         
         # Embed-Farbe
         embed_color = self._parse_color(settings.get('embed_color', self.config.DEFAULT_EMBED_COLOR))
         
-        # Beschreibung mit Fallback
-        description = content if content else "*Medien oder Anhang*"
+        # Beschreibung
+        if content:
+            description = content
+        elif message.attachments or message.stickers or attachment_data:
+            description = "*Medien-Nachricht*"
+        else:
+            description = "*Keine Beschreibung*"
         
+        # Embed erstellen
         embed = discord.Embed(
             description=description,
             color=embed_color,
@@ -172,23 +279,327 @@ class EmbedBuilder:
             icon_url=message.author.display_avatar.url
         )
         
-        # Footer mit Server-Info
-        footer_text = f"📍 {message.guild.name} • #{message.channel.name}"
+        # Footer mit Server-Info UND Original-Message-ID (für Reply-Tracking)
+        footer_text = f"📍 {message.guild.name} • #{message.channel.name} • ID:{message.id}"
         embed.set_footer(
             text=footer_text,
             icon_url=message.guild.icon.url if message.guild.icon else None
         )
         
-        # Anhänge verarbeiten
-        if message.attachments:
-            self._process_attachments(embed, message.attachments)
+        # Reply-Kontext hinzufügen (robust, ohne invasive Änderungen)
+        if message.reference:
+            try:
+                # Versuche zuerst die gecachte referenzierte Nachricht
+                replied_msg = message.reference.resolved
+
+                # Falls nicht im Cache, versuche die referenzierte Nachricht aus dem referenzierten Kanal zu holen
+                if not replied_msg and getattr(message.reference, 'message_id', None):
+                    ref_channel = None
+                    ref_chan_id = getattr(message.reference, 'channel_id', None)
+                    if ref_chan_id:
+                        # Versuche zuerst den Kanal vom Bot-Cache
+                        ref_channel = self.bot.get_channel(ref_chan_id)
+                        # Fallback auf Guild-Kanal
+                        if not ref_channel and message.guild:
+                            try:
+                                ref_channel = message.guild.get_channel(ref_chan_id)
+                            except Exception:
+                                ref_channel = None
+                    if not ref_channel:
+                        ref_channel = message.channel
+
+                    if ref_channel:
+                        try:
+                            replied_msg = await ref_channel.fetch_message(message.reference.message_id)
+                        except Exception:
+                            replied_msg = None
+
+                # Wenn wir eine referenzierte Nachricht haben, bereite Vorschau vor
+                if isinstance(replied_msg, discord.Message):
+                    # Text-Vorschau (bevorzuge echten content)
+                    preview = replied_msg.content or ""
+
+                    # Wenn die referenzierte Nachricht das Relay-Bot-Embed ist, versuche Text aus dem Embed
+                    if not preview and replied_msg.embeds:
+                        try:
+                            preview = replied_msg.embeds[0].description or ""
+                        except Exception:
+                            preview = ""
+
+                    # Fallback auf Anhänge/Sticker
+                    if not preview:
+                        if replied_msg.attachments:
+                            preview = f"📎 {len(replied_msg.attachments)} Datei(en)"
+                        elif replied_msg.stickers:
+                            preview = "🎨 Sticker"
+                        else:
+                            preview = "*(Leere Nachricht)*"
+
+                    preview = self._clean_content(preview)
+                    preview_short = (preview[:200] + "...") if len(preview) > 200 else preview
+
+                    # Author bestimmen: falls die referenzierte Nachricht vom Bot ist, versuche embed.author
+                    author_display = None
+                    try:
+                        if replied_msg.author and replied_msg.author.id == getattr(self.bot, 'user', None).id and replied_msg.embeds:
+                            emb = replied_msg.embeds[0]
+                            if emb.author and emb.author.name:
+                                author_display = emb.author.name
+                    except Exception:
+                        author_display = None
+
+                    if not author_display:
+                        try:
+                            author_display = replied_msg.author.display_name
+                        except Exception:
+                            author_display = "Unbekannter User"
+
+                    # Herkunft (Server • #channel)
+                    origin = None
+                    try:
+                        if getattr(replied_msg, 'guild', None) and getattr(replied_msg, 'channel', None):
+                            origin = f"{replied_msg.guild.name} • #{replied_msg.channel.name}"
+                    except Exception:
+                        origin = None
+
+                    reply_field = f"**{author_display}:** {preview_short}"
+                    if origin:
+                        reply_field += f"\n_{origin}_"
+
+                    embed.add_field(name="↩️ Antwort (Vorschau)", value=reply_field, inline=False)
+            except Exception:
+                # Never fail building the embed just because reply resolution failed
+                pass
         
-        # Sticker Support
+        # Medien verarbeiten mit heruntergeladenen Dateien
+        files_to_upload = await self._process_media(embed, message, attachment_data)
+
+        # Rückgabe: Embed + Liste von discord.File Objekten
+        return embed, files_to_upload
+    
+    async def _process_media(self, embed: discord.Embed, message: discord.Message, attachment_data: List[Tuple[str, bytes, str]] = None) -> List[Tuple[str, bytes]]:
+        """Verarbeitet alle Medien-Typen mit heruntergeladenen Anhängen
+        
+        attachment_data: Liste von (filename, bytes, content_type) - bereits heruntergeladen
+        Gibt Liste von (filename, bytes) zurück - NOT discord.File!
+        """
+        if attachment_data is None:
+            attachment_data = []
+        
+        attachment_bytes: List[Tuple[str, bytes]] = []
+
+        # === HERUNTERGELADENE ATTACHMENTS ===
+        if attachment_data:
+            attachment_bytes.extend(self._process_downloaded_attachments(embed, attachment_data))
+
+        # === STICKERS ===
         if message.stickers:
-            sticker_text = " • ".join([f":{sticker.name}:" for sticker in message.stickers])
-            embed.add_field(name="🎨 Sticker", value=sticker_text, inline=False)
+            self._process_stickers(embed, message.stickers)
+
+        # === ORIGINAL EMBEDS (z.B. von Links) ===
+        if message.embeds:
+            self._process_embeds(embed, message.embeds)
+
+        return attachment_bytes
+    
+    def _process_downloaded_attachments(self, embed: discord.Embed, attachment_data: List[Tuple[str, bytes, str]]) -> List[Tuple[str, bytes]]:
+        """Verarbeitet heruntergeladene Anhänge und gibt (filename, bytes) zurück
         
-        return embed
+        attachment_data: [(filename, bytes_data, content_type), ...]
+        Gibt [(filename, bytes), ...] zurück - NICHT discord.File!
+        """
+        attachment_bytes: List[Tuple[str, bytes]] = []
+        
+        # Kategorisiere nach Typ
+        images = []
+        videos = []
+        audios = []
+        documents = []
+        others = []
+        
+        for filename, data, content_type in attachment_data:
+            # Bestimme Dateityp anhand von content_type und Dateiendung
+            category = self._get_attachment_category(filename, content_type)
+            
+            if category == 'image':
+                images.append((filename, data))
+            elif category == 'video':
+                videos.append((filename, data))
+            elif category == 'audio':
+                audios.append((filename, data))
+            elif category == 'document':
+                documents.append((filename, data))
+            else:
+                others.append((filename, data))
+
+        # === BILDER ===
+        if images:
+            # Erstes Bild als Attachment für embed.set_image()
+            first_name, first_data = images[0]
+            embed.set_image(url=f"attachment://{first_name}")
+            attachment_bytes.append((first_name, first_data))
+
+            # Weitere Bilder
+            if len(images) > 1:
+                image_links = []
+                for i, (img_name, img_data) in enumerate(images[1:], start=2):
+                    size = len(img_data)
+                    size_str = self.media_handler.format_file_size(size)
+                    image_links.append(f"🖼️ {img_name} ({size_str})")
+                    attachment_bytes.append((img_name, img_data))
+                
+                if image_links:
+                    embed.add_field(
+                        name="📷 Weitere Bilder",
+                        value="\n".join(image_links[:5]),  # Max 5
+                        inline=False
+                    )
+
+        # === VIDEOS ===
+        if videos:
+            video_links = []
+            for video_name, video_data in videos:
+                size = len(video_data)
+                size_str = self.media_handler.format_file_size(size)
+                video_links.append(f"🎥 {video_name} ({size_str})")
+                attachment_bytes.append((video_name, video_data))
+            
+            if video_links:
+                embed.add_field(
+                    name="🎬 Videos",
+                    value="\n".join(video_links[:3]),  # Max 3
+                    inline=False
+                )
+
+        # === AUDIO ===
+        if audios:
+            audio_links = []
+            for audio_name, audio_data in audios:
+                size = len(audio_data)
+                size_str = self.media_handler.format_file_size(size)
+                audio_links.append(f"🎵 {audio_name} ({size_str})")
+                attachment_bytes.append((audio_name, audio_data))
+            
+            if audio_links:
+                embed.add_field(
+                    name="🎧 Audio-Dateien",
+                    value="\n".join(audio_links[:3]),  # Max 3
+                    inline=False
+                )
+
+        # === DOKUMENTE ===
+        if documents:
+            doc_links = []
+            for doc_name, doc_data in documents:
+                size = len(doc_data)
+                size_str = self.media_handler.format_file_size(size)
+                doc_links.append(f"📄 {doc_name} ({size_str})")
+                attachment_bytes.append((doc_name, doc_data))
+            
+            if doc_links:
+                embed.add_field(
+                    name="📦 Dateien",
+                    value="\n".join(doc_links[:5]),  # Max 5
+                    inline=False
+                )
+
+        # === SONSTIGE DATEIEN ===
+        if others:
+            other_links = []
+            for other_name, other_data in others:
+                size = len(other_data)
+                size_str = self.media_handler.format_file_size(size)
+                other_links.append(f"📎 {other_name} ({size_str})")
+                attachment_bytes.append((other_name, other_data))
+            
+            if other_links:
+                embed.add_field(
+                    name="📎 Sonstige Dateien",
+                    value="\n".join(other_links[:5]),  # Max 5
+                    inline=False
+                )
+
+        return attachment_bytes
+    
+    def _get_attachment_category(self, filename: str, content_type: str = "") -> str:
+        """Bestimmt Kategorie eines Attachments anhand Dateiname und Content-Type"""
+        if not filename:
+            return 'other'
+        
+        file_ext = filename.split('.')[-1].lower() if '.' in filename else ''
+        
+        # Prüfe Extension
+        if file_ext in self.config.ALLOWED_IMAGE_FORMATS or 'image' in content_type.lower():
+            return 'image'
+        elif file_ext in self.config.ALLOWED_VIDEO_FORMATS or 'video' in content_type.lower():
+            return 'video'
+        elif file_ext in self.config.ALLOWED_AUDIO_FORMATS or 'audio' in content_type.lower():
+            return 'audio'
+        elif file_ext in self.config.ALLOWED_DOCUMENT_FORMATS or 'application' in content_type.lower():
+            return 'document'
+        
+        return 'other'
+    
+    def _process_stickers(self, embed: discord.Embed, stickers: List[discord.Sticker]):
+        """Verarbeitet Discord-Sticker"""
+        sticker_info = []
+        
+        for sticker in stickers[:3]:  # Max 3 Sticker
+            # Sticker-URL (wenn verfügbar)
+            if sticker.url:
+                sticker_info.append(f"[:{sticker.name}:]({sticker.url})")
+            else:
+                sticker_info.append(f":{sticker.name}:")
+        
+        if sticker_info:
+            embed.add_field(
+                name="🎨 Sticker",
+                value=" • ".join(sticker_info),
+                inline=False
+            )
+            
+            # Erstes Sticker als Thumbnail (wenn verfügbar und kein Bild)
+            if stickers[0].url and not embed.image:
+                embed.set_thumbnail(url=stickers[0].url)
+    
+    def _process_embeds(self, main_embed: discord.Embed, message_embeds: List[discord.Embed]):
+        """Verarbeitet Original-Embeds (z.B. von YouTube, Twitter, etc.)"""
+        
+        # Nur Link-Previews verarbeiten (typ: rich, link, video, image)
+        link_embeds = []
+        
+        for emb in message_embeds[:2]:  # Max 2 Embeds
+            if emb.type in ['rich', 'link', 'video', 'image', 'article']:
+                
+                info_parts = []
+                
+                # Titel
+                if emb.title:
+                    if emb.url:
+                        info_parts.append(f"**[{emb.title}]({emb.url})**")
+                    else:
+                        info_parts.append(f"**{emb.title}**")
+                
+                # Beschreibung (gekürzt)
+                if emb.description:
+                    desc = emb.description[:150]
+                    if len(emb.description) > 150:
+                        desc += "..."
+                    info_parts.append(desc)
+                
+                # Provider (z.B. YouTube, Twitter)
+                if emb.provider:
+                    info_parts.append(f"*via {emb.provider.name}*")
+                
+                if info_parts:
+                    link_embeds.append("\n".join(info_parts))
+        
+        if link_embeds:
+            main_embed.add_field(
+                name="🔗 Verlinkte Inhalte",
+                value="\n\n".join(link_embeds),
+                inline=False
+            )
     
     def _clean_content(self, content: str) -> str:
         """Bereinigt Nachrichteninhalt"""
@@ -232,7 +643,7 @@ class EmbedBuilder:
             badges.append("💎")
             roles.append("Booster")
         
-        # Account-Alter Badge (optional)
+        # Account-Alter Badge
         account_age = (datetime.now(author.created_at.tzinfo) - author.created_at).days
         if account_age < 30:
             badges.append("🆕")
@@ -245,41 +656,17 @@ class EmbedBuilder:
             author_text += f" • {' | '.join(roles)}"
         
         return author_text, badges
-    
-    def _process_attachments(self, embed: discord.Embed, attachments: List[discord.Attachment]):
-        """Verarbeitet Anhänge für Embed"""
-        image_set = False
-        attachment_lines = []
-        
-        for attachment in attachments:
-            # Erstes Bild als Embed-Image
-            if attachment.content_type and attachment.content_type.startswith("image/"):
-                if not image_set:
-                    embed.set_image(url=attachment.url)
-                    image_set = True
-                else:
-                    attachment_lines.append(f"🖼️ [{attachment.filename}]({attachment.url})")
-            elif attachment.content_type and attachment.content_type.startswith("video/"):
-                attachment_lines.append(f"🎥 [{attachment.filename}]({attachment.url})")
-            else:
-                attachment_lines.append(f"📎 [{attachment.filename}]({attachment.url})")
-        
-        if attachment_lines:
-            embed.add_field(
-                name="📎 Weitere Anhänge",
-                value="\n".join(attachment_lines[:5]),  # Max 5 anzeigen
-                inline=False
-            )
 
 
 class GlobalChat(ezcord.Cog, group="globalchat"):
-    """Hauptklasse für GlobalChat-Funktionalität"""
+    """Hauptklasse für GlobalChat-Funktionalität mit vollständigem Medien-Support"""
     
     def __init__(self, bot):
         self.bot = bot
         self.config = GlobalChatConfig()
         self.validator = MessageValidator(self.config)
-        self.embed_builder = EmbedBuilder(self.config)
+        self.embed_builder = EmbedBuilder(self.config, bot)  # Bot mitgeben!
+        self.media_handler = MediaHandler(self.config)
         
         # Rate Limiting
         self.message_cooldown = commands.CooldownMapping.from_cooldown(
@@ -351,8 +738,12 @@ class GlobalChat(ezcord.Cog, group="globalchat"):
     
     # ==================== Message Handling ====================
     
-    async def _send_to_channel(self, channel_id: int, embed: discord.Embed) -> bool:
-        """Sendet Embed an spezifischen Channel mit Error-Handling"""
+    async def _send_to_channel(self, channel_id: int, embed: discord.Embed, attachment_bytes: Optional[List[Tuple[str, bytes]]] = None) -> bool:
+        """Sendet Embed an spezifischen Channel mit Error-Handling
+        
+        attachment_bytes: Liste von (filename, bytes) - wird zu discord.File konvertiert
+                         Wichtig: Raw bytes, nicht discord.File, da File-Streams verbraucht sind!
+        """
         try:
             channel = self.bot.get_channel(channel_id)
             if not channel:
@@ -360,11 +751,38 @@ class GlobalChat(ezcord.Cog, group="globalchat"):
                 return False
             
             # Permissions prüfen
-            if not channel.permissions_for(channel.guild.me).send_messages:
-                logger.warning(f"⚠️ Keine Send-Permission in {channel_id}")
+            perms = channel.permissions_for(channel.guild.me)
+            if not perms.send_messages or not perms.embed_links:
+                logger.warning(f"⚠️ Keine Permissions in {channel_id}")
                 return False
             
-            await channel.send(embed=embed)
+            # Erstelle NEUE discord.File Objekte für diesen Channel (wichtig!)
+            # Jeder Channel bekommt seine eigenen frischen Files!
+            files = []
+            if attachment_bytes:
+                for filename, data in attachment_bytes:
+                    try:
+                        files.append(discord.File(io.BytesIO(data), filename=filename))
+                    except Exception as e:
+                        logger.warning(f"⚠️ Error creating file {filename}: {e}")
+            
+            # Sende mit Retry-Logik
+            max_retries = 3
+            for attempt in range(max_retries):
+                try:
+                    if files:
+                        await channel.send(embed=embed, files=files)
+                    else:
+                        await channel.send(embed=embed)
+                    return True
+                except (ConnectionResetError, asyncio.TimeoutError, OSError) as net_err:
+                    if attempt < max_retries - 1:
+                        logger.warning(f"⚠️ Netzwerk-Fehler in {channel_id}, Versuch {attempt + 1}/{max_retries}: {net_err}")
+                        await asyncio.sleep(2 ** attempt)  # Exponential backoff: 1s, 2s, 4s
+                    else:
+                        logger.error(f"❌ Netzwerk-Fehler in {channel_id} nach {max_retries} Versuchen: {net_err}")
+                        return False
+            
             return True
             
         except discord.Forbidden:
@@ -373,30 +791,24 @@ class GlobalChat(ezcord.Cog, group="globalchat"):
         except discord.HTTPException as e:
             if e.status == 429:  # Rate Limited
                 logger.warning(f"⚠️ Rate Limited in Channel {channel_id}")
+                await asyncio.sleep(5)  # Warte länger bei Rate Limit
             else:
                 logger.error(f"❌ HTTP Error {e.status} in Channel {channel_id}: {e}")
             return False
         except Exception as e:
-            logger.error(f"❌ Unbekannter Fehler in Channel {channel_id}: {e}", exc_info=True)
+            logger.error(f"❌ Unbekannter Fehler in Channel {channel_id}: {type(e).__name__}: {e}")
             return False
     
-    async def _send_to_all_channels(self, embed: discord.Embed, source_channel_id: int, exclude_source: bool = False) -> Tuple[int, int]:
+    async def _send_to_all_channels(self, embed: discord.Embed, source_channel_id: int, attachment_bytes: Optional[List[Tuple[str, bytes]]] = None) -> Tuple[int, int]:
         """Sendet Embed an alle GlobalChat-Channels (parallel)
         
-        Args:
-            embed: Das zu sendende Embed
-            source_channel_id: Der Original-Channel
-            exclude_source: Wenn True, wird der Source-Channel ausgeschlossen (nicht empfohlen)
+        attachment_bytes: Liste von (filename, bytes) - wird für jeden Channel neu zu discord.File konvertiert
         """
         channel_ids = await self._get_cached_channels()
-        
-        # Optional: Source-Channel ausschließen
-        if exclude_source:
-            channel_ids = [cid for cid in channel_ids if cid != source_channel_id]
-        
+
         # Erstelle Tasks für paralleles Senden
         tasks = [
-            self._send_to_channel(channel_id, embed)
+            self._send_to_channel(channel_id, embed, attachment_bytes)
             for channel_id in channel_ids
         ]
         
@@ -415,7 +827,7 @@ class GlobalChat(ezcord.Cog, group="globalchat"):
     
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message):
-        """Hauptlogik für GlobalChat-Nachrichten"""
+        """Hauptlogik für GlobalChat-Nachrichten mit vollständigem Medien-Support"""
         # Basis-Checks
         if not message.guild or not hasattr(message.author, 'guild_permissions'):
             return
@@ -435,10 +847,20 @@ class GlobalChat(ezcord.Cog, group="globalchat"):
         if not is_valid:
             logger.debug(f"❌ Nachricht abgelehnt: {reason} (User: {message.author.id})")
             
-            # Optional: User benachrichtigen bei bestimmten Gründen
-            if "Blacklist" in reason or "NSFW" in reason or "Gefilterte" in reason:
+            # User benachrichtigen bei bestimmten Gründen
+            if any(keyword in reason for keyword in ["Blacklist", "NSFW", "Gefilterte", "Ungültige Anhänge", "zu groß"]):
                 try:
                     await message.add_reaction("❌")
+                    
+                    # Info-Nachricht für spezifische Fehler
+                    if "Ungültige Anhänge" in reason or "zu groß" in reason:
+                        info_msg = await message.reply(
+                            f"❌ **Fehler:** {reason}\n"
+                            f"**Max. Größe:** {self.config.MAX_FILE_SIZE_MB}MB pro Datei\n"
+                            f"**Max. Anhänge:** {self.config.MAX_ATTACHMENTS}",
+                            delete_after=7
+                        )
+                    
                     await asyncio.sleep(2)
                     await message.delete()
                 except (discord.Forbidden, discord.NotFound):
@@ -459,10 +881,35 @@ class GlobalChat(ezcord.Cog, group="globalchat"):
             logger.debug(f"⏰ Rate Limited: User {message.author.id} ({retry_after:.1f}s)")
             return
         
-        # Message loggen
+        # ✅ ZUERST: Anhänge herunterladen BEVOR Nachricht gelöscht wird (URLs ablaufen sonst!)
+        attachment_data = []
+        if message.attachments:
+            try:
+                # Timeout für größere Dateien - aber viel kürzer (30s total)
+                timeout = aiohttp.ClientTimeout(total=30, sock_connect=5, sock_read=10)
+                async with aiohttp.ClientSession(timeout=timeout) as session:
+                    for att in message.attachments:
+                        try:
+                            async with session.get(att.url, ssl=False) as resp:
+                                if resp.status == 200:
+                                    data = await resp.read()
+                                    # Speichere als raw bytes, nicht als BytesIO!
+                                    attachment_data.append((att.filename, data, att.content_type))
+                                    logger.debug(f"✅ Downloaded: {att.filename} ({len(data)} bytes)")
+                                else:
+                                    logger.warning(f"⚠️ Download failed for {att.filename}: Status {resp.status}")
+                        except (asyncio.TimeoutError, asyncio.CancelledError) as te:
+                            logger.warning(f"⏱️ Timeout downloading {att.filename}: {te}")
+                        except (aiohttp.ClientOSError, aiohttp.ClientConnectionError) as ce:
+                            logger.warning(f"⚠️ Connection error downloading {att.filename}: {ce}")
+                        except Exception as e:
+                            logger.error(f"❌ Error downloading {att.filename}: {type(e).__name__}: {e}")
+            except Exception as e:
+                logger.error(f"❌ Error in attachment download session: {type(e).__name__}: {e}")
+        
+        # Message loggen (inkl. Attachments)
         try:
             attachment_urls = [att.url for att in message.attachments] if message.attachments else None
-            # Als komma-separierter String wie in der DB erwartet
             attachment_str = ",".join(attachment_urls) if attachment_urls else None
             
             db.log_message(
@@ -470,7 +917,7 @@ class GlobalChat(ezcord.Cog, group="globalchat"):
                 message.guild.id,
                 message.channel.id,
                 message.content,
-                attachment_str  # Als String, nicht als Liste
+                attachment_str
             )
         except Exception as e:
             logger.error(f"❌ Fehler beim Loggen: {e}")
@@ -487,24 +934,30 @@ class GlobalChat(ezcord.Cog, group="globalchat"):
             await message.delete()
         except discord.Forbidden:
             logger.warning(f"⚠️ Keine Delete-Permission in {message.channel.id}")
-            return  # Ohne Delete-Permission nicht weiterleiten
+            return
         except discord.NotFound:
-            pass  # Bereits gelöscht
+            pass
         
-        # Embed erstellen
+        # Embed erstellen mit heruntergeladenen Dateien
         try:
-            embed = await self.embed_builder.create_message_embed(message, settings)
+            embed, files = await self.embed_builder.create_message_embed(message, settings, attachment_data)
         except Exception as e:
             logger.error(f"❌ Fehler beim Embed-Erstellen: {e}", exc_info=True)
             return
+
+        # An alle Channels senden (inkl. Dateien)
+        successful, failed = await self._send_to_all_channels(embed, message.channel.id, files)
         
-        # An alle Channels senden
-        successful, failed = await self._send_to_all_channels(embed, message.channel.id)
+        # Log-Info erstellen
+        media_info = ""
+        if message.attachments:
+            media_info = f"📎 {len(message.attachments)} Anhänge"
+        if message.stickers:
+            if media_info:
+                media_info += f" | 🎨 {len(message.stickers)} Sticker"
+            else:
+                media_info = f"🎨 {len(message.stickers)} Sticker"
         
-        logger.info(
-            f"📤 GlobalChat: {message.author} ({message.author.id}) | "
-            f"✅ {successful} erfolgreich | ❌ {failed} fehlgeschlagen"
-        )
     
     # ==================== Slash Commands ====================
     
@@ -517,7 +970,7 @@ class GlobalChat(ezcord.Cog, group="globalchat"):
     async def setup_globalchat(
         self,
         ctx: discord.ApplicationContext,
-        channel: Option(discord.TextChannel, "Der GlobalChat-Channel", required=True)
+        channel: discord.TextChannel = Option(discord.TextChannel, "Der GlobalChat-Channel", required=True)
     ):
         """Setup-Command für GlobalChat"""
         # Permissions prüfen
@@ -540,6 +993,8 @@ class GlobalChat(ezcord.Cog, group="globalchat"):
             missing_perms.append("Links einbetten")
         if not bot_perms.read_message_history:
             missing_perms.append("Nachrichtenverlauf lesen")
+        if not bot_perms.attach_files:
+            missing_perms.append("Dateien anhängen")
         
         if missing_perms:
             await ctx.respond(
@@ -584,9 +1039,19 @@ class GlobalChat(ezcord.Cog, group="globalchat"):
                     "• Nachrichten hier werden an alle verbundenen Server gesendet\n"
                     "• Deine Nachricht wird gelöscht und als Embed neu gesendet\n"
                     "• Rate-Limit: 5 Nachrichten pro Minute\n\n"
+                    "**Unterstützte Medien:**\n"
+                    "• 🖼️ Bilder (PNG, JPG, GIF, WebP, BMP)\n"
+                    "• 🎥 Videos (MP4, MOV, WebM, AVI, MKV)\n"
+                    "• 🎵 Audio (MP3, WAV, OGG, M4A, FLAC)\n"
+                    "• 📄 Dokumente (PDF, Office-Dateien, Archive)\n"
+                    "• 🎨 Discord Sticker\n"
+                    "• 🔗 Link-Previews (YouTube, Twitter, etc.)\n"
+                    "• ↩️ Antworten auf Nachrichten\n\n"
                     "**Regeln:**\n"
                     "• Keine Discord-Invites\n"
                     "• Keine NSFW-Inhalte\n"
+                    "• Max. 25MB pro Datei\n"
+                    "• Max. 10 Anhänge pro Nachricht\n"
                     "• Respektvoller Umgang\n\n"
                     "*Viel Spaß beim Chatten! 🎉*"
                 ),
@@ -606,9 +1071,19 @@ class GlobalChat(ezcord.Cog, group="globalchat"):
             container.add_separator()
             container.add_text(
                 f"Der Channel {channel.mention} wurde erfolgreich eingerichtet.\n\n"
+                "**Features:**\n"
+                "• 📝 Text-Nachrichten mit Formatierung\n"
+                "• 🖼️ Bilder (automatische Anzeige)\n"
+                "• 🎥 Videos (Download-Links)\n"
+                "• 🎵 Audio-Dateien\n"
+                "• 📄 Dokumente (Office, PDF, Archive)\n"
+                "• 🎨 Discord Sticker\n"
+                "• 🔗 Automatische Link-Previews\n"
+                "• ↩️ Reply auf andere Nachrichten\n\n"
                 "**Nächste Schritte:**\n"
                 "• `/globalchat settings` - Einstellungen anpassen\n"
-                "• `/globalchat stats` - Statistiken anzeigen\n\n"
+                "• `/globalchat stats` - Statistiken anzeigen\n"
+                "• `/globalchat media-info` - Medien-Limits anzeigen\n\n"
                 f"**Aktuell verbunden:** {len(await self._get_cached_channels())} Server"
             )
             
@@ -703,6 +1178,18 @@ class GlobalChat(ezcord.Cog, group="globalchat"):
                 inline=True
             )
             
+            # Medien-Support Info
+            embed.add_field(
+                name="📁 Medien-Support",
+                value=(
+                    "✅ Bilder & Videos\n"
+                    "✅ Audio & Dokumente\n"
+                    "✅ Sticker & Links\n"
+                    "✅ Reply-Support"
+                ),
+                inline=True
+            )
+            
             # Dieser Server
             channel_id = db.get_globalchat_channel(ctx.guild.id)
             if channel_id:
@@ -736,10 +1223,10 @@ class GlobalChat(ezcord.Cog, group="globalchat"):
     async def globalchat_settings(
         self,
         ctx: discord.ApplicationContext,
-        filter_enabled: Option(bool, "Content-Filter aktivieren", required=False),
-        nsfw_filter: Option(bool, "NSFW-Filter aktivieren", required=False),
-        embed_color: Option(str, "Embed-Farbe (Hex, z.B. #FF0000)", required=False),
-        max_message_length: Option(
+        filter_enabled: Optional[bool] = Option(bool, "Content-Filter aktivieren", required=False),
+        nsfw_filter: Optional[bool] = Option(bool, "NSFW-Filter aktivieren", required=False),
+        embed_color: Optional[str] = Option(str, "Embed-Farbe (Hex, z.B. #FF0000)", required=False),
+        max_message_length: Optional[int] = Option(
             int,
             "Maximale Nachrichtenlänge",
             required=False,
@@ -837,21 +1324,20 @@ class GlobalChat(ezcord.Cog, group="globalchat"):
                 icon_url=ctx.author.display_avatar.url
             )
         
-        await ctx.respond(embed=embed, ephemeral=True)
     
     # ==================== Admin Commands ====================
     
     @globalchat.command(
         name="ban",
-        description="[ADMIN] Sperrt einen User oder Server"
+        description="[ADMIN] Sperrt einen User oder Server vom GlobalChat"
     )
     async def ban_from_globalchat(
         self,
         ctx: discord.ApplicationContext,
-        entity_type: Option(str, "Was sperren", choices=["user", "guild"]),
-        entity_id: Option(str, "User-ID oder Server-ID"),
-        reason: Option(str, "Grund für die Sperre"),
-        duration: Option(int, "Dauer in Stunden (leer = permanent)", required=False)
+        entity_type: str = Option(str, "Was sperren", choices=["user", "guild"]),
+        entity_id: str = Option(str, "User-ID oder Server-ID"),
+        reason: str = Option(str, "Grund für die Sperre"),
+        duration: Optional[int] = Option(int, "Dauer in Stunden (leer = permanent)", required=False)
     ):
         """Bannt User oder Guilds vom GlobalChat"""
         # Nur Bot Owner
@@ -934,8 +1420,8 @@ class GlobalChat(ezcord.Cog, group="globalchat"):
     async def unban_from_globalchat(
         self,
         ctx: discord.ApplicationContext,
-        entity_type: Option(str, "Was entsperren", choices=["user", "guild"]),
-        entity_id: Option(str, "User-ID oder Server-ID")
+        entity_type: str = Option(str, "Was entsperren", choices=["user", "guild"]),
+        entity_id: str = Option(str, "User-ID oder Server-ID")
     ):
         """Entbannt User oder Guilds"""
         # Nur Bot Owner
@@ -991,7 +1477,7 @@ class GlobalChat(ezcord.Cog, group="globalchat"):
     async def globalchat_banlist(
         self,
         ctx: discord.ApplicationContext,
-        entity_type: Option(str, "Filter", choices=["user", "guild", "all"], default="all")
+        entity_type: str = Option(str, "Filter", choices=["user", "guild", "all"], default="all")
     ):
         """Zeigt alle aktuellen Bans"""
         # Nur Bot Owner
@@ -1045,23 +1531,36 @@ class GlobalChat(ezcord.Cog, group="globalchat"):
     async def globalchat_info(self, ctx: discord.ApplicationContext):
         """Zeigt allgemeine Informationen"""
         embed = discord.Embed(
-            title="🌍 GlobalChat",
+            title="🌍 GlobalChat - Vollständiger Medien-Support",
             description=(
-                "Ein serverübergreifendes Chat-System, das Server miteinander verbindet.\n\n"
-                "**Features:**\n"
+                "Ein serverübergreifendes Chat-System mit vollständigem Medien-Support.\n\n"
+                "**🎯 Hauptfeatures:**\n"
                 "• Nachrichten werden an alle verbundenen Server gesendet\n"
+                "• Vollständiger Medien-Support (Bilder, Videos, Audio, Dokumente)\n"
+                "• Discord Sticker und Link-Previews\n"
+                "• Reply-Unterstützung mit Kontext\n"
                 "• Automatische Moderation und Filter\n"
                 "• Rate-Limiting gegen Spam\n"
                 "• Individuelle Server-Einstellungen\n\n"
-                "**Wie nutze ich GlobalChat?**\n"
+                "**📁 Unterstützte Medien:**\n"
+                "• 🖼️ **Bilder:** PNG, JPG, GIF, WebP, BMP\n"
+                "• 🎥 **Videos:** MP4, MOV, WebM, AVI, MKV\n"
+                "• 🎵 **Audio:** MP3, WAV, OGG, M4A, FLAC\n"
+                "• 📄 **Dokumente:** PDF, Office, Archive\n"
+                "• 🎨 **Sticker:** Discord Sticker (automatisch)\n"
+                "• 🔗 **Links:** YouTube, Twitter, Spotify (Preview)\n\n"
+                "**🚀 Wie nutze ich GlobalChat?**\n"
                 "1. `/globalchat setup` - Channel einrichten\n"
                 "2. In diesem Channel chatten\n"
-                "3. Deine Nachricht erscheint auf allen Servern\n\n"
-                "**Regeln:**\n"
+                "3. Medien, Sticker und mehr senden\n"
+                "4. Deine Nachricht erscheint auf allen Servern\n\n"
+                "**📏 Regeln & Limits:**\n"
                 "• Keine Discord-Invites oder Werbung\n"
                 "• Keine NSFW-Inhalte\n"
-                "• Respektvoller Umgang\n"
-                "• Max. 5 Nachrichten pro Minute"
+                "• Max. 25MB pro Datei (Discord-Limit)\n"
+                "• Max. 10 Anhänge pro Nachricht\n"
+                "• Max. 5 Nachrichten pro Minute\n"
+                "• Respektvoller Umgang"
             ),
             color=discord.Color.blue()
         )
@@ -1073,18 +1572,475 @@ class GlobalChat(ezcord.Cog, group="globalchat"):
                 name="📊 Netzwerk",
                 value=(
                     f"**Server:** {stats.get('active_guilds', 0):,}\n"
-                    f"**Nachrichten:** {stats.get('total_messages', 0):,}"
+                    f"**Nachrichten:** {stats.get('total_messages', 0):,}\n"
+                    f"**Heute:** {stats.get('today_messages', 0):,}"
                 ),
                 inline=True
             )
         except:
             pass
         
-        embed.set_footer(text="© 2025 OPPRO.NET Network")
+        # Medien-Features
+        embed.add_field(
+            name="✨ Features",
+            value=(
+                "🖼️ Bilder\n"
+                "🎥 Videos\n"
+                "🎵 Audio\n"
+                "📄 Dokumente\n"
+                "🎨 Sticker\n"
+                "🔗 Link-Previews\n"
+                "↩️ Replies"
+            ),
+            inline=True
+        )
+        
+        # Commands
+        embed.add_field(
+            name="🛠️ Wichtige Commands",
+            value=(
+                "`/globalchat setup` - Einrichten\n"
+                "`/globalchat settings` - Konfiguration\n"
+                "`/globalchat media-info` - Medien-Details\n"
+                "`/globalchat stats` - Statistiken\n"
+                "`/globalchat test-media` - Test"
+            ),
+            inline=False
+        )
+        
+        embed.set_footer(text="© 2025 OPPRO.NET Network • Vollständiger Medien-Support")
+        
+        await ctx.respond(embed=embed, ephemeral=True)
+    
+    @globalchat.command(
+        name="broadcast",
+        description="[ADMIN] Sendet eine Broadcast-Nachricht an alle GlobalChat-Channels"
+    )
+    async def broadcast(
+        self,
+        ctx: discord.ApplicationContext,
+        title: str = Option(str, "Titel der Nachricht"),
+        message: str = Option(str, "Nachricht"),
+        color: str = Option(str, "Embed-Farbe (Hex)", required=False, default="#5865F2")
+    ):
+        """Sendet Broadcast an alle Channels (nur für Bot-Owner)"""
+        # Nur Bot Owner
+        if ctx.author.id not in self.config.BOT_OWNERS:
+            await ctx.respond(
+                "❌ Nur Bot-Owner können diesen Command nutzen!",
+                ephemeral=True
+            )
+            return
+        
+        await ctx.defer(ephemeral=True)
+        
+        try:
+            # Embed erstellen
+            embed_color = self.embed_builder._parse_color(color)
+            
+            embed = discord.Embed(
+                title=f"📢 {title}",
+                description=message,
+                color=embed_color,
+                timestamp=datetime.utcnow()
+            )
+            
+            embed.set_footer(
+                text=f"GlobalChat Broadcast von {ctx.author}",
+                icon_url=ctx.author.display_avatar.url
+            )
+            
+            # An alle Channels senden
+            successful, failed = await self._send_to_all_channels(embed, 0)
+            
+            # Response
+            result_embed = discord.Embed(
+                title="✅ Broadcast gesendet",
+                color=discord.Color.green(),
+                timestamp=datetime.utcnow()
+            )
+            
+            result_embed.add_field(
+                name="📊 Ergebnis",
+                value=(
+                    f"**Erfolgreich:** {successful}\n"
+                    f"**Fehlgeschlagen:** {failed}\n"
+                    f"**Gesamt:** {successful + failed}"
+                ),
+                inline=False
+            )
+            
+            result_embed.add_field(
+                name="📝 Nachricht",
+                value=f"**{title}**\n{message[:100]}{'...' if len(message) > 100 else ''}",
+                inline=False
+            )
+            
+            await ctx.respond(embed=result_embed, ephemeral=True)
+            
+            logger.info(
+                f"📢 Broadcast: '{title}' | Von: {ctx.author} | "
+                f"✅ {successful} | ❌ {failed}"
+            )
+            
+        except Exception as e:
+            logger.error(f"❌ Broadcast-Fehler: {e}", exc_info=True)
+            await ctx.respond("❌ Fehler beim Senden des Broadcasts!", ephemeral=True)
+
+
+    # ==================== Error Handler ====================
+    
+    @globalchat.command(
+        name="reload-cache",
+        description="[ADMIN] Lädt den Channel-Cache neu"
+    )
+    async def reload_cache(self, ctx: discord.ApplicationContext):
+        """Lädt Cache manuell neu (für Bot-Owner)"""
+        if ctx.author.id not in self.config.BOT_OWNERS:
+            await ctx.respond(
+                "❌ Nur Bot-Owner können diesen Command nutzen!",
+                ephemeral=True
+            )
+            return
+        
+        try:
+            old_count = len(self._channel_cache)
+            self._invalidate_cache()
+            self._channel_cache = db.get_all_channels()
+            self._cache_last_update = time.time()
+            new_count = len(self._channel_cache)
+            
+            embed = discord.Embed(
+                title="🔄 Cache neu geladen",
+                description=f"**Vorher:** {old_count} Channels\n**Nachher:** {new_count} Channels",
+                color=discord.Color.green(),
+                timestamp=datetime.utcnow()
+            )
+            
+            await ctx.respond(embed=embed, ephemeral=True)
+            logger.info(f"🔄 Cache manuell neu geladen: {old_count} → {new_count} Channels")
+            
+        except Exception as e:
+            logger.error(f"❌ Cache-Reload Fehler: {e}", exc_info=True)
+            await ctx.respond("❌ Fehler beim Neuladen des Cache!", ephemeral=True)
+    
+    @globalchat.command(
+        name="debug",
+        description="[ADMIN] Zeigt Debug-Informationen"
+    )
+    async def debug_info(self, ctx: discord.ApplicationContext):
+        """Zeigt Debug-Infos (für Bot-Owner)"""
+        if ctx.author.id not in self.config.BOT_OWNERS:
+            await ctx.respond(
+                "❌ Nur Bot-Owner können diesen Command nutzen!",
+                ephemeral=True
+            )
+            return
+        
+        embed = discord.Embed(
+            title="🐛 Debug-Informationen",
+            color=discord.Color.orange(),
+            timestamp=datetime.utcnow()
+        )
+        
+        # Cache-Info
+        cache_age = time.time() - self._cache_last_update if self._cache_last_update > 0 else 0
+        embed.add_field(
+            name="📦 Cache",
+            value=(
+                f"**Channels:** {len(self._channel_cache)}\n"
+                f"**Alter:** {int(cache_age)}s\n"
+                f"**Letzte Aktualisierung:** <t:{int(self._cache_last_update)}:R>"
+            ),
+            inline=True
+        )
+        
+        # Bot-Info
+        embed.add_field(
+            name="🤖 Bot",
+            value=(
+                f"**Guilds:** {len(self.bot.guilds)}\n"
+                f"**User:** {len(self.bot.users)}\n"
+                f"**Latenz:** {round(self.bot.latency * 1000)}ms"
+            ),
+            inline=True
+        )
+        
+        # Tasks
+        cleanup_running = self.cleanup_task.is_running()
+        cache_running = self.cache_refresh_task.is_running()
+        embed.add_field(
+            name="⚙️ Background Tasks",
+            value=(
+                f"**Cleanup:** {'✅ Läuft' if cleanup_running else '❌ Gestoppt'}\n"
+                f"**Cache Refresh:** {'✅ Läuft' if cache_running else '❌ Gestoppt'}"
+            ),
+            inline=True
+        )
+        
+        # Config
+        embed.add_field(
+            name="🔧 Konfiguration",
+            value=(
+                f"**Rate Limit:** {self.config.RATE_LIMIT_MESSAGES}/{self.config.RATE_LIMIT_SECONDS}s\n"
+                f"**Max. Attachments:** {self.config.MAX_ATTACHMENTS}\n"
+                f"**Max. File Size:** {self.config.MAX_FILE_SIZE_MB}MB"
+            ),
+            inline=False
+        )
+        
+        embed.set_footer(text=f"Angefordert von {ctx.author}", icon_url=ctx.author.display_avatar.url)
+        
+        await ctx.respond(embed=embed, ephemeral=True)
+    
+    @globalchat.command(
+        name="help",
+        description="Zeigt eine Hilfe-Übersicht für GlobalChat"
+    )
+    async def help_command(self, ctx: discord.ApplicationContext):
+        """Zeigt Hilfe für GlobalChat"""
+        
+        embed = discord.Embed(
+            title="📚 GlobalChat Hilfe",
+            description="Hier ist eine Übersicht aller verfügbaren Commands und Features.",
+            color=discord.Color.blue(),
+            timestamp=datetime.utcnow()
+        )
+        
+        # Setup & Verwaltung
+        embed.add_field(
+            name="⚙️ Setup & Verwaltung",
+            value=(
+                "`/globalchat setup` - Channel einrichten\n"
+                "`/globalchat remove` - Channel entfernen\n"
+                "`/globalchat settings` - Einstellungen anpassen"
+            ),
+            inline=False
+        )
+        
+        # Informationen
+        embed.add_field(
+            name="📊 Informationen",
+            value=(
+                "`/globalchat info` - Allgemeine Infos\n"
+                "`/globalchat stats` - Statistiken anzeigen\n"
+                "`/globalchat media-info` - Medien-Details\n"
+                "`/globalchat help` - Diese Hilfe"
+            ),
+            inline=False
+        )
+        
+        # Test & Debug
+        embed.add_field(
+            name="🧪 Test & Debug",
+            value=(
+                "`/globalchat test-media` - Medien-Test\n"
+                "`/globalchat debug` - Debug-Info (Admin)\n"
+                "`/globalchat reload-cache` - Cache neu laden (Admin)"
+            ),
+            inline=False
+        )
+        
+        # Moderation (Admin)
+        embed.add_field(
+            name="🔨 Moderation (Bot-Owner)",
+            value=(
+                "`/globalchat ban` - User/Server sperren\n"
+                "`/globalchat unban` - Sperre aufheben\n"
+                "`/globalchat banlist` - Sperrliste anzeigen\n"
+                "`/globalchat broadcast` - Broadcast senden"
+            ),
+            inline=False
+        )
+        
+        # Features
+        embed.add_field(
+            name="✨ Unterstützte Features",
+            value=(
+                "🖼️ Bilder • 🎥 Videos • 🎵 Audio\n"
+                "📄 Dokumente • 🎨 Sticker • 🔗 Links\n"
+                "↩️ Antworten • 👥 User-Badges"
+            ),
+            inline=False
+        )
+        
+        embed.set_footer(
+            text=f"Bei Fragen wende dich an einen Bot-Owner | Angefordert von {ctx.author}",
+            icon_url=ctx.author.display_avatar.url
+        )
         
         await ctx.respond(embed=embed, ephemeral=True)
 
+    
+    @globalchat.command(
+        name="media-info",
+        description="Zeigt Informationen über unterstützte Medien"
+    )
+    async def media_info(self, ctx: discord.ApplicationContext):
+        """Zeigt detaillierte Informationen über Medien-Support"""
+        
+        embed = discord.Embed(
+            title="📁 GlobalChat Medien-Support",
+            description="Alle unterstützten Medientypen und Limits im Überblick",
+            color=discord.Color.blue(),
+            timestamp=datetime.utcnow()
+        )
+        
+        # Bilder
+        embed.add_field(
+            name="🖼️ Bilder",
+            value=(
+                f"**Formate:** {', '.join(self.config.ALLOWED_IMAGE_FORMATS).upper()}\n"
+                "**Max. Größe:** 25 MB pro Datei\n"
+                "**Features:** Erstes Bild als Haupt-Bild, weitere als Links"
+            ),
+            inline=False
+        )
+        
+        # Videos
+        embed.add_field(
+            name="🎥 Videos",
+            value=(
+                f"**Formate:** {', '.join(self.config.ALLOWED_VIDEO_FORMATS).upper()}\n"
+                "**Max. Größe:** 25 MB pro Datei\n"
+                "**Features:** Direkter Download-Link mit Dateiname und Größe"
+            ),
+            inline=False
+        )
+        
+        # Audio
+        embed.add_field(
+            name="🎵 Audio",
+            value=(
+                f"**Formate:** {', '.join(self.config.ALLOWED_AUDIO_FORMATS).upper()}\n"
+                "**Max. Größe:** 25 MB pro Datei\n"
+                "**Features:** Direkter Download-Link mit Dateiname"
+            ),
+            inline=False
+        )
+        
+        # Dokumente
+        embed.add_field(
+            name="📄 Dokumente",
+            value=(
+                "**Formate:** PDF, DOC, DOCX, XLS, XLSX, PPT, PPTX, TXT, ZIP, RAR, 7Z\n"
+                "**Max. Größe:** 25 MB pro Datei\n"
+                "**Features:** Direkter Download-Link mit Icon, Name und Größe"
+            ),
+            inline=False
+        )
+        
+        # Weitere Features
+        embed.add_field(
+            name="✨ Weitere Features",
+            value=(
+                "• 🎨 **Discord Sticker** - Automatisch als Thumbnail oder Field\n"
+                "• 🔗 **Link-Previews** - YouTube, Twitter, Spotify, etc. (automatisch)\n"
+                "• ↩️ **Reply-Support** - Zitiere vorherige Nachrichten mit Kontext\n"
+                f"• 📎 **Multi-Attachments** - Bis zu {self.config.MAX_ATTACHMENTS} Anhänge gleichzeitig\n"
+                "• 🖼️ **Automatische Kategorisierung** - Intelligente Anzeige je nach Medientyp"
+            ),
+            inline=False
+        )
+        
+        # Limits
+        embed.add_field(
+            name="⚠️ Wichtige Limits",
+            value=(
+                f"• **Max. {self.config.MAX_ATTACHMENTS} Anhänge** pro Nachricht\n"
+                f"• **Max. {self.config.MAX_FILE_SIZE_MB} MB** pro Datei (Discord-Limit)\n"
+                "• **Rate-Limit:** 5 Nachrichten pro Minute\n"
+                "• **Max. 1900 Zeichen** Text (konfigurierbar)\n"
+                "• Nur freigegebene Dateiformate erlaubt"
+            ),
+            inline=False
+        )
+        
+        # Beispiele
+        embed.add_field(
+            name="💡 Beispiele",
+            value=(
+                "**Sende:**\n"
+                "• Text + 3 Bilder → Erstes groß, Rest als Links\n"
+                "• Video-Datei → Download-Link mit Größe\n"
+                "• PDF-Dokument → Download mit Icon\n"
+                "• YouTube-Link → Automatischer Preview\n"
+                "• Reply + Sticker → Kontext + Thumbnail"
+            ),
+            inline=False
+        )
+        
+        embed.set_footer(text=f"Angefordert von {ctx.author}", icon_url=ctx.author.display_avatar.url)
+        
+        await ctx.respond(embed=embed, ephemeral=True)
 
+    @globalchat.command(
+        name="test-media",
+        description="Teste den Medien-Support mit einer Demo-Nachricht"
+    )
+    async def test_media(self, ctx: discord.ApplicationContext):
+        """Sendet eine Test-Nachricht um Medien-Support zu demonstrieren"""
+        
+        # Prüfen ob GlobalChat aktiv
+        channel_id = db.get_globalchat_channel(ctx.guild.id)
+        if not channel_id:
+            await ctx.respond(
+                "❌ Dieser Server nutzt GlobalChat nicht!\n"
+                "Nutze `/globalchat setup` zuerst.",
+                ephemeral=True
+            )
+            return
+
+        embed = discord.Embed(
+            title="🧪 GlobalChat Medien-Test",
+            description=(
+                "Dies ist eine Test-Nachricht um den vollständigen Medien-Support zu demonstrieren.\n\n"
+                "**Was wird unterstützt:**\n"
+                "• Bilder, Videos und Audio-Dateien\n"
+                "• Dokumente aller Art\n"
+                "• Discord Sticker\n"
+                "• Link-Previews von YouTube, Twitter, etc.\n"
+                "• Antworten auf andere Nachrichten\n\n"
+                "**So testest du:**\n"
+                f"1. Gehe zu <#{channel_id}>\n"
+                "2. Sende eine Nachricht mit Medien\n"
+                "3. Die Nachricht erscheint auf allen Servern\n\n"
+                "Probiere verschiedene Kombinationen aus!"
+            ),
+            color=discord.Color.green(),
+            timestamp=datetime.utcnow()
+        )
+        
+        embed.add_field(
+            name="📊 Aktuelle Limits",
+            value=(
+                f"• Max. {self.config.MAX_ATTACHMENTS} Anhänge\n"
+                f"• Max. {self.config.MAX_FILE_SIZE_MB} MB pro Datei\n"
+                "• 5 Nachrichten/Minute"
+            ),
+            inline=True
+        )
+        
+        embed.add_field(
+            name="✅ Unterstützte Formate",
+            value=(
+                "Bilder, Videos, Audio,\n"
+                "Dokumente, Archive,\n"
+                "Office-Dateien, PDFs"
+            ),
+            inline=True
+        )
+        
+        embed.set_footer(text=f"Test von {ctx.author}", icon_url=ctx.author.display_avatar.url)
+        
+        await ctx.respond(embed=embed, ephemeral=True)
+
+    
 def setup(bot):
-    """Setup-Funktion für den Bot"""
-    bot.add_cog(GlobalChat(bot))
+    """Setup-Funktion für the cog when loaded by classic loader."""
+    try:
+        cog = GlobalChat(bot)
+        bot.add_cog(cog)
+    except Exception:
+        # Keep this minimal — main setup above handles logging and DB checks.
+        raise

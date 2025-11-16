@@ -10,7 +10,6 @@ from DevTools.backend import WarnDatabase
 from DevTools.backend import discord, slash_command, Option, datetime, os, ezcord
 import asyncio
 from typing import Optional
-from discord.ui import Container
 
 
 # ───────────────────────────────────────────────
@@ -40,7 +39,7 @@ class WarnSystem(ezcord.Cog, group="moderation"):
         
         # Server-Owner kann nicht verwarnt werden
         if target.id == target.guild.owner_id:
-            return False, "Der Server-Owner kann nicht verwarnt werden."
+            return False, "Der Server Owner kann nicht verwarnt werden."
         
         # Selbst-Verwarnung verhindern
         if moderator.id == target.id:
@@ -48,7 +47,7 @@ class WarnSystem(ezcord.Cog, group="moderation"):
         
         # Bot kann nicht verwarnt werden
         if target.bot:
-            return False, "Bots können nicht verwarnt werden."
+            return False, "Du kannst keine Bots verwarnen."
         
         # Rollen-Hierarchie prüfen (außer bei Owner)
         if (moderator.top_role <= target.top_role and 
