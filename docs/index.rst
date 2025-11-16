@@ -27,3 +27,5 @@ Then, navigate to the directory and install the required packages:
 
    managerx/main
    handler/index
+   database/index
+   cogs/index

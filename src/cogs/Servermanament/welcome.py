@@ -1,6 +1,14 @@
+"""
+Welcome System Cog
+==================
+
+Umfassendes Welcome System mit Embed-Support, Auto-Roles,
+DM-Nachrichten und Statistiken.
+"""
+
 import discord
 from discord.ext import commands
-from DevTools import WelcomeDatabase  # Korrigierter Import
+from DevTools import WelcomeDatabase
 import asyncio
 import json
 import io
@@ -16,8 +24,42 @@ from DevTools import emoji_yes, emoji_no, emoji_add
 # Logger Setup
 logger = logging.getLogger(__name__)
 
+
 class WelcomeSystem(ezcord.Cog):
+    """
+    Welcome System für Discord Server.
+    
+    Bietet umfassende Willkommensnachrichten mit Embed-Support,
+    automatischen Rollen, privaten Nachrichten und Statistiken.
+    
+    Parameters
+    ----------
+    bot : ezcord.Bot
+        Die Bot-Instanz
+    
+    Attributes
+    ----------
+    bot : ezcord.Bot
+        Die Bot-Instanz
+    db : WelcomeDatabase
+        Datenbank-Handler für Welcome-Einstellungen
+    _settings_cache : dict
+        Cache für Server-Einstellungen
+    _cache_timeout : int
+        Cache-Timeout in Sekunden (Standard: 300)
+    _rate_limit_cache : dict
+        Rate-Limiting Cache für Welcome-Messages
+    """
+    
     def __init__(self, bot):
+        """
+        Initialisiert das Welcome System.
+        
+        Parameters
+        ----------
+        bot : ezcord.Bot
+            Die Bot-Instanz
+        """
         self.bot = bot
         self.db = WelcomeDatabase()
         # Cache für bessere Performance
@@ -26,7 +68,23 @@ class WelcomeSystem(ezcord.Cog):
         self._rate_limit_cache = {}  # Rate Limiting
     
     async def get_cached_settings(self, guild_id: int):
-        """Holt Einstellungen mit Cache"""
+        """
+        Holt Einstellungen mit Cache-Unterstützung.
+        
+        Parameters
+        ----------
+        guild_id : int
+            Discord Server ID
+        
+        Returns
+        -------
+        dict or None
+            Server-Einstellungen aus Cache oder Datenbank
+        
+        Notes
+        -----
+        Cache wird nach 5 Minuten automatisch invalidiert.
+        """
         now = asyncio.get_event_loop().time()
         
         if guild_id in self._settings_cache:
@@ -41,12 +99,39 @@ class WelcomeSystem(ezcord.Cog):
         return settings
 
     def invalidate_cache(self, guild_id: int):
-        """Invalidiert Cache für einen Server"""
+        """
+        Invalidiert Cache für einen Server.
+        
+        Parameters
+        ----------
+        guild_id : int
+            Discord Server ID
+        
+        Notes
+        -----
+        Sollte nach jeder Einstellungsänderung aufgerufen werden.
+        """
         if guild_id in self._settings_cache:
             del self._settings_cache[guild_id]
     
     def check_rate_limit(self, guild_id: int) -> bool:
-        """Prüft Rate Limit für Server"""
+        """
+        Prüft Rate Limit für Server.
+        
+        Parameters
+        ----------
+        guild_id : int
+            Discord Server ID
+        
+        Returns
+        -------
+        bool
+            True wenn Rate Limit nicht erreicht, False sonst
+        
+        Notes
+        -----
+        Erlaubt maximal eine Welcome Message alle 5 Sekunden pro Server.
+        """
         now = asyncio.get_event_loop().time()
         if guild_id not in self._rate_limit_cache:
             self._rate_limit_cache[guild_id] = now
@@ -60,7 +145,38 @@ class WelcomeSystem(ezcord.Cog):
         return False
     
     def replace_placeholders(self, text: str, member: discord.Member, guild: discord.Guild) -> str:
-        """Erweiterte Placeholder-Ersetzung mit Rückwärtskompatibilität"""
+        """
+        Erweiterte Placeholder-Ersetzung mit Rückwärtskompatibilität.
+        
+        Parameters
+        ----------
+        text : str
+            Text mit Placeholders
+        member : discord.Member
+            Discord Member Objekt
+        guild : discord.Guild
+            Discord Guild Objekt
+        
+        Returns
+        -------
+        str
+            Text mit ersetzten Placeholders
+        
+        Notes
+        -----
+        Unterstützte Placeholder-Kategorien:
+        - User: %user%, %username%, %mention%, %tag%, %userid%
+        - Server: %servername%, %server%, %guild%, %serverid%, %membercount%
+        - Zeit: %joindate%, %jointime%, %createddate%, %createdtime%, %accountage%
+        - Erweitert: %roles%, %rolecount%, %highestrole%, %avatar%
+        - Statistiken: %onlinemembers%, %textchannels%, %voicechannels%
+        
+        Examples
+        --------
+        >>> text = "Willkommen %mention% auf %servername%!"
+        >>> replace_placeholders(text, member, guild)
+        "Willkommen @User auf Mein Server!"
+        """
         if not text:
             return text
         
@@ -134,7 +250,21 @@ class WelcomeSystem(ezcord.Cog):
         return text
     
     async def send_welcome_dm(self, member: discord.Member, settings: dict):
-        """Sendet private Willkommensnachricht"""
+        """
+        Sendet private Willkommensnachricht.
+        
+        Parameters
+        ----------
+        member : discord.Member
+            Neues Mitglied
+        settings : dict
+            Server-Einstellungen
+        
+        Notes
+        -----
+        Fehler beim DM-Versand werden geloggt aber nicht als Fehler behandelt,
+        da viele User DMs deaktiviert haben.
+        """
         try:
             if not settings.get('join_dm_enabled'):
                 return
@@ -153,7 +283,20 @@ class WelcomeSystem(ezcord.Cog):
             logger.error(f"Fehler beim Senden der Welcome DM: {e}")
     
     async def assign_auto_role(self, member: discord.Member, settings: dict):
-        """Vergibt automatische Rolle"""
+        """
+        Vergibt automatische Rolle.
+        
+        Parameters
+        ----------
+        member : discord.Member
+            Neues Mitglied
+        settings : dict
+            Server-Einstellungen mit auto_role_id
+        
+        Notes
+        -----
+        Prüft automatisch Berechtigungen und Rollen-Hierarchie.
+        """
         try:
             auto_role_id = settings.get('auto_role_id')
             if not auto_role_id:
@@ -178,7 +321,24 @@ class WelcomeSystem(ezcord.Cog):
     
     @commands.Cog.listener()
     async def on_member_join(self, member: discord.Member):
-        """Event wird ausgelöst, wenn ein neuer User dem Server beitritt"""
+        """
+        Event wird ausgelöst, wenn ein neuer User dem Server beitritt.
+        
+        Parameters
+        ----------
+        member : discord.Member
+            Neues Mitglied
+        
+        Notes
+        -----
+        Führt folgende Aktionen aus (wenn aktiviert):
+        1. Rate Limiting Check
+        2. Einstellungen aus Cache/DB laden
+        3. Auto-Role vergeben
+        4. Welcome Message senden (Channel)
+        5. Welcome DM senden
+        6. Statistiken aktualisieren
+        """
         try:
             # Rate Limiting prüfen
             if not self.check_rate_limit(member.guild.id):
@@ -235,7 +395,24 @@ class WelcomeSystem(ezcord.Cog):
             logger.exception(f"Welcome System Fehler für {member}: {e}")
     
     async def send_embed_welcome(self, channel, member, settings, processed_message):
-        """Sendet Embed Welcome Message"""
+        """
+        Sendet Embed Welcome Message.
+        
+        Parameters
+        ----------
+        channel : discord.TextChannel
+            Ziel-Channel
+        member : discord.Member
+            Neues Mitglied
+        settings : dict
+            Server-Einstellungen
+        processed_message : str
+            Verarbeitete Welcome Message (Fallback)
+        
+        Notes
+        -----
+        Fallback auf normale Nachricht bei Embed-Fehlern.
+        """
         try:
             embed = discord.Embed()
             
@@ -281,7 +458,21 @@ class WelcomeSystem(ezcord.Cog):
             await self.handle_auto_delete(msg, settings)
     
     async def handle_auto_delete(self, message, settings):
-        """Behandelt automatisches Löschen"""
+        """
+        Behandelt automatisches Löschen von Nachrichten.
+        
+        Parameters
+        ----------
+        message : discord.Message
+            Zu löschende Nachricht
+        settings : dict
+            Server-Einstellungen mit delete_after
+        
+        Notes
+        -----
+        Wartet die angegebene Zeit und löscht dann die Nachricht.
+        Fehler beim Löschen werden geloggt aber nicht weitergegeben.
+        """
         try:
             delete_after = settings.get('delete_after', 0)
             if delete_after > 0:
@@ -301,7 +492,16 @@ class WelcomeSystem(ezcord.Cog):
     @welcome.command(name="channel", description="Setzt den Welcome Channel")
     @commands.has_permissions(manage_guild=True)
     async def set_welcome_channel(self, ctx, channel: discord.TextChannel):
-        """Setzt den Channel für Welcome Messages"""
+        """
+        Setzt den Channel für Welcome Messages.
+        
+        Parameters
+        ----------
+        ctx : discord.ApplicationContext
+            Slash Command Context
+        channel : discord.TextChannel
+            Ziel-Channel für Welcome Messages
+        """
         success = await self.db.update_welcome_settings(ctx.guild.id, channel_id=channel.id)
         self.invalidate_cache(ctx.guild.id)
         
@@ -330,13 +530,36 @@ class WelcomeSystem(ezcord.Cog):
     @welcome.command(name="message", description="Setzt die Welcome Message über ein Modal")
     @commands.has_permissions(manage_guild=True)
     async def set_welcome_message(self, ctx):
-        """Öffnet ein Modal zum Setzen der Welcome Message"""
+        """
+        Öffnet ein Modal zum Setzen der Welcome Message.
+        
+        Parameters
+        ----------
+        ctx : discord.ApplicationContext
+            Slash Command Context
+        
+        Notes
+        -----
+        Zeigt ein Modal mit der aktuellen Message als Vorausfüllung.
+        Bietet nach dem Speichern eine Vorschau der neuen Message.
+        """
         
         # Aktuelle Einstellungen laden für Vorausfüllung
         current_settings = await self.get_cached_settings(ctx.guild.id)
         current_message = current_settings.get('welcome_message', '') if current_settings else ''
         
         class WelcomeMessageModal(discord.ui.Modal):
+            """
+            Modal für Welcome Message Konfiguration.
+            
+            Parameters
+            ----------
+            cog : WelcomeSystem
+                Parent Cog Instanz
+            current_msg : str, optional
+                Aktuelle Message für Vorausfüllung
+            """
+            
             def __init__(self, cog, current_msg=""):
                 super().__init__(title="Welcome Message konfigurieren")
                 self.cog = cog
@@ -352,6 +575,14 @@ class WelcomeSystem(ezcord.Cog):
                 self.add_item(self.message_input)
             
             async def callback(self, interaction: discord.Interaction):
+                """
+                Callback nach Modal-Submit.
+                
+                Parameters
+                ----------
+                interaction : discord.Interaction
+                    Modal Interaction
+                """
                 message = self.message_input.value.strip()
                 
                 if not message:
@@ -383,7 +614,7 @@ class WelcomeSystem(ezcord.Cog):
                     container.add_text(
                         "## 👀 Vorschau (mit deinen Daten)\n\n"
                         f"{preview[:500] + ("..." if len(preview) > 500 else "")}\n\n"
-                        "-# 💡 Tipp Verwende `/welcome test` für eine vollständige Vorschau oder `/welcome placeholders` für alle verfügbaren Optionen."
+                        "-# 💡 Tipp: Verwende `/welcome test` für eine vollständige Vorschau oder `/welcome placeholders` für alle verfügbaren Optionen."
                     )
                     view = discord.ui.View(container, timeout=None)
                 else:
@@ -400,7 +631,14 @@ class WelcomeSystem(ezcord.Cog):
     @welcome.command(name="toggle", description="Schaltet das Welcome System ein/aus")
     @commands.has_permissions(manage_guild=True)
     async def toggle_welcome(self, ctx):
-        """Schaltet das Welcome System ein oder aus"""
+        """
+        Schaltet das Welcome System ein oder aus.
+        
+        Parameters
+        ----------
+        ctx : discord.ApplicationContext
+            Slash Command Context
+        """
         new_state = await self.db.toggle_welcome(ctx.guild.id)
         self.invalidate_cache(ctx.guild.id)
         
@@ -426,7 +664,16 @@ class WelcomeSystem(ezcord.Cog):
     @welcome.command(name="embed", description="Aktiviert/Deaktiviert Embed Modus")
     @commands.has_permissions(manage_guild=True)
     async def toggle_embed(self, ctx, enabled: bool):
-        """Aktiviert oder deaktiviert Embed Welcome Messages"""
+        """
+        Aktiviert oder deaktiviert Embed Welcome Messages.
+        
+        Parameters
+        ----------
+        ctx : discord.ApplicationContext
+            Slash Command Context
+        enabled : bool
+            True für Embed-Modus, False für normale Nachrichten
+        """
         success = await self.db.update_welcome_settings(ctx.guild.id, embed_enabled=enabled)
         self.invalidate_cache(ctx.guild.id)
         
@@ -448,11 +695,23 @@ class WelcomeSystem(ezcord.Cog):
             view = discord.ui.View(container, timeout=None)
         await ctx.respond(view=view)
     
-    # Neue Commands
     @welcome.command(name="autorole", description="Setzt eine Rolle die automatisch vergeben wird")
     @commands.has_permissions(manage_roles=True)
     async def set_auto_role(self, ctx, role: discord.Role = None):
-        """Setzt eine Rolle die bei Join automatisch vergeben wird"""
+        """
+        Setzt eine Rolle die bei Join automatisch vergeben wird.
+        
+        Parameters
+        ----------
+        ctx : discord.ApplicationContext
+            Slash Command Context
+        role : discord.Role, optional
+            Rolle zum automatischen Vergeben (None zum Entfernen)
+        
+        Notes
+        -----
+        Prüft automatisch die Rollen-Hierarchie.
+        """
         if role is None:
             # Auto-Role entfernen
             success = await self.db.update_welcome_settings(ctx.guild.id, auto_role_id=None)
@@ -473,7 +732,7 @@ class WelcomeSystem(ezcord.Cog):
             if role >= ctx.guild.me.top_role:
                 container = Container()
                 container.add_text(
-                    "# ❌ Fehler\nDiese Rolle ist höher als meine höchste Rolle. Ich kann sie nicht vergeben. "
+                    "# ❌ Fehler\nDiese Rolle ist höher als meine höchste Rolle. Ich kann sie nicht vergeben."
                 )
                 view = discord.ui.View(container, timeout=None)
                 await ctx.respond(view=view)
@@ -503,7 +762,18 @@ class WelcomeSystem(ezcord.Cog):
     @welcome.command(name="dm", description="Aktiviert/Konfiguriert private Willkommensnachrichten")
     @commands.has_permissions(manage_guild=True)
     async def setup_join_dm(self, ctx, enabled: bool, *, message: str = None):
-        """Konfiguriert private Willkommensnachrichten"""
+        """
+        Konfiguriert private Willkommensnachrichten.
+        
+        Parameters
+        ----------
+        ctx : discord.ApplicationContext
+            Slash Command Context
+        enabled : bool
+            True zum Aktivieren, False zum Deaktivieren
+        message : str, optional
+            Custom DM Message (verwendet Standard wenn nicht angegeben)
+        """
         settings = {'join_dm_enabled': enabled}
         if message and enabled:
             settings['join_dm_message'] = message
@@ -540,7 +810,24 @@ class WelcomeSystem(ezcord.Cog):
     @welcome.command(name="template", description="Lädt eine Vorlage")
     @commands.has_permissions(manage_guild=True)
     async def load_template(self, ctx, template_name: str):
-        """Lädt eine vordefinierte Vorlage"""
+        """
+        Lädt eine vordefinierte Vorlage.
+        
+        Parameters
+        ----------
+        ctx : discord.ApplicationContext
+            Slash Command Context
+        template_name : str
+            Name der Vorlage (basic, fancy, minimal, detailed)
+        
+        Notes
+        -----
+        Verfügbare Vorlagen:
+        - basic: Einfache Text-Nachricht
+        - fancy: Embed mit Thumbnail und Farbe
+        - minimal: Minimalistischer Text
+        - detailed: Detailliertes Embed mit vielen Infos
+        """
         templates = {
             "basic": {
                 "welcome_message": "Willkommen %mention% auf **%servername%**! 🎉",
@@ -614,7 +901,18 @@ class WelcomeSystem(ezcord.Cog):
     @welcome.command(name="config", description="Zeigt die aktuelle Konfiguration")
     @commands.has_permissions(manage_messages=True)
     async def show_config(self, ctx):
-        """Zeigt die aktuelle Welcome Konfiguration"""
+        """
+        Zeigt die aktuelle Welcome Konfiguration.
+        
+        Parameters
+        ----------
+        ctx : discord.ApplicationContext
+            Slash Command Context
+        
+        Notes
+        -----
+        Zeigt alle konfigurierten Einstellungen übersichtlich an.
+        """
         settings = await self.get_cached_settings(ctx.guild.id)
         
         if not settings:
@@ -683,7 +981,19 @@ class WelcomeSystem(ezcord.Cog):
     @welcome.command(name="test", description="Testet die Welcome Message")
     @commands.has_permissions(manage_messages=True)
     async def test_welcome(self, ctx):
-        """Testet die Welcome Message mit dem aktuellen User"""
+        """
+        Testet die Welcome Message mit dem aktuellen User.
+        
+        Parameters
+        ----------
+        ctx : discord.ApplicationContext
+            Slash Command Context
+        
+        Notes
+        -----
+        Simuliert einen Member Join mit den aktuellen Einstellungen.
+        Zeigt eine Vorschau ohne tatsächlich eine Welcome Message zu senden.
+        """
         settings = await self.get_cached_settings(ctx.guild.id)
         
         if not settings:
@@ -700,7 +1010,8 @@ class WelcomeSystem(ezcord.Cog):
             container.add_text(
                 "# ❌ Fehler\nEs ist kein Welcome Channel gesetzt."
             )
-            await ctx.respond(embed=embed, ephemeral=True)
+            view = discord.ui.View(container, timeout=None)
+            await ctx.respond(view=view, ephemeral=True)
             return
         
         # Simuliere Member Join Event
@@ -761,7 +1072,18 @@ class WelcomeSystem(ezcord.Cog):
     
     @welcome.command(name="placeholders", description="Zeigt alle verfügbaren Placeholder")
     async def show_placeholders(self, ctx):
-        """Zeigt alle verfügbaren Placeholder"""
+        """
+        Zeigt alle verfügbaren Placeholder.
+        
+        Parameters
+        ----------
+        ctx : discord.ApplicationContext
+            Slash Command Context
+        
+        Notes
+        -----
+        Liste aller unterstützten Placeholder mit Beschreibungen.
+        """
         embed = discord.Embed(
             title="📝 Verfügbare Placeholder",
             description="Diese Placeholder können in Welcome Messages verwendet werden:",
@@ -836,7 +1158,19 @@ class WelcomeSystem(ezcord.Cog):
     @welcome.command(name="export", description="Exportiert die Welcome Konfiguration")
     @commands.has_permissions(administrator=True)
     async def export_config(self, ctx):
-        """Exportiert die aktuelle Konfiguration"""
+        """
+        Exportiert die aktuelle Konfiguration als JSON-Datei.
+        
+        Parameters
+        ----------
+        ctx : discord.ApplicationContext
+            Slash Command Context
+        
+        Notes
+        -----
+        Erstellt eine JSON-Datei mit allen Einstellungen.
+        Sensible Daten (IDs, Timestamps) werden entfernt.
+        """
         settings = await self.get_cached_settings(ctx.guild.id)
         if not settings:
             embed = discord.Embed(
@@ -882,7 +1216,21 @@ class WelcomeSystem(ezcord.Cog):
     @welcome.command(name="stats", description="Zeigt Welcome Statistiken")
     @commands.has_permissions(manage_messages=True)
     async def show_stats(self, ctx):
-        """Zeigt Welcome Statistiken für den Server"""
+        """
+        Zeigt Welcome Statistiken für den Server.
+        
+        Parameters
+        ----------
+        ctx : discord.ApplicationContext
+            Slash Command Context
+        
+        Notes
+        -----
+        Zeigt Statistiken für:
+        - Heute
+        - Diese Woche (letzte 7 Tage)
+        - Gesamt (seit Aktivierung)
+        """
         try:
             await self.db.migrate_database()
             
@@ -988,16 +1336,47 @@ class WelcomeSystem(ezcord.Cog):
     @welcome.command(name="reset", description="Setzt alle Welcome Einstellungen zurück")
     @commands.has_permissions(administrator=True)
     async def reset_welcome(self, ctx):
-        """Setzt alle Welcome Einstellungen zurück"""
+        """
+        Setzt alle Welcome Einstellungen zurück.
+        
+        Parameters
+        ----------
+        ctx : discord.ApplicationContext
+            Slash Command Context
+        
+        Notes
+        -----
+        Zeigt eine Bestätigungsabfrage vor dem Löschen.
+        Diese Aktion kann nicht rückgängig gemacht werden.
+        """
         
         # Bestätigungs-View
         class ConfirmView(discord.ui.View):
+            """
+            Bestätigungs-View für Reset.
+            
+            Attributes
+            ----------
+            confirmed : bool
+                Ob der Reset bestätigt wurde
+            """
+            
             def __init__(self):
                 super().__init__(timeout=30)
                 self.confirmed = False
             
             @discord.ui.button(label="✅ Ja, zurücksetzen", style=discord.ButtonStyle.danger)
             async def confirm_button(self, button: discord.ui.Button, interaction: discord.Interaction):
+                """
+                Bestätigung des Resets.
+                
+                Parameters
+                ----------
+                button : discord.ui.Button
+                    Geklickter Button
+                interaction : discord.Interaction
+                    Button Interaction
+                """
                 self.confirmed = True
                 self.stop()
                 
@@ -1021,6 +1400,16 @@ class WelcomeSystem(ezcord.Cog):
             
             @discord.ui.button(label="❌ Abbrechen", style=discord.ButtonStyle.secondary)
             async def cancel_button(self, button: discord.ui.Button, interaction: discord.Interaction):
+                """
+                Abbruch des Resets.
+                
+                Parameters
+                ----------
+                button : discord.ui.Button
+                    Geklickter Button
+                interaction : discord.Interaction
+                    Button Interaction
+                """
                 self.stop()
                 
                 embed = discord.Embed(
@@ -1043,7 +1432,18 @@ class WelcomeSystem(ezcord.Cog):
     # Event Listeners für Statistiken
     @commands.Cog.listener()
     async def on_member_remove(self, member: discord.Member):
-        """Tracking für Member Leaves"""
+        """
+        Tracking für Member Leaves.
+        
+        Parameters
+        ----------
+        member : discord.Member
+            Mitglied das den Server verlassen hat
+        
+        Notes
+        -----
+        Aktualisiert die Statistiken wenn aktiviert.
+        """
         try:
             settings = await self.get_cached_settings(member.guild.id)
             if settings and settings.get('welcome_stats_enabled'):
@@ -1053,4 +1453,16 @@ class WelcomeSystem(ezcord.Cog):
 
 
 def setup(bot):
+    """
+    Setup-Funktion für das Cog.
+    
+    Parameters
+    ----------
+    bot : ezcord.Bot
+        Bot-Instanz
+    
+    Notes
+    -----
+    Wird automatisch von discord.py beim Laden des Cogs aufgerufen.
+    """
     bot.add_cog(WelcomeSystem(bot))

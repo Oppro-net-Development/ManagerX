@@ -1,4 +1,4 @@
-Handlers
+Datenbanken
 ===================
 
 .. toctree::
@@ -6,7 +6,7 @@ Handlers
    :caption: Contents:
 
    managerx/main
+   handler/index
    index
-   logger
-   database/index
+   welcome_db
    cogs/index

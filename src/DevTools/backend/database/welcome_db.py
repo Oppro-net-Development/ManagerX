@@ -1,4 +1,12 @@
-# OPPRO.NET Network
+"""
+Welcome Database Handler
+=========================
+
+Datenbank-Handler für das Welcome System mit vollständiger
+Rückwärtskompatibilität und automatischer Migration.
+
+Copyright (c) 2025 OPPRO.NET Network
+"""
 
 import sqlite3
 import aiosqlite
@@ -10,14 +18,64 @@ from datetime import datetime
 # Logger Setup
 logger = logging.getLogger(__name__)
 
+
 class WelcomeDatabase:
+    """
+    Datenbank-Handler für Welcome System Einstellungen.
+    
+    Bietet synchrone und asynchrone Methoden mit automatischer
+    Fallback-Logik für Rückwärtskompatibilität. Unterstützt
+    automatische Datenbankmigrationen.
+    
+    Parameters
+    ----------
+    db_path : str, optional
+        Pfad zur SQLite-Datenbank, by default "data/welcome.db"
+    
+    Attributes
+    ----------
+    db_path : str
+        Pfad zur SQLite-Datenbank
+    migration_done : bool
+        Status der Datenbankmigrierung
+    
+    Examples
+    --------
+    >>> db = WelcomeDatabase()
+    >>> await db.update_welcome_settings(123456, channel_id=789012)
+    True
+    """
+    
     def __init__(self, db_path: str = "data/welcome.db"):
+        """
+        Initialisiert den Datenbank-Handler.
+        
+        Parameters
+        ----------
+        db_path : str, optional
+            Pfad zur SQLite-Datenbank, by default "data/welcome.db"
+        
+        Notes
+        -----
+        Erstellt automatisch die Basis-Tabellen wenn sie nicht existieren.
+        """
         self.db_path = db_path
         self.migration_done = False
         self.init_database()
     
     def init_database(self):
-        """Initialisiert die Datenbank synchron für Rückwärtskompatibilität"""
+        """
+        Initialisiert die Datenbank synchron für Rückwärtskompatibilität.
+        
+        Notes
+        -----
+        Erstellt die Basis-Tabelle `welcome_settings` mit allen
+        ursprünglichen Feldern. Neue Felder werden später durch
+        `migrate_database()` hinzugefügt.
+        
+        Diese Methode ist synchron um Kompatibilität mit älteren
+        Versionen zu gewährleisten.
+        """
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
         
@@ -45,7 +103,24 @@ class WelcomeDatabase:
         conn.close()
     
     async def migrate_database(self):
-        """Migriert die Datenbank zu neuen Features (async)"""
+        """
+        Migriert die Datenbank zu neuen Features (async).
+        
+        Notes
+        -----
+        Fügt folgende neue Spalten hinzu:
+        - auto_role_id: Automatische Rollenvergabe
+        - join_dm_enabled: Private Willkommensnachrichten
+        - join_dm_message: DM Nachrichtentext
+        - template_name: Verwendete Vorlage
+        - welcome_stats_enabled: Statistik-Tracking
+        - rate_limit_enabled: Rate-Limiting aktiv
+        - rate_limit_seconds: Rate-Limit Zeitfenster
+        
+        Erstellt außerdem die `welcome_stats` Tabelle für Statistiken.
+        
+        Die Migrierung wird nur einmal pro Instanz ausgeführt.
+        """
         if self.migration_done:
             return
         
@@ -95,15 +170,102 @@ class WelcomeDatabase:
             logger.error(f"Fehler bei Datenbankmigrierung: {e}")
     
     async def set_welcome_channel(self, guild_id: int, channel_id: int) -> bool:
-        """Rückwärtskompatible Methode"""
+        """
+        Setzt den Welcome Channel (Rückwärtskompatible Methode).
+        
+        Parameters
+        ----------
+        guild_id : int
+            Discord Server ID
+        channel_id : int
+            Discord Channel ID
+        
+        Returns
+        -------
+        bool
+            True bei Erfolg, False bei Fehler
+        
+        Notes
+        -----
+        Diese Methode ist deprecated, verwende stattdessen
+        `update_welcome_settings(guild_id, channel_id=channel_id)`.
+        """
         return await self.update_welcome_settings(guild_id, channel_id=channel_id)
     
     async def set_welcome_message(self, guild_id: int, message: str) -> bool:
-        """Rückwärtskompatible Methode"""
+        """
+        Setzt die Welcome Message (Rückwärtskompatible Methode).
+        
+        Parameters
+        ----------
+        guild_id : int
+            Discord Server ID
+        message : str
+            Welcome Message Text
+        
+        Returns
+        -------
+        bool
+            True bei Erfolg, False bei Fehler
+        
+        Notes
+        -----
+        Diese Methode ist deprecated, verwende stattdessen
+        `update_welcome_settings(guild_id, welcome_message=message)`.
+        """
         return await self.update_welcome_settings(guild_id, welcome_message=message)
     
     async def update_welcome_settings(self, guild_id: int, **kwargs) -> bool:
-        """Async Update mit Fallback auf sync"""
+        """
+        Aktualisiert Welcome Einstellungen mit Fallback auf sync.
+        
+        Parameters
+        ----------
+        guild_id : int
+            Discord Server ID
+        **kwargs : dict
+            Felder zum Aktualisieren (siehe Notes)
+        
+        Returns
+        -------
+        bool
+            True bei Erfolg, False bei Fehler
+        
+        Notes
+        -----
+        Gültige Felder in kwargs:
+        - channel_id : int
+        - welcome_message : str
+        - enabled : bool/int
+        - embed_enabled : bool/int
+        - embed_color : str (Hex-Format)
+        - embed_title : str
+        - embed_description : str
+        - embed_thumbnail : bool/int
+        - embed_footer : str
+        - ping_user : bool/int
+        - delete_after : int (Sekunden)
+        - auto_role_id : int
+        - join_dm_enabled : bool/int
+        - join_dm_message : str
+        - template_name : str
+        - welcome_stats_enabled : bool/int
+        - rate_limit_enabled : bool/int
+        - rate_limit_seconds : int
+        
+        Erstellt automatisch einen neuen Eintrag wenn keiner existiert.
+        Bei async-Fehlern wird automatisch auf sync Fallback gewechselt.
+        
+        Examples
+        --------
+        >>> await db.update_welcome_settings(
+        ...     123456,
+        ...     channel_id=789012,
+        ...     welcome_message="Willkommen %mention%!",
+        ...     embed_enabled=True
+        ... )
+        True
+        """
         try:
             await self.migrate_database()
             
@@ -150,7 +312,26 @@ class WelcomeDatabase:
             return self._sync_update_welcome_settings(guild_id, **kwargs)
     
     def _sync_update_welcome_settings(self, guild_id: int, **kwargs) -> bool:
-        """Sync Fallback für alte Versionen"""
+        """
+        Sync Fallback für alte Versionen.
+        
+        Parameters
+        ----------
+        guild_id : int
+            Discord Server ID
+        **kwargs : dict
+            Felder zum Aktualisieren
+        
+        Returns
+        -------
+        bool
+            True bei Erfolg, False bei Fehler
+        
+        Notes
+        -----
+        Unterstützt nur Basis-Felder für Rückwärtskompatibilität.
+        Neue Felder werden ignoriert.
+        """
         try:
             conn = sqlite3.connect(self.db_path)
             cursor = conn.cursor()
@@ -191,7 +372,31 @@ class WelcomeDatabase:
             return False
     
     async def get_welcome_settings(self, guild_id: int) -> Optional[Dict[str, Any]]:
-        """Async Get mit sync Fallback"""
+        """
+        Holt Welcome Einstellungen mit sync Fallback.
+        
+        Parameters
+        ----------
+        guild_id : int
+            Discord Server ID
+        
+        Returns
+        -------
+        dict or None
+            Dictionary mit allen Einstellungen oder None wenn nicht vorhanden
+        
+        Notes
+        -----
+        Gibt ein Dictionary zurück mit allen Feldern als Keys.
+        Bei async-Fehlern wird automatisch auf sync Fallback gewechselt.
+        
+        Examples
+        --------
+        >>> settings = await db.get_welcome_settings(123456)
+        >>> if settings:
+        ...     print(settings['channel_id'])
+        ...     print(settings['welcome_message'])
+        """
         try:
             await self.migrate_database()
             
@@ -209,7 +414,19 @@ class WelcomeDatabase:
             return self._sync_get_welcome_settings(guild_id)
     
     def _sync_get_welcome_settings(self, guild_id: int) -> Optional[Dict[str, Any]]:
-        """Sync Fallback"""
+        """
+        Sync Fallback für Einstellungen holen.
+        
+        Parameters
+        ----------
+        guild_id : int
+            Discord Server ID
+        
+        Returns
+        -------
+        dict or None
+            Dictionary mit Einstellungen oder None
+        """
         try:
             conn = sqlite3.connect(self.db_path)
             cursor = conn.cursor()
@@ -229,7 +446,24 @@ class WelcomeDatabase:
             return None
     
     async def delete_welcome_settings(self, guild_id: int) -> bool:
-        """Löscht Welcome Einstellungen"""
+        """
+        Löscht alle Welcome Einstellungen für einen Server.
+        
+        Parameters
+        ----------
+        guild_id : int
+            Discord Server ID
+        
+        Returns
+        -------
+        bool
+            True bei Erfolg, False bei Fehler
+        
+        Notes
+        -----
+        Löscht nur die Einstellungen, nicht die Statistiken.
+        Diese Aktion kann nicht rückgängig gemacht werden.
+        """
         try:
             async with aiosqlite.connect(self.db_path) as conn:
                 await conn.execute('DELETE FROM welcome_settings WHERE guild_id = ?', (guild_id,))
@@ -240,7 +474,26 @@ class WelcomeDatabase:
             return False
     
     async def toggle_welcome(self, guild_id: int) -> Optional[bool]:
-        """Toggle Welcome System"""
+        """
+        Schaltet das Welcome System ein/aus.
+        
+        Parameters
+        ----------
+        guild_id : int
+            Discord Server ID
+        
+        Returns
+        -------
+        bool or None
+            Neuer Status (True=aktiviert, False=deaktiviert)
+            oder None wenn keine Einstellungen vorhanden
+        
+        Examples
+        --------
+        >>> new_state = await db.toggle_welcome(123456)
+        >>> if new_state is not None:
+        ...     print(f"Welcome System ist jetzt {'aktiviert' if new_state else 'deaktiviert'}")
+        """
         try:
             settings = await self.get_welcome_settings(guild_id)
             if not settings:
@@ -254,7 +507,35 @@ class WelcomeDatabase:
             return None
     
     async def update_welcome_stats(self, guild_id: int, joins: int = 0, leaves: int = 0):
-        """Aktualisiert Welcome Statistiken"""
+        """
+        Aktualisiert Welcome Statistiken für den aktuellen Tag.
+        
+        Parameters
+        ----------
+        guild_id : int
+            Discord Server ID
+        joins : int, optional
+            Anzahl neuer Beitritte hinzuzufügen, by default 0
+        leaves : int, optional
+            Anzahl Austritte hinzuzufügen, by default 0
+        
+        Notes
+        -----
+        Verwendet das aktuelle Datum als Schlüssel.
+        Summiert die Werte wenn bereits Einträge für heute existieren.
+        Erstellt automatisch einen neuen Eintrag wenn keiner vorhanden ist.
+        
+        Die Statistiken werden in der `welcome_stats` Tabelle gespeichert
+        mit einer Zeile pro Server pro Tag.
+        
+        Examples
+        --------
+        >>> # Einen neuen Join tracken
+        >>> await db.update_welcome_stats(123456, joins=1)
+        >>> 
+        >>> # Einen Leave tracken
+        >>> await db.update_welcome_stats(123456, leaves=1)
+        """
         try:
             await self.migrate_database()
             date = datetime.now().strftime('%Y-%m-%d')
