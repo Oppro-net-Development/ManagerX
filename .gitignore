@@ -28,3 +28,4 @@ Thumbs.db
 FastCoding/backend/utils/config.py
 command.yaml
 wiki_stats.json
+_build/

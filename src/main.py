@@ -1,6 +1,8 @@
 # Copyright (c) 2025 OPPRO.NET Network
 """
 ManagerX Discord Bot - Main Entry Point
+========================================
+
 Version: 1.7.2-dev
 """
 
@@ -22,11 +24,29 @@ from ezcord import log
 from DevTools.backend import init_all
 
 load_dotenv(os.path.join("config", ".env"))
+
 # =============================================================================
 # CONFIGURATION
 # =============================================================================
 class BotConfig:
-    """Zentrale Bot-Konfiguration"""
+    """
+    Zentrale Bot-Konfiguration.
+    
+    Attributes
+    ----------
+    VERSION : str
+        Aktuelle Bot-Version
+    VERSION_URL : str
+        URL zur Version-Prüfung auf GitHub
+    GITHUB_REPO : str
+        GitHub Repository URL
+    INTENTS : discord.Intents
+        Discord Gateway Intents
+    LOG_LEVEL : int
+        Logging Level
+    DEFAULT_LANGUAGE : str
+        Standard-Sprache für den Bot
+    """
     VERSION = "1.7.2-dev"
     VERSION_URL = "https://raw.githubusercontent.com/Oppro-net-Development/ManagerX/main/version.txt"
     GITHUB_REPO = "https://github.com/Oppro-net-Development/ManagerX"
@@ -47,47 +67,127 @@ class BotConfig:
 # UTILS
 # =============================================================================
 class ColoredOutput:
-    """Formatierte Console-Ausgaben mit Timestamps"""
+    """
+    Formatierte Console-Ausgaben mit Timestamps.
+    
+    Verwendet colorama für farbige Terminal-Ausgaben mit
+    automatischen Zeitstempeln für alle Nachrichten.
+    """
     
     @staticmethod
     def timestamp() -> str:
-        """Gibt einen formatierten Timestamp zurück"""
+        """
+        Gibt einen formatierten Timestamp zurück.
+        
+        Returns
+        -------
+        str
+            Formatierter Timestamp im Format [HH:MM:SS]
+        """
         return datetime.now().strftime(f"[{Fore.CYAN}%H:%M:%S{Style.RESET_ALL}]")
     
     @staticmethod
     def success(category: str, message: str):
-        """Erfolgs-Nachricht"""
+        """
+        Erfolgs-Nachricht ausgeben.
+        
+        Parameters
+        ----------
+        category : str
+            Kategorie der Nachricht
+        message : str
+            Nachrichtentext
+        """
         print(f"{ColoredOutput.timestamp()} [{Style.BRIGHT}{Fore.GREEN}{category}{Style.RESET_ALL}] {message}")
     
     @staticmethod
     def error(category: str, message: str):
-        """Fehler-Nachricht"""
+        """
+        Fehler-Nachricht ausgeben.
+        
+        Parameters
+        ----------
+        category : str
+            Kategorie der Nachricht
+        message : str
+            Nachrichtentext
+        """
         print(f"{ColoredOutput.timestamp()} [{Fore.RED}{category}{Style.RESET_ALL}] {message}")
     
     @staticmethod
     def info(category: str, message: str):
-        """Info-Nachricht"""
+        """
+        Info-Nachricht ausgeben.
+        
+        Parameters
+        ----------
+        category : str
+            Kategorie der Nachricht
+        message : str
+            Nachrichtentext
+        """
         print(f"{ColoredOutput.timestamp()} [{Style.BRIGHT}{Fore.LIGHTCYAN_EX}{category}{Style.RESET_ALL}] {message}")
     
     @staticmethod
     def warning(category: str, message: str):
-        """Warnung"""
+        """
+        Warnung ausgeben.
+        
+        Parameters
+        ----------
+        category : str
+            Kategorie der Nachricht
+        message : str
+            Nachrichtentext
+        """
         print(f"{ColoredOutput.timestamp()} [{Fore.YELLOW}{category}{Style.RESET_ALL}] {message}")
     
     @staticmethod
     def loading(category: str, message: str):
-        """Lade-Nachricht"""
+        """
+        Lade-Nachricht ausgeben.
+        
+        Parameters
+        ----------
+        category : str
+            Kategorie der Nachricht
+        message : str
+            Nachrichtentext
+        """
         print(f"{ColoredOutput.timestamp()} [{Style.BRIGHT}{Fore.RED}{category}{Style.RESET_ALL}] {message}")
 
 
 class VersionChecker:
-    """Überprüft Bot-Versionen"""
+    """
+    Überprüft Bot-Versionen.
+    
+    Vergleicht die aktuelle Bot-Version mit der neuesten
+    verfügbaren Version auf GitHub.
+    """
     
     @staticmethod
     def parse_version(version_str: str) -> tuple:
         """
-        Parst Version-String in (major, minor, patch, type)
-        Beispiel: "1.7.2-dev" -> (1, 7, 2, "dev")
+        Parst Version-String in Komponenten.
+        
+        Parameters
+        ----------
+        version_str : str
+            Version-String im Format "major.minor.patch-type"
+            Beispiel: "1.7.2-dev"
+        
+        Returns
+        -------
+        tuple
+            Tuple im Format (major, minor, patch, type)
+            Beispiel: (1, 7, 2, "dev")
+        
+        Examples
+        --------
+        >>> VersionChecker.parse_version("1.7.2-dev")
+        (1, 7, 2, "dev")
+        >>> VersionChecker.parse_version("2.0.0")
+        (2, 0, 0, "stable")
         """
         match = re.match(r"(\d+)\.(\d+)\.(\d+)(?:[-_]?(dev|beta|alpha))?", version_str)
         if match:
@@ -98,8 +198,27 @@ class VersionChecker:
     @staticmethod
     async def check_update(current_version: str, version_url: str) -> str | None:
         """
-        Überprüft auf Updates
-        Returns: Latest version string oder None bei Fehler
+        Überprüft auf verfügbare Updates.
+        
+        Parameters
+        ----------
+        current_version : str
+            Aktuelle Bot-Version
+        version_url : str
+            URL zur Version-Datei auf GitHub
+        
+        Returns
+        -------
+        str or None
+            Neueste Version als String oder None bei Fehler
+        
+        Notes
+        -----
+        Gibt verschiedene Status-Meldungen aus:
+        - Up-to-date: Grüne Erfolgsmeldung
+        - Dev build: Info-Meldung
+        - Pre-release: Warnmeldung
+        - Update verfügbar: Gelbe Warnung mit Download-Link
         """
         try:
             async with aiohttp.ClientSession() as session:
@@ -153,14 +272,36 @@ class VersionChecker:
 
 
 class MessageHandler:
-    """Verarbeitet spezielle Message-Commands"""
+    """
+    Verarbeitet spezielle Message-Commands.
+    
+    Behandelt Text-basierte Commands wie Slowmode-Änderungen
+    und Message-Löschungen über Mentions.
+    """
     
     @staticmethod
     def parse_time(text: str) -> int | None:
         """
-        Parst Zeitangaben aus Text
-        Beispiele: "10s", "5min", "2m"
-        Returns: Sekunden oder None
+        Parst Zeitangaben aus Text.
+        
+        Parameters
+        ----------
+        text : str
+            Text mit Zeitangabe
+        
+        Returns
+        -------
+        int or None
+            Zeit in Sekunden oder None bei ungültiger Angabe
+        
+        Examples
+        --------
+        >>> MessageHandler.parse_time("slowmode 10s")
+        10
+        >>> MessageHandler.parse_time("slowmode 5min")
+        300
+        >>> MessageHandler.parse_time("slowmode 2m")
+        120
         """
         match = re.search(r'slowmode\s*(\d+)\s*(s|sec|min|m)?', text.lower())
         if not match:
@@ -175,7 +316,27 @@ class MessageHandler:
     
     @staticmethod
     async def handle_delete_message(message: discord.Message):
-        """Verarbeitet 'lösch das' Command"""
+        """
+        Verarbeitet 'lösch das' Command.
+        
+        Parameters
+        ----------
+        message : discord.Message
+            Die Discord-Nachricht
+        
+        Returns
+        -------
+        bool
+            True wenn Command verarbeitet wurde, sonst False
+        
+        Notes
+        -----
+        Benötigt folgende Bedingungen:
+        - Message muss eine Reply sein
+        - Text muss "lösch das" enthalten
+        - Bot muss erwähnt sein
+        - Autor muss "Nachrichten verwalten" Berechtigung haben
+        """
         if not message.reference:
             return False
         
@@ -211,7 +372,25 @@ class MessageHandler:
     
     @staticmethod
     async def handle_slowmode(message: discord.Message):
-        """Verarbeitet Slowmode Command"""
+        """
+        Verarbeitet Slowmode Command.
+        
+        Parameters
+        ----------
+        message : discord.Message
+            Die Discord-Nachricht
+        
+        Returns
+        -------
+        bool
+            True wenn Command verarbeitet wurde, sonst False
+        
+        Notes
+        -----
+        Syntax: @Bot slowmode <Zeit>
+        Unterstützte Zeiteinheiten: s, sec, min, m
+        Beispiele: "10s", "5min", "2m"
+        """
         content_lower = message.content.lower()
         
         if not (message.mentions and message.guild.me in message.mentions):
@@ -263,10 +442,32 @@ class MessageHandler:
 # BOT CLASS
 # =============================================================================
 class ManagerXBot(ezcord.Bot):
-    """Hauptklasse für den ManagerX Bot"""
+    """
+    Hauptklasse für den ManagerX Bot.
+    
+    Erweitert ezcord.Bot mit zusätzlichen Features wie
+    Version-Checking, Message-Handling und DevTools-Integration.
+    
+    Parameters
+    ----------
+    config : BotConfig
+        Bot-Konfigurationsobjekt
+    
+    Attributes
+    ----------
+    config : BotConfig
+        Gespeicherte Konfiguration
+    """
     
     def __init__(self, config: BotConfig):
-        """Initialisiert den Bot"""
+        """
+        Initialisiert den Bot.
+        
+        Parameters
+        ----------
+        config : BotConfig
+            Bot-Konfigurationsobjekt mit allen Einstellungen
+        """
         self.config = config
         
         # Environment laden
@@ -294,11 +495,28 @@ class ManagerXBot(ezcord.Bot):
         ColoredOutput.loading("INIT", "Bot initialized")
     
     async def setup_hook(self):
-        """Setup vor dem Bot-Start"""
+        """
+        Setup vor dem Bot-Start.
+        
+        Notes
+        -----
+        Wird automatisch von discord.py vor dem Login aufgerufen.
+        Ideal für asynchrone Setup-Operationen.
+        """
         ColoredOutput.info("SETUP", "Running setup hook...")
     
     async def on_ready(self):
-        """Event wenn Bot bereit ist"""
+        """
+        Event wenn Bot bereit ist.
+        
+        Notes
+        -----
+        Führt folgende Aktionen aus:
+        1. Ausgabe des Login-Status
+        2. Version-Check gegen GitHub
+        3. DevTools-Initialisierung
+        4. Status-Aktivität setzen
+        """
         ColoredOutput.success("READY", f"Logged in as {self.user}")
         
         # Version check
@@ -328,7 +546,23 @@ class ManagerXBot(ezcord.Bot):
         )
     
     async def on_message(self, message: discord.Message):
-        """Message Event Handler"""
+        """
+        Message Event Handler.
+        
+        Parameters
+        ----------
+        message : discord.Message
+            Die empfangene Discord-Nachricht
+        
+        Notes
+        -----
+        Verarbeitet:
+        - Message-Lösch-Commands
+        - Slowmode-Commands
+        - Text-Commands (wenn verfügbar)
+        
+        Ignoriert Bot-Nachrichten und DMs.
+        """
         # Ignore bots
         if message.author.bot:
             return
@@ -355,7 +589,19 @@ class ManagerXBot(ezcord.Bot):
                 ColoredOutput.error("COMMANDS", f"process_commands raised: {e}")
     
     def load_all_cogs(self):
-        """Lädt alle Cogs"""
+        """
+        Lädt alle Cogs.
+        
+        Returns
+        -------
+        bool
+            True bei Erfolg, False bei Fehler
+        
+        Notes
+        -----
+        Lädt alle Cogs aus dem 'cogs' Verzeichnis
+        inklusive Unterverzeichnissen.
+        """
         try:
             ColoredOutput.loading("COGS", "Loading all cogs...")
             
@@ -372,7 +618,24 @@ class ManagerXBot(ezcord.Bot):
             return False
     
     def start_bot(self):
-        """Startet den Bot"""
+        """
+        Startet den Bot.
+        
+        Notes
+        -----
+        Führt folgende Schritte aus:
+        1. Token aus Environment laden
+        2. Help-Command hinzufügen
+        3. Alle Cogs laden
+        4. Bot mit Token starten
+        
+        Raises
+        ------
+        discord.LoginFailure
+            Wenn der Bot-Token ungültig ist
+        KeyboardInterrupt
+            Bei manuellem Abbruch (Ctrl+C)
+        """
         token = os.getenv("TOKEN")
         
         if not token:
@@ -406,7 +669,17 @@ class ManagerXBot(ezcord.Bot):
 # MAIN ENTRY POINT
 # =============================================================================
 def main():
-    """Haupteinstiegspunkt"""
+    """
+    Haupteinstiegspunkt der Anwendung.
+    
+    Erstellt die Bot-Konfiguration, initialisiert den Bot
+    und startet ihn. Gibt einen Banner mit Versionsinformationen aus.
+    
+    Raises
+    ------
+    Exception
+        Bei kritischen Fehlern während der Bot-Initialisierung
+    """
     try:
         # Banner ausgeben
         print(f"\n{Fore.CYAN}{'=' * 60}{Style.RESET_ALL}")
