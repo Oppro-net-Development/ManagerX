@@ -21,6 +21,7 @@ import ezcord
 from ezcord import log
 from DevTools.backend import init_all
 
+load_dotenv(os.path.join("config", ".env"))
 # =============================================================================
 # CONFIGURATION
 # =============================================================================

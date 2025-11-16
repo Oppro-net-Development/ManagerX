@@ -27,3 +27,4 @@ Thumbs.db
 *.tmp
 FastCoding/backend/utils/config.py
 command.yaml
+wiki_stats.json
