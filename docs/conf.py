@@ -13,7 +13,7 @@ sys.path.insert(0, os.path.abspath('../src'))
 project = 'ManagerX'
 copyright = '2025, OPPRO.NET Network'
 author = 'OPPRO.NET Development'
-release = '1.7.2'
+release = '1.7.2 '
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
