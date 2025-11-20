@@ -48,7 +48,7 @@ class BotConfig:
         Standard-Sprache für den Bot
     """
     VERSION = "1.7.2-dev"
-    VERSION_URL = "https://raw.githubusercontent.com/Oppro-net-Development/ManagerX/main/version.txt"
+    VERSION_URL = "https://raw.githubusercontent.com/Oppro-net-Development/ManagerX/main/config/version.txt"
     GITHUB_REPO = "https://github.com/Oppro-net-Development/ManagerX"
     
     # Intents
