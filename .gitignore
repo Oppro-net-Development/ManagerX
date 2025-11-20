@@ -26,4 +26,6 @@ Thumbs.db
 *.bak
 *.tmp
 FastCoding/backend/utils/config.py
-translations/command.yaml
+command.yaml
+wiki_stats.json
+_build/
