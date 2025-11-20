@@ -7,6 +7,8 @@ ManagerX documentation
 
    managerx/main
    handler/index
+   handler
    database/index
+   database/welcome_db
    index
    welcome

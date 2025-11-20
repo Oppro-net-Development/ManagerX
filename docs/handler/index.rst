@@ -9,4 +9,6 @@ Handlers
    index
    logger
    database/index
+   database/welcome_db
    cogs/index
+   cogs/welcome
