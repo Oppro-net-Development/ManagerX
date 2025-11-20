@@ -3,7 +3,7 @@
 ManagerX Discord Bot - Main Entry Point
 ========================================
 
-Version: 1.7.2-dev
+Version: 1.7.2-alpha
 """
 
 # =============================================================================
@@ -47,7 +47,7 @@ class BotConfig:
     DEFAULT_LANGUAGE : str
         Standard-Sprache für den Bot
     """
-    VERSION = "1.7.2-dev"
+    VERSION = "1.7.2-alpha"
     VERSION_URL = "https://raw.githubusercontent.com/Oppro-net-Development/ManagerX/main/config/version.txt"
     GITHUB_REPO = "https://github.com/Oppro-net-Development/ManagerX"
     
