@@ -8,7 +8,7 @@ DM-Nachrichten und Statistiken.
 
 import discord
 from discord.ext import commands
-from DevTools import WelcomeDatabase
+from src.DevTools import WelcomeDatabase
 import asyncio
 import json
 import io
@@ -18,7 +18,7 @@ import aiosqlite
 from datetime import datetime
 import ezcord
 from discord.ui import Container
-from DevTools import emoji_yes, emoji_no, emoji_add
+from src.DevTools import emoji_yes, emoji_no, emoji_add
 
 
 # Logger Setup

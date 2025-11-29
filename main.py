@@ -15,12 +15,14 @@ import asyncio
 import logging
 import re
 import sys
-import glob # WIEDER HINZUGEFÜGT FÜR DYNAMISCHES LADEN
+import glob 
 from datetime import datetime
 from dotenv import load_dotenv
 from colorama import Fore, Style, init as colorama_init
 import aiohttp
 import traceback
+from logs import Logs, LogLevel, Category
+
 
 if os.path.dirname(os.path.abspath(__file__)) not in sys.path:
     sys.path.append(os.path.dirname(os.path.abspath(__file__)))
@@ -50,40 +52,12 @@ class BotConfig:
     INTENTS.guilds = True
     INTENTS.messages = True
     INTENTS.message_content = True
-    
-    # Logging
-    LOG_LEVEL = logging.DEBUG
-    DEFAULT_LANGUAGE = "de"
+
 
 
 # -----------------------------------------------------------------------------
 # UTILS (Unverändert)
-# -----------------------------------------------------------------------------
-class ColoredOutput:
-    
-    @staticmethod
-    def timestamp() -> str:
-        return datetime.now().strftime(f"[{Fore.CYAN}%H:%M:%S{Style.RESET_ALL}]")
-    
-    @staticmethod
-    def success(category: str, message: str):
-        print(f"{ColoredOutput.timestamp()} [{Style.BRIGHT}{Fore.GREEN}{category}{Style.RESET_ALL}] {message}")
-    
-    @staticmethod
-    def error(category: str, message: str):
-        print(f"{ColoredOutput.timestamp()} [{Fore.RED}{category}{Style.RESET_ALL}] {message}")
-    
-    @staticmethod
-    def info(category: str, message: str):
-        print(f"{ColoredOutput.timestamp()} [{Style.BRIGHT}{Fore.LIGHTCYAN_EX}{category}{Style.RESET_ALL}] {message}")
-    
-    @staticmethod
-    def warning(category: str, message: str):
-        print(f"{ColoredOutput.timestamp()} [{Fore.YELLOW}{category}{Style.RESET_ALL}] {message}")
-    
-    @staticmethod
-    def loading(category: str, message: str):
-        print(f"{ColoredOutput.timestamp()} [{Style.BRIGHT}{Fore.RED}{category}{Style.RESET_ALL}] {message}")
+# ----------------------------------------------------------------------------
 
 
 class VersionChecker:
@@ -101,47 +75,49 @@ class VersionChecker:
             async with aiohttp.ClientSession() as session:
                 async with session.get(version_url, timeout=aiohttp.ClientTimeout(total=10)) as resp:
                     if resp.status != 200:
-                        ColoredOutput.error("UPDATE", f"Version check failed (HTTP {resp.status})")
+                        Logs.error("UPDATE", f"Version check failed (HTTP {resp.status})")
                         return None
                     
                     latest_version = (await resp.text()).strip()
                     if not latest_version:
-                        ColoredOutput.error("UPDATE", "Empty response from version server")
+                        Logs.error("UPDATE", "Empty response from version server")
                         return None
                     
                     current = VersionChecker.parse_version(current_version)
                     latest = VersionChecker.parse_version(latest_version)
                     
                     if current[:3] == latest[:3] and current[3] == latest[3]:
-                        ColoredOutput.success("VERSION", f"Running latest version: {current_version}")
+                        Logs.success("VERSION", f"Running latest version: {current_version}")
                     
                     elif current[:3] > latest[:3]:
-                        ColoredOutput.info(
+                        Logs.info(
                             "VERSION",
                             f"Dev build detected ({current_version}) - newer than public release ({latest_version})"
                         )
                     
                     elif current[:3] == latest[:3] and current[3] in ("dev", "beta", "alpha"):
-                        ColoredOutput.warning(
+                        Logs.warn(
                             "VERSION",
                             f"Pre-release version ({current_version}) - latest stable: {latest_version}"
                         )
                     
                     else:
                         print(
-                            f"{ColoredOutput.timestamp()} [{Fore.YELLOW}UPDATE AVAILABLE{Style.RESET_ALL}] "
+                            f"[{Fore.YELLOW}UPDATE AVAILABLE{Style.RESET_ALL}] "
                             f"Current: {current_version} → Latest: {latest_version}\n"
                             f"        Download: {Fore.CYAN}{BotConfig.GITHUB_REPO}{Style.RESET_ALL}"
+
                         )
+
                     
                     return latest_version
         
         except aiohttp.ClientConnectorError:
-            ColoredOutput.error("UPDATE", "Could not connect to GitHub (network issue)")
+            Logs.error("UPDATE", "Could not connect to GitHub (network issue)")
         except asyncio.TimeoutError:
-            ColoredOutput.error("UPDATE", "Connection to version server timed out")
+            Logs.error("UPDATE", "Connection to version server timed out")
         except Exception as e:
-            ColoredOutput.error("UPDATE", f"Unexpected error: {e}")
+            Logs.error("UPDATE", f"Unexpected error: {e}")
         
         return None
 
@@ -189,7 +165,7 @@ class MessageHandler:
         except discord.NotFound:
             await message.channel.send("❌ Nachricht nicht gefunden!", delete_after=5)
         except Exception as e:
-            ColoredOutput.error("MESSAGE", f"Delete failed: {e}")
+            Logs.error("MESSAGE", f"Delete failed: {e}")
         
         return True
     
@@ -234,7 +210,7 @@ class MessageHandler:
             await message.channel.send("❌ Keine Berechtigung!", delete_after=5)
         except Exception as e:
             await message.channel.send(f"⚠️ Fehler: {e}", delete_after=5)
-            ColoredOutput.error("SLOWMODE", str(e))
+            Logs.error("SLOWMODE", str(e))
         
         return True
 
@@ -244,32 +220,29 @@ class MessageHandler:
 # =============================================================================
 class ManagerXBot(ezcord.Bot):
     
-    # Die COGS_LIST wird entfernt.
-    
     def __init__(self, config: BotConfig):
         self.config = config
         
         colorama_init(autoreset=True)
         
         ezcord.set_log(
-            log_level=config.LOG_LEVEL,
             webhook_url=os.getenv("LOGGING_WEBHOOK_URL"),
         )
         
         super().__init__(
             intents=config.INTENTS,
             language="auto",
-            default_language=config.DEFAULT_LANGUAGE,
-            logging_level=config.LOG_LEVEL,
             error_webhook_url=os.getenv("ERROR_WEBHOOK_URL"),
             ready_event=None
         )
         
-        ColoredOutput.loading("INIT", "Bot initialized")
+        Logs.loading("INIT", "Bot initialized")
 
     def _load_all_cogs(self):
         """
         Dynamisches Laden aller Cogs basierend auf dem Dateisystem.
+        KORREKTUR: Normalisiert die Pfad-Trennung für Windows, damit der 
+        Check 'startswith("src.cogs")' funktioniert.
         """
         cogs_dir = "src/cogs"
         
@@ -278,91 +251,40 @@ class ManagerXBot(ezcord.Bot):
         total_cogs = 0
 
         for file_path in cog_files:
-            # Ersetzt OS-spezifische Slashes und entfernt Dateiendung und Cog-Basisordner
-            module_name = file_path.replace(os.path.sep, ".")[:-3]
+            # 1. Normalisiere den Pfad: Ersetze alle Slashes und Backslashes durch Punkte.
+            #    Wir ersetzen zuerst os.path.sep (\ unter Windows) und dann /
+            #    Dies stellt sicher, dass der gesamte Pfad in Python-Modulnamen-Konvention umgewandelt wird.
+            normalized_path = file_path.replace(os.path.sep, ".").replace("/", ".")
             
-            # Stellt sicher, dass der Modulname mit 'src.cogs' beginnt
+            # 2. Entferne die Dateiendung '.py'
+            module_name = normalized_path[:-3]
+            
+            # 3. PRÜFUNG: Stellt sicher, dass der Modulname mit 'src.cogs' beginnt
             if not module_name.startswith("src.cogs"):
-                 ColoredOutput.warning("COGS SKIP", f"Skipping non-standard cog path: {file_path}")
+                 Logs.warn("COGS SKIP", f"Skipping non-standard cog path: {file_path}")
                  continue
 
             try:
                 self.load_extension(module_name)
-                ColoredOutput.info("COGS", f"Loaded: {module_name}")
+                Logs.info(Category.COGS, f"Loaded: {module_name}")
                 total_cogs += 1
             except Exception as e:
-                ColoredOutput.error("COGS FAIL", f"Laden von {module_name} fehlgeschlagen: {e.__class__.__name__}: {e}")
-                ColoredOutput.info("COGS FAIL", "--- Start Traceback ---")
+                Logs.error("COGS FAIL", f"Laden von {module_name} fehlgeschlagen: {e.__class__.__name__}: {e}")
+                Logs.info("COGS FAIL", "--- Start Traceback ---")
                 traceback.print_exc()
-                ColoredOutput.info("COGS FAIL", "--- Ende Traceback ---")
+                Logs.info("COGS FAIL", "--- Ende Traceback ---")
                 
-        ColoredOutput.success("COGS", f"Insgesamt {total_cogs} Cogs dynamisch geladen.")
+        Logs.success(Category.COGS, f"Insgesamt {total_cogs} Cogs dynamisch geladen.")
         return total_cogs
     
     async def on_ready(self):
-        ColoredOutput.success("READY", f"Logged in as {self.user}")
+        Logs.success("READY", f"Logged in as {self.user}")
 
         # --- COG LADUNG (Kurzform) ---
-        ColoredOutput.loading("COGS", "Starting dynamic cog loading...")
+        Logs.loading(Category.COGS, "Starting dynamic cog loading...")
         self._load_all_cogs()
         # -----------------------------
 
-        # --- COMMANDS DEBUG-PRÜFUNG ---
-        await asyncio.sleep(1)
-        
-        try:
-            commands_count = len(self.get_application_commands())
-        except AttributeError:
-             commands_count = len(getattr(self, 'application_commands', []))
-             
-        
-        ColoredOutput.info("COMMANDS CHECK", f"Bot hat {commands_count} App-Commands nach dem Laden gefunden.")
-        
-        if commands_count == 1:
-            ColoredOutput.error("COMMANDS FAIL", "Nur 1 Command (Der Help-Command) gefunden. KEIN Cog wurde korrekt geladen!")
-        
-        # --- ROBUESTE SYNCHRONISATION DER COMMANDS ---
-        
-        ColoredOutput.loading("COMMANDS", "Starting robust command synchronization (Rate Limit Watch)...")
-        
-        try:
-            await self.sync_commands()
-            ColoredOutput.success("COMMANDS", "Global application commands synchronized.")
-            
-        except AttributeError:
-             pass
-        except Exception as e:
-            ColoredOutput.error("COMMANDS FAIL", f"Globale Synchronisation (ezcord API) fehlgeschlagen: {e.__class__.__name__}: {e}")
-            ColoredOutput.info("COMMANDS FAIL", "--- Start Traceback ---")
-            traceback.print_exc()
-            ColoredOutput.info("COMMANDS FAIL", "--- Ende Traceback ---")
-        
-        # --- Fallback-Logik (wenn sync_commands() fehlschlägt) ---
-        
-        ColoredOutput.loading("COMMANDS", "Attempting Py-cord/Fallback synchronization...")
-        
-        try:
-            if hasattr(self, 'sync_application_commands'):
-                await self.sync_application_commands()
-                ColoredOutput.success("COMMANDS", "Global application commands synchronized (Fallback 1).")
-            
-            else:
-                guild_id_str = os.getenv("TEST_GUILD_ID")
-                if guild_id_str:
-                    guild = self.get_guild(int(guild_id_str))
-                    if guild:
-                        await self.get_application_command_map().sync(guild=guild)
-                        ColoredOutput.success("COMMANDS", f"Commands synchronized to TEST GUILD: {guild.name}")
-                    else:
-                        ColoredOutput.warning("COMMANDS", f"TEST_GUILD_ID {guild_id_str} not found in cache. Global synchronization required.")
-                else:
-                    ColoredOutput.warning("COMMANDS", "TEST_GUILD_ID is missing. Cannot perform guild fallback sync.")
-                    
-        except Exception as e:
-            ColoredOutput.error("COMMANDS FAIL", f"Robuste Synchronisation (Py-cord Fallback) fehlgeschlagen: {e.__class__.__name__}: {e}")
-            ColoredOutput.info("COMMANDS FAIL", "--- Start Traceback ---")
-            traceback.print_exc()
-            ColoredOutput.info("COMMANDS FAIL", "--- Ende Traceback ---")
         
         
         # --- REST DER ON_READY LOGIK FOLGT ---
@@ -376,12 +298,12 @@ class ManagerXBot(ezcord.Bot):
         
         try:
             init_all()
-            ColoredOutput.success("DEVTOOLS", "DevTools initialized successfully")
+            Logs.success("DEVTOOLS", "DevTools initialized successfully")
         except Exception as e:
-            ColoredOutput.error("DEVTOOLS", f"Initialization failed: {e}")
+            Logs.error("DEVTOOLS", f"Initialization failed: {e}")
         
         await asyncio.sleep(0.5)
-        ColoredOutput.info("SYSTEM", "All systems operational")
+        Logs.info(Category.SYSTEM, "All systems operational")
         
         await self.change_presence(
             activity=discord.Activity(
@@ -408,30 +330,30 @@ class ManagerXBot(ezcord.Bot):
             try:
                 await proc(message)
             except Exception as e:
-                ColoredOutput.error("COMMANDS", f"process_commands raised: {e}")
+                Logs.error(Category.COMMANDS, f"process_commands raised: {e}")
     
     def start_bot(self):
         token = os.getenv("TOKEN")
         
         if not token:
-            ColoredOutput.error("AUTH", "Discord bot token not found in environment variables!")
+            Logs.error(Category.AUTH, "Discord bot token not found in environment variables!")
             return
         
         self.add_help_command()
         
-        ColoredOutput.info("BOT", f"Starting ManagerX v{self.config.VERSION}...")
+        Logs.info(Category.BOT, f"Starting ManagerX v{self.config.VERSION}...")
         
         try:
             self.run(token)
         
         except discord.LoginFailure:
-            ColoredOutput.error("AUTH", "Invalid bot token!")
+            Logs.error(Category.AUTH, "Invalid bot token!")
         
         except KeyboardInterrupt:
-            ColoredOutput.warning("SHUTDOWN", "Bot shutdown requested by user")
+            Logs.warn(Category.SHUTDOWN, "Bot shutdown requested by user")
         
         except Exception as e:
-            ColoredOutput.error("FATAL", f"Unexpected error: {e}")
+            Logs.error(f"Unexpected error: {e}")
             raise
 
 
@@ -445,16 +367,16 @@ def main():
         current_dir = os.path.dirname(os.path.abspath(__file__))
         cogs_test_path = os.path.join(current_dir, "src", "cogs")
         
-        ColoredOutput.info("DEBUG START", f"__file__ dir: {current_dir} (ROOT)")
-        ColoredOutput.info("DEBUG START", f"Cog Path: {cogs_test_path}")
+        Logs.info("DEBUG START", f"__file__ dir: {current_dir} (ROOT)")
+        Logs.info("DEBUG START", f"Cog Path: {cogs_test_path}")
         
         if os.path.exists(cogs_test_path):
-            ColoredOutput.success("DEBUG START", "Cogs Ordner EXISTIERT am erwarteten Pfad!")
+            Logs.success("DEBUG START", "Cogs Ordner EXISTIERT am erwarteten Pfad!")
         else:
-            ColoredOutput.error("DEBUG START", "Cogs Ordner NICHT gefunden! Pfad ist falsch.")
+            Logs.error("DEBUG START", "Cogs Ordner NICHT gefunden! Pfad ist falsch.")
             
     except Exception as e:
-        ColoredOutput.error("CRITICAL", f"Debug check failed: {e}")
+        Logs.error(Category.DEBUG, f"Debug check failed: {e}")
     # --- ENDE DEBUG-CHECK ---
 
     try:
@@ -470,7 +392,7 @@ def main():
         bot.start_bot()
     
     except Exception as e:
-        ColoredOutput.error("CRITICAL", f"Failed to start bot: {e}")
+        Logs.error(Category.DEBUG, f"Failed to start bot: {e}")
         raise
 
 

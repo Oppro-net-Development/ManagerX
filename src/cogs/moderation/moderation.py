@@ -2,8 +2,7 @@
 # ───────────────────────────────────────────────
 # >> Imports
 # ───────────────────────────────────────────────
-from DevTools.ui import emoji_yes, emoji_no, emoji_member, emoji_warn, emoji_summary, emoji_staff, emoji_slowmode
-from DevTools.ui import ERROR_TITLE, ERROR_COLOR, SUCCESS_COLOR, AUTHOR, FLOOTER
+from src.DevTools.ui import emoji_yes, emoji_no, emoji_member, emoji_warn, emoji_summary, emoji_staff, emoji_slowmode
 
 import asyncio
 import re
