@@ -21,7 +21,7 @@ from dotenv import load_dotenv
 from colorama import Fore, Style, init as colorama_init
 import aiohttp
 import traceback
-from logs import Logs, LogLevel, Category
+from log import logger, LogLevel, Category, LogFormat
 
 
 if os.path.dirname(os.path.abspath(__file__)) not in sys.path:
@@ -53,7 +53,9 @@ class BotConfig:
     INTENTS.messages = True
     INTENTS.message_content = True
 
-
+logger.configure(
+    format_type=LogFormat.SIMPLE
+)
 
 # -----------------------------------------------------------------------------
 # UTILS (Unverändert)
@@ -75,28 +77,28 @@ class VersionChecker:
             async with aiohttp.ClientSession() as session:
                 async with session.get(version_url, timeout=aiohttp.ClientTimeout(total=10)) as resp:
                     if resp.status != 200:
-                        Logs.error("UPDATE", f"Version check failed (HTTP {resp.status})")
+                        logger.error("UPDATE", f"Version check failed (HTTP {resp.status})")
                         return None
                     
                     latest_version = (await resp.text()).strip()
                     if not latest_version:
-                        Logs.error("UPDATE", "Empty response from version server")
+                        logger.error("UPDATE", "Empty response from version server")
                         return None
                     
                     current = VersionChecker.parse_version(current_version)
                     latest = VersionChecker.parse_version(latest_version)
                     
                     if current[:3] == latest[:3] and current[3] == latest[3]:
-                        Logs.success("VERSION", f"Running latest version: {current_version}")
+                        logger.success("VERSION", f"Running latest version: {current_version}")
                     
                     elif current[:3] > latest[:3]:
-                        Logs.info(
+                        logger.info(
                             "VERSION",
                             f"Dev build detected ({current_version}) - newer than public release ({latest_version})"
                         )
                     
                     elif current[:3] == latest[:3] and current[3] in ("dev", "beta", "alpha"):
-                        Logs.warn(
+                        logger.warn(
                             "VERSION",
                             f"Pre-release version ({current_version}) - latest stable: {latest_version}"
                         )
@@ -113,11 +115,11 @@ class VersionChecker:
                     return latest_version
         
         except aiohttp.ClientConnectorError:
-            Logs.error("UPDATE", "Could not connect to GitHub (network issue)")
+            logger.error("UPDATE", "Could not connect to GitHub (network issue)")
         except asyncio.TimeoutError:
-            Logs.error("UPDATE", "Connection to version server timed out")
+            logger.error("UPDATE", "Connection to version server timed out")
         except Exception as e:
-            Logs.error("UPDATE", f"Unexpected error: {e}")
+            logger.error("UPDATE", f"Unexpected error: {e}")
         
         return None
 
@@ -165,7 +167,7 @@ class MessageHandler:
         except discord.NotFound:
             await message.channel.send("❌ Nachricht nicht gefunden!", delete_after=5)
         except Exception as e:
-            Logs.error("MESSAGE", f"Delete failed: {e}")
+            logger.error("MESSAGE", f"Delete failed: {e}")
         
         return True
     
@@ -210,7 +212,7 @@ class MessageHandler:
             await message.channel.send("❌ Keine Berechtigung!", delete_after=5)
         except Exception as e:
             await message.channel.send(f"⚠️ Fehler: {e}", delete_after=5)
-            Logs.error("SLOWMODE", str(e))
+            logger.error("SLOWMODE", str(e))
         
         return True
 
@@ -236,7 +238,7 @@ class ManagerXBot(ezcord.Bot):
             ready_event=None
         )
         
-        Logs.loading("INIT", "Bot initialized")
+        logger.loading("INIT", "Bot initialized")
 
     def _load_all_cogs(self):
         """
@@ -261,27 +263,27 @@ class ManagerXBot(ezcord.Bot):
             
             # 3. PRÜFUNG: Stellt sicher, dass der Modulname mit 'src.cogs' beginnt
             if not module_name.startswith("src.cogs"):
-                 Logs.warn("COGS SKIP", f"Skipping non-standard cog path: {file_path}")
+                 logger.warn("COGS SKIP", f"Skipping non-standard cog path: {file_path}")
                  continue
 
             try:
                 self.load_extension(module_name)
-                Logs.info(Category.COGS, f"Loaded: {module_name}")
+                logger.info(Category.COGS, f"Loaded: {module_name}")
                 total_cogs += 1
             except Exception as e:
-                Logs.error("COGS FAIL", f"Laden von {module_name} fehlgeschlagen: {e.__class__.__name__}: {e}")
-                Logs.info("COGS FAIL", "--- Start Traceback ---")
+                logger.error("COGS FAIL", f"Laden von {module_name} fehlgeschlagen: {e.__class__.__name__}: {e}")
+                logger.info("COGS FAIL", "--- Start Traceback ---")
                 traceback.print_exc()
-                Logs.info("COGS FAIL", "--- Ende Traceback ---")
+                logger.info("COGS FAIL", "--- Ende Traceback ---")
                 
-        Logs.success(Category.COGS, f"Insgesamt {total_cogs} Cogs dynamisch geladen.")
+        logger.success(Category.COGS, f"Insgesamt {total_cogs} Cogs dynamisch geladen.")
         return total_cogs
     
     async def on_ready(self):
-        Logs.success("READY", f"Logged in as {self.user}")
+        logger.success("READY", f"Logged in as {self.user}")
 
         # --- COG LADUNG (Kurzform) ---
-        Logs.loading(Category.COGS, "Starting dynamic cog loading...")
+        logger.loading(Category.COGS, "Starting dynamic cog loading...")
         self._load_all_cogs()
         # -----------------------------
 
@@ -298,12 +300,12 @@ class ManagerXBot(ezcord.Bot):
         
         try:
             init_all()
-            Logs.success("DEVTOOLS", "DevTools initialized successfully")
+            logger.success("DEVTOOLS", "DevTools initialized successfully")
         except Exception as e:
-            Logs.error("DEVTOOLS", f"Initialization failed: {e}")
+            logger.error("DEVTOOLS", f"Initialization failed: {e}")
         
         await asyncio.sleep(0.5)
-        Logs.info(Category.SYSTEM, "All systems operational")
+        logger.info(Category.SYSTEM, "All systems operational")
         
         await self.change_presence(
             activity=discord.Activity(
@@ -330,30 +332,30 @@ class ManagerXBot(ezcord.Bot):
             try:
                 await proc(message)
             except Exception as e:
-                Logs.error(Category.COMMANDS, f"process_commands raised: {e}")
+                logger.error(Category.COMMANDS, f"process_commands raised: {e}")
     
     def start_bot(self):
         token = os.getenv("TOKEN")
         
         if not token:
-            Logs.error(Category.AUTH, "Discord bot token not found in environment variables!")
+            logger.error(Category.AUTH, "Discord bot token not found in environment variables!")
             return
         
         self.add_help_command()
         
-        Logs.info(Category.BOT, f"Starting ManagerX v{self.config.VERSION}...")
+        logger.info(Category.BOT, f"Starting ManagerX v{self.config.VERSION}...")
         
         try:
             self.run(token)
         
         except discord.LoginFailure:
-            Logs.error(Category.AUTH, "Invalid bot token!")
+            logger.error(Category.AUTH, "Invalid bot token!")
         
         except KeyboardInterrupt:
-            Logs.warn(Category.SHUTDOWN, "Bot shutdown requested by user")
+            logger.warn(Category.SHUTDOWN, "Bot shutdown requested by user")
         
         except Exception as e:
-            Logs.error(f"Unexpected error: {e}")
+            logger.error(f"Unexpected error: {e}")
             raise
 
 
@@ -367,16 +369,16 @@ def main():
         current_dir = os.path.dirname(os.path.abspath(__file__))
         cogs_test_path = os.path.join(current_dir, "src", "cogs")
         
-        Logs.info("DEBUG START", f"__file__ dir: {current_dir} (ROOT)")
-        Logs.info("DEBUG START", f"Cog Path: {cogs_test_path}")
+        logger.info("DEBUG START", f"__file__ dir: {current_dir} (ROOT)")
+        logger.info("DEBUG START", f"Cog Path: {cogs_test_path}")
         
         if os.path.exists(cogs_test_path):
-            Logs.success("DEBUG START", "Cogs Ordner EXISTIERT am erwarteten Pfad!")
+            logger.success("DEBUG START", "Cogs Ordner EXISTIERT am erwarteten Pfad!")
         else:
-            Logs.error("DEBUG START", "Cogs Ordner NICHT gefunden! Pfad ist falsch.")
+            logger.error("DEBUG START", "Cogs Ordner NICHT gefunden! Pfad ist falsch.")
             
     except Exception as e:
-        Logs.error(Category.DEBUG, f"Debug check failed: {e}")
+        logger.error(Category.DEBUG, f"Debug check failed: {e}")
     # --- ENDE DEBUG-CHECK ---
 
     try:
@@ -392,7 +394,7 @@ def main():
         bot.start_bot()
     
     except Exception as e:
-        Logs.error(Category.DEBUG, f"Failed to start bot: {e}")
+        logger.error(Category.DEBUG, f"Failed to start bot: {e}")
         raise
 
 

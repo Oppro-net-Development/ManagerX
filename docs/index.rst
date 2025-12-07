@@ -5,27 +5,14 @@
 
 Getting Started
 ======================
-
-Installing
-----------------------
-To setup ManagerX, follow the installation:
-
-::
-
-   git clone https://github.com/Oppro-net-Development/ManagerX.git
+Welcome to the ManagerX documentation! This guide will help you get started with installing, configuring, and using ManagerX effectively.
 
 
-Then, navigate to the directory and install the required packages:
-::
 
-   pip install -r src/req.txt
-
-
+Documentation Structure
+======================
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
 
-   managerx/main
-   handler/index
-   database/index
-   cogs/index
+   User Guide <user_guide/index>
+   Developer Guide <dev_guide/index>
