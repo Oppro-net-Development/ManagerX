@@ -31,6 +31,7 @@ import ezcord
 from ezcord import log
 # ❗ KORRIGIERTER PFAD: DevTools liegt jetzt in src/ vom Root-Verzeichnis aus
 from src.DevTools.backend import init_all
+from src.handler.update_checker import VersionChecker, UpdateCheckerConfig
 
 # WICHTIG: Lade Environment-Variablen NUR HIER am Anfang
 load_dotenv(os.path.join("config", ".env"))
@@ -43,8 +44,8 @@ class BotConfig:
     Zentrale Bot-Konfiguration.
     """
     VERSION = "1.7.2-alpha"
-    VERSION_URL = "https://raw.githubusercontent.com/Oppro-net-Development/ManagerX/main/config/version.txt"
-    GITHUB_REPO = "https://github.com/Oppro-net-Development/ManagerX"
+    VERSION_URL = UpdateCheckerConfig.VERSION_URL
+    GITHUB_REPO = UpdateCheckerConfig.GITHUB_REPO
     
     # Intents
     INTENTS = discord.Intents.default()
@@ -58,71 +59,8 @@ logger.configure(
 )
 
 # -----------------------------------------------------------------------------
-# UTILS (Unverändert)
-# ----------------------------------------------------------------------------
-
-
-class VersionChecker:
-    @staticmethod
-    def parse_version(version_str: str) -> tuple:
-        match = re.match(r"(\d+)\.(\d+)\.(\d+)(?:[-_]?(dev|beta|alpha))?", version_str)
-        if match:
-            major, minor, patch, vtype = match.groups()
-            return int(major), int(minor), int(patch), vtype or "stable"
-        return 0, 0, 0, "unknown"
-    
-    @staticmethod
-    async def check_update(current_version: str, version_url: str) -> str | None:
-        try:
-            async with aiohttp.ClientSession() as session:
-                async with session.get(version_url, timeout=aiohttp.ClientTimeout(total=10)) as resp:
-                    if resp.status != 200:
-                        logger.error("UPDATE", f"Version check failed (HTTP {resp.status})")
-                        return None
-                    
-                    latest_version = (await resp.text()).strip()
-                    if not latest_version:
-                        logger.error("UPDATE", "Empty response from version server")
-                        return None
-                    
-                    current = VersionChecker.parse_version(current_version)
-                    latest = VersionChecker.parse_version(latest_version)
-                    
-                    if current[:3] == latest[:3] and current[3] == latest[3]:
-                        logger.success("VERSION", f"Running latest version: {current_version}")
-                    
-                    elif current[:3] > latest[:3]:
-                        logger.info(
-                            "VERSION",
-                            f"Dev build detected ({current_version}) - newer than public release ({latest_version})"
-                        )
-                    
-                    elif current[:3] == latest[:3] and current[3] in ("dev", "beta", "alpha"):
-                        logger.warn(
-                            "VERSION",
-                            f"Pre-release version ({current_version}) - latest stable: {latest_version}"
-                        )
-                    
-                    else:
-                        print(
-                            f"[{Fore.YELLOW}UPDATE AVAILABLE{Style.RESET_ALL}] "
-                            f"Current: {current_version} → Latest: {latest_version}\n"
-                            f"        Download: {Fore.CYAN}{BotConfig.GITHUB_REPO}{Style.RESET_ALL}"
-
-                        )
-
-                    
-                    return latest_version
-        
-        except aiohttp.ClientConnectorError:
-            logger.error("UPDATE", "Could not connect to GitHub (network issue)")
-        except asyncio.TimeoutError:
-            logger.error("UPDATE", "Connection to version server timed out")
-        except Exception as e:
-            logger.error("UPDATE", f"Unexpected error: {e}")
-        
-        return None
-
+# MESSAGE HANDLER
+# -------
 
 class MessageHandler:
     @staticmethod
