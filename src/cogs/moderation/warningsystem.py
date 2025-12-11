@@ -2,12 +2,11 @@
 # ───────────────────────────────────────────────
 # >> Imports
 # ───────────────────────────────────────────────
-from DevTools.ui import (
-    emoji_no, emoji_yes, emoji_warn, emoji_member, emoji_staff, emoji_slowmode, emoji_summary, ERROR_TITLE, 
-    ERROR_COLOR, SUCCESS_COLOR, AUTHOR, FLOOTER
+from src.DevTools.ui import (
+    emoji_no, emoji_yes, emoji_warn, emoji_member, emoji_staff, emoji_slowmode, emoji_summary
 )
-from DevTools.backend import WarnDatabase
-from DevTools.backend import discord, slash_command, Option, datetime, os, ezcord
+from src.DevTools.backend import WarnDatabase
+from src.DevTools.backend import discord, slash_command, Option, datetime, os, ezcord
 import asyncio
 from typing import Optional
 

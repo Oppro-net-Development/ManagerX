@@ -2,9 +2,9 @@
 from collections import defaultdict
 import asyncio
 
-from DevTools.backend import discord, SlashCommandGroup, ezcord, datetime, timedelta
+from src.DevTools.backend import discord, SlashCommandGroup, ezcord, datetime, timedelta
 
-from DevTools.ui import (
+from src.DevTools.ui import (
     emoji_yes,
     emoji_no,
     emoji_forbidden,
@@ -17,10 +17,9 @@ from DevTools.ui import (
     emoji_statistics,
     emoji_annoattention,
     emoji_owner,
-    ERROR_COLOR
 )
 
-from DevTools.backend import SpamDB
+from src.DevTools.backend import SpamDB
 
 
 class AntiSpam(ezcord.Cog):

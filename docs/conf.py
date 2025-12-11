@@ -3,36 +3,64 @@
 # For the full list of built-in configuration values, see the documentation:
 # https://www.sphinx-doc.org/en/master/usage/configuration.html
 
-# -- Project information -----------------------------------------------------
-# https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 import os
 import sys
 
 sys.path.insert(0, os.path.abspath('../src'))
 
+# -- Project information -----------------------------------------------------
 project = 'ManagerX'
 copyright = '2025, OPPRO.NET Network'
 author = 'OPPRO.NET Development'
-release = '1.7.2 '
+release = '1.7.2'
+version = '1.7'       # Kurzversion
+language = 'en'
 
 # -- General configuration ---------------------------------------------------
-# https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
-
 extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.napoleon',
     'sphinx.ext.intersphinx',
+    'sphinx.ext.viewcode',
+    'sphinx.ext.todo',
+    'sphinx.ext.coverage',
+    'sphinx.ext.githubpages',
+    'sphinx.ext.autosummary',
     'sphinx_autodoc_typehints',
     'myst_parser',
+    'sphinx_copybutton',
 ]
+
+autosummary_generate = True
+todo_include_todos = True
 
 templates_path = ['_templates']
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
+# Intersphinx Mapping (für Cross-Referenzen)
+intersphinx_mapping = {
+    'python': ('https://docs.python.org/3', None),
+    'requests': ('https://docs.python-requests.org/en/latest/', None),
+}
 
+# Markdown Einstellungen
+myst_enable_extensions = [
+    "colon_fence", 
+    "deflist", 
+    "html_admonition", 
+    "html_image",
+]
 
 # -- Options for HTML output -------------------------------------------------
-# https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
-
-html_theme = 'furo'
+html_theme = 'pydata_sphinx_theme'
 html_static_path = ['_static']
+html_theme_options = {
+    "icon_links": [
+        {
+            "name": "GitHub",
+            "url": "https://github.com/Oppro-net-Development/ManagerX",  # required
+            "icon": "fa-brands fa-square-github",
+            "type": "fontawesome",
+        }
+   ]
+}

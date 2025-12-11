@@ -6,6 +6,7 @@
 .idea/
 .vscode/
 data/
+
 # Python
 __pycache__/
 *.pyc
@@ -19,13 +20,32 @@ __pycache__/
 .DS_Store
 Thumbs.db
 
-# Datenbank Dateien (unnötig auf Repo)
-*.db
-
 # Sonstiges
 *.bak
 *.tmp
 FastCoding/backend/utils/config.py
 command.yaml
 wiki_stats.json
-_build/
+checker.py
+
+# Build-Ordner: alles ignorieren...
+_build/*
+.pickle
+.doctree
+.buildinfo
+.nojekyll
+.inv
+docs/_build/html/_sources/
+furo.js.LICENSE.txt
+fontawesome.js.LICENSE.txt
+.map
+docs/_build/doctrees/
+
+
+# ...außer HTML & CSS im html-Ordner
+!_build/html/
+!_build/html/**/*.html
+!_build/html/**/*.css
+!_build/html/_static/
+!_build/html/_static/**/*.css
+!_build/html/_static/**/*.js

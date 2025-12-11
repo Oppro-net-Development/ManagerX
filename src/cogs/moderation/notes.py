@@ -2,9 +2,9 @@
 # ───────────────────────────────────────────────
 # >> Imports
 # ───────────────────────────────────────────────
-from DevTools.backend import discord, SlashCommandGroup, ezcord, datetime
-from DevTools.backend import NotesDatabase
-from DevTools.ui import emoji_no, emoji_yes
+from src.DevTools.backend import discord, SlashCommandGroup, ezcord, datetime
+from src.DevTools.backend import NotesDatabase
+from src.DevTools.ui import emoji_no, emoji_yes
 # ───────────────────────────────────────────────
 # >> Cog
 # ───────────────────────────────────────────────

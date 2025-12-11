@@ -1,4 +1,4 @@
-from DevTools import AutoDeleteDB
+from src.DevTools import AutoDeleteDB
 import discord
 from discord.ext import tasks
 from discord.commands import SlashCommandGroup, Option
