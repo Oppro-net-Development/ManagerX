@@ -1,0 +1,1000 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Database &amp; Database Handler &#8212; ManagerX 1.7.2 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../_static/documentation_options.js?v=908dc885"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'dev_guide/database/index';</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="AutoDelete Database" href="autodelete.html" />
+    <link rel="prev" title="Contributing to ManagerX" href="../contributing/index.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="1.7" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">ManagerX 1.7.2 documentation</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user_guide/index.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Developer Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Oppro-net-Development/ManagerX" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user_guide/index.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Developer Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Oppro-net-Development/ManagerX" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">Developer Guide:</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../architecture/index.html">Architecture</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../architecture/event_loop.html">Event Loop</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture/command_handler.html">Command Handler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture/database_handler.html">Database Handler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture/cog_system.html">Cog System</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../architecture/logging_system.html">Logging System</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing/index.html">Contributing</a></li>
+<li class="toctree-l1 current active has-children"><a class="current reference internal" href="#">database</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="autodelete.html">AutoDelete Database</a></li>
+</ul>
+</details></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">Developer Guide</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Database &amp; Database Handler</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="database-database-handler">
+<h1>Database &amp; Database Handler<a class="headerlink" href="#database-database-handler" title="Link to this heading">#</a></h1>
+<p>ManagerX uses SQLite databases to persist data for various features. Each database handler is responsible for managing a specific feature’s data storage.</p>
+<div class="toctree-wrapper compound">
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Database Handlers:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="autodelete.html">AutoDelete Database</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="autodelete.html#DevTools.backend.database.autodelete_db.AutoDeleteDB"><code class="docutils literal notranslate"><span class="pre">AutoDeleteDB</span></code></a></li>
+</ul>
+</li>
+</ul>
+</div>
+<section id="database-overview">
+<h2>Database Overview<a class="headerlink" href="#database-overview" title="Link to this heading">#</a></h2>
+<p>The following databases are used in ManagerX:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 50.0%" />
+<col style="width: 30.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Database File</p></th>
+<th class="head"><p>Purpose</p></th>
+<th class="head"><p>Handler Class</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><cite>autodelete.db</cite></p></td>
+<td><p>Auto-delete messages in channels</p></td>
+<td><p><cite>AutoDeleteDB</cite></p></td>
+</tr>
+<tr class="row-odd"><td><p><cite>spam.db</cite></p></td>
+<td><p>Anti-spam detection and configuration</p></td>
+<td><p><cite>SpamDB</cite></p></td>
+</tr>
+<tr class="row-even"><td><p><cite>warns.db</cite></p></td>
+<td><p>User warning system</p></td>
+<td><p><cite>WarnDatabase</cite></p></td>
+</tr>
+<tr class="row-odd"><td><p><cite>welcome.db</cite></p></td>
+<td><p>Welcome messages and settings</p></td>
+<td><p><cite>WelcomeDatabase</cite></p></td>
+</tr>
+<tr class="row-even"><td><p><cite>levelsystem.db</cite></p></td>
+<td><p>User levels and XP tracking</p></td>
+<td><p><cite>LevelDatabase</cite></p></td>
+</tr>
+<tr class="row-odd"><td><p><cite>log_channels.db</cite></p></td>
+<td><p>Server logging configuration</p></td>
+<td><p><cite>LoggingDatabase</cite></p></td>
+</tr>
+<tr class="row-even"><td><p><cite>notes.db</cite></p></td>
+<td><p>User notes and moderator notes</p></td>
+<td><p><cite>NotesDatabase</cite></p></td>
+</tr>
+<tr class="row-odd"><td><p><cite>globalchat.db</cite></p></td>
+<td><p>Global chat network settings</p></td>
+<td><p><cite>GlobalChatDB</cite></p></td>
+</tr>
+<tr class="row-even"><td><p><cite>vc.db</cite></p></td>
+<td><p>Voice channel management</p></td>
+<td><p><cite>VoiceChannelDB</cite></p></td>
+</tr>
+<tr class="row-odd"><td><p><cite>stats.db</cite></p></td>
+<td><p>Server statistics</p></td>
+<td><p><cite>StatsDB</cite></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="detailed-database-documentation">
+<h2>Detailed Database Documentation<a class="headerlink" href="#detailed-database-documentation" title="Link to this heading">#</a></h2>
+<section id="autodelete-database">
+<h3>AutoDelete Database<a class="headerlink" href="#autodelete-database" title="Link to this heading">#</a></h3>
+<p><strong>File:</strong> <cite>data/autodelete.db</cite></p>
+<p><strong>Purpose:</strong> Manages auto-deletion of messages in specific channels.</p>
+<p><strong>Tables:</strong></p>
+<ul class="simple">
+<li><p><strong>autodelete</strong>: Main configuration table</p>
+<ul>
+<li><p><cite>channel_id</cite>: Channel ID (UNIQUE)</p></li>
+<li><p><cite>duration</cite>: Seconds before message deletion</p></li>
+<li><p><cite>exclude_pinned</cite>: Exclude pinned messages (default: 1)</p></li>
+<li><p><cite>exclude_bots</cite>: Exclude bot messages (default: 0)</p></li>
+<li><p><cite>created_at</cite>: Timestamp of creation</p></li>
+<li><p><cite>updated_at</cite>: Last update timestamp</p></li>
+</ul>
+</li>
+<li><p><strong>autodelete_whitelist</strong>: User/Role whitelist</p>
+<ul>
+<li><p><cite>channel_id</cite>: Reference to autodelete channel</p></li>
+<li><p><cite>target_id</cite>: User or Role ID</p></li>
+<li><p><cite>target_type</cite>: ‘user’ or ‘role’</p></li>
+<li><p><cite>added_at</cite>: When added to whitelist</p></li>
+</ul>
+</li>
+<li><p><strong>autodelete_schedules</strong>: Scheduled deletion timeframes</p>
+<ul>
+<li><p><cite>channel_id</cite>: Reference to autodelete channel</p></li>
+<li><p><cite>start_time</cite>: Start time (HH:MM format)</p></li>
+<li><p><cite>end_time</cite>: End time (HH:MM format)</p></li>
+<li><p><cite>days</cite>: Days of week (JSON array or comma-separated)</p></li>
+</ul>
+</li>
+<li><p><strong>autodelete_stats</strong>: Statistics tracking</p>
+<ul>
+<li><p><cite>channel_id</cite>: Reference to autodelete channel</p></li>
+<li><p><cite>deleted_count</cite>: Total messages deleted</p></li>
+<li><p><cite>error_count</cite>: Failed deletion attempts</p></li>
+<li><p><cite>last_deletion</cite>: Timestamp of last deletion</p></li>
+</ul>
+</li>
+</ul>
+<p><strong>Key Methods:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Add or update auto-delete configuration</span>
+<span class="n">add_autodelete</span><span class="p">(</span><span class="n">channel_id</span><span class="p">,</span> <span class="n">duration</span><span class="p">,</span> <span class="n">exclude_pinned</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exclude_bots</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="c1"># Add user/role to whitelist</span>
+<span class="n">add_whitelist</span><span class="p">(</span><span class="n">channel_id</span><span class="p">,</span> <span class="n">target_id</span><span class="p">,</span> <span class="n">target_type</span><span class="p">)</span>
+
+<span class="c1"># Get configuration for channel</span>
+<span class="n">get_autodelete</span><span class="p">(</span><span class="n">channel_id</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>—</p>
+</section>
+<section id="spam-detection-database">
+<h3>Spam Detection Database<a class="headerlink" href="#spam-detection-database" title="Link to this heading">#</a></h3>
+<p><strong>File:</strong> <cite>data/spam.db</cite></p>
+<p><strong>Purpose:</strong> Tracks spam patterns and manages anti-spam settings.</p>
+<p><strong>Tables:</strong></p>
+<ul class="simple">
+<li><p><strong>spam_settings</strong>: Server spam configuration</p>
+<ul>
+<li><p><cite>guild_id</cite>: Server ID (PRIMARY KEY)</p></li>
+<li><p><cite>max_messages</cite>: Max messages in time window</p></li>
+<li><p><cite>time_window</cite>: Time window in seconds</p></li>
+<li><p><cite>action</cite>: Action to take (kick, mute, delete)</p></li>
+<li><p><cite>created_at</cite>: Configuration creation date</p></li>
+<li><p><cite>updated_at</cite>: Last configuration update</p></li>
+</ul>
+</li>
+<li><p><strong>spam_logs</strong>: Spam detection logs</p>
+<ul>
+<li><p><cite>id</cite>: Log entry ID</p></li>
+<li><p><cite>guild_id</cite>: Server ID</p></li>
+<li><p><cite>user_id</cite>: User ID</p></li>
+<li><p><cite>message_count</cite>: Number of messages</p></li>
+<li><p><cite>timestamp</cite>: Detection timestamp</p></li>
+<li><p><cite>action_taken</cite>: Action that was performed</p></li>
+</ul>
+</li>
+<li><p><strong>spam_whitelist</strong>: Exempt users/roles</p>
+<ul>
+<li><p><cite>guild_id</cite>: Server ID</p></li>
+<li><p><cite>target_id</cite>: User or Role ID</p></li>
+<li><p><cite>target_type</cite>: ‘user’ or ‘role’</p></li>
+<li><p><cite>added_by</cite>: User ID who added to whitelist</p></li>
+<li><p><cite>reason</cite>: Reason for whitelist</p></li>
+<li><p><cite>added_at</cite>: When added</p></li>
+</ul>
+</li>
+</ul>
+<p><strong>Features:</strong></p>
+<ul class="simple">
+<li><p>Context manager for database operations</p></li>
+<li><p>Automatic database migration support</p></li>
+<li><p>Enhanced error handling and logging</p></li>
+<li><p>Support for user and role whitelisting</p></li>
+</ul>
+<p><strong>Key Methods:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get spam settings for guild</span>
+<span class="n">get_spam_settings</span><span class="p">(</span><span class="n">guild_id</span><span class="p">)</span>
+
+<span class="c1"># Update spam detection settings</span>
+<span class="n">update_spam_settings</span><span class="p">(</span><span class="n">guild_id</span><span class="p">,</span> <span class="n">max_messages</span><span class="p">,</span> <span class="n">time_window</span><span class="p">)</span>
+
+<span class="c1"># Log spam detection</span>
+<span class="n">add_spam_log</span><span class="p">(</span><span class="n">guild_id</span><span class="p">,</span> <span class="n">user_id</span><span class="p">,</span> <span class="n">message_count</span><span class="p">)</span>
+
+<span class="c1"># Add user to whitelist</span>
+<span class="n">add_to_whitelist</span><span class="p">(</span><span class="n">guild_id</span><span class="p">,</span> <span class="n">target_id</span><span class="p">,</span> <span class="n">target_type</span><span class="p">,</span> <span class="n">reason</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>—</p>
+</section>
+<section id="warning-system-database">
+<h3>Warning System Database<a class="headerlink" href="#warning-system-database" title="Link to this heading">#</a></h3>
+<p><strong>File:</strong> <cite>data/Datenbanken/warns.db</cite></p>
+<p><strong>Purpose:</strong> Stores user warnings for moderation.</p>
+<p><strong>Tables:</strong></p>
+<ul class="simple">
+<li><p><strong>warns</strong>: Warning records</p>
+<ul>
+<li><p><cite>id</cite>: Warning ID (PRIMARY KEY)</p></li>
+<li><p><cite>guild_id</cite>: Server ID</p></li>
+<li><p><cite>user_id</cite>: User ID</p></li>
+<li><p><cite>moderator_id</cite>: Moderator who issued warning</p></li>
+<li><p><cite>reason</cite>: Warning reason</p></li>
+<li><p><cite>timestamp</cite>: When warning was issued</p></li>
+</ul>
+</li>
+</ul>
+<p><strong>Key Methods:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Add warning for user</span>
+<span class="n">add_warning</span><span class="p">(</span><span class="n">guild_id</span><span class="p">,</span> <span class="n">user_id</span><span class="p">,</span> <span class="n">moderator_id</span><span class="p">,</span> <span class="n">reason</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">)</span>
+
+<span class="c1"># Get all warnings for user</span>
+<span class="n">get_warnings</span><span class="p">(</span><span class="n">guild_id</span><span class="p">,</span> <span class="n">user_id</span><span class="p">)</span>
+
+<span class="c1"># Get warning by ID</span>
+<span class="n">get_warning_by_id</span><span class="p">(</span><span class="n">warn_id</span><span class="p">)</span>
+
+<span class="c1"># Delete warning</span>
+<span class="n">delete_warning</span><span class="p">(</span><span class="n">warn_id</span><span class="p">)</span>
+
+<span class="c1"># Get warning count</span>
+<span class="n">get_warning_count</span><span class="p">(</span><span class="n">guild_id</span><span class="p">,</span> <span class="n">user_id</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>—</p>
+</section>
+<section id="welcome-system-database">
+<h3>Welcome System Database<a class="headerlink" href="#welcome-system-database" title="Link to this heading">#</a></h3>
+<p><strong>File:</strong> <cite>data/welcome.db</cite></p>
+<p><strong>Purpose:</strong> Manages welcome message configuration and settings.</p>
+<p><strong>Tables:</strong></p>
+<ul class="simple">
+<li><p><strong>welcome_settings</strong>: Server welcome configuration</p>
+<ul>
+<li><p><cite>guild_id</cite>: Server ID (PRIMARY KEY)</p></li>
+<li><p><cite>channel_id</cite>: Welcome channel ID</p></li>
+<li><p><cite>welcome_message</cite>: Welcome message text</p></li>
+<li><p><cite>enabled</cite>: Whether welcome is enabled</p></li>
+<li><p><cite>embed_enabled</cite>: Use embed format</p></li>
+<li><p><cite>embed_color</cite>: Embed color (HEX format)</p></li>
+<li><p><cite>embed_title</cite>: Embed title</p></li>
+<li><p><cite>embed_description</cite>: Embed description</p></li>
+<li><p><cite>embed_thumbnail</cite>: Show member avatar</p></li>
+<li><p><cite>embed_footer</cite>: Embed footer text</p></li>
+<li><p><cite>ping_user</cite>: Ping the new user</p></li>
+<li><p><cite>delete_after</cite>: Auto-delete after N seconds</p></li>
+<li><p><cite>created_at</cite>: Creation timestamp</p></li>
+<li><p><cite>updated_at</cite>: Last update timestamp</p></li>
+</ul>
+</li>
+</ul>
+<p><strong>Features:</strong></p>
+<ul class="simple">
+<li><p>Supports both text and embed messages</p></li>
+<li><p>Automatic database migration</p></li>
+<li><p>Backward compatibility with older versions</p></li>
+<li><p>Asynchronous and synchronous methods</p></li>
+</ul>
+<p><strong>Key Methods:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Update welcome settings</span>
+<span class="k">await</span> <span class="n">update_welcome_settings</span><span class="p">(</span><span class="n">guild_id</span><span class="p">,</span> <span class="n">channel_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
+
+<span class="c1"># Get welcome settings</span>
+<span class="k">await</span> <span class="n">get_welcome_settings</span><span class="p">(</span><span class="n">guild_id</span><span class="p">)</span>
+
+<span class="c1"># Enable/disable welcome</span>
+<span class="k">await</span> <span class="n">toggle_welcome</span><span class="p">(</span><span class="n">guild_id</span><span class="p">,</span> <span class="n">enabled</span><span class="p">)</span>
+
+<span class="c1"># Delete welcome settings</span>
+<span class="k">await</span> <span class="n">delete_welcome_settings</span><span class="p">(</span><span class="n">guild_id</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>—</p>
+</section>
+<section id="level-system-database">
+<h3>Level System Database<a class="headerlink" href="#level-system-database" title="Link to this heading">#</a></h3>
+<p><strong>File:</strong> <cite>data/levelsystem.db</cite></p>
+<p><strong>Purpose:</strong> Tracks user XP, levels, and progression.</p>
+<p><strong>Tables:</strong></p>
+<ul class="simple">
+<li><p><strong>user_levels</strong>: User XP and level data</p>
+<ul>
+<li><p><cite>guild_id</cite>: Server ID</p></li>
+<li><p><cite>user_id</cite>: User ID</p></li>
+<li><p><cite>level</cite>: Current level</p></li>
+<li><p><cite>xp</cite>: Current XP</p></li>
+<li><p><cite>total_xp</cite>: Total XP earned</p></li>
+<li><p><cite>last_message_time</cite>: Last message timestamp</p></li>
+<li><p><cite>prestige_count</cite>: Prestige level</p></li>
+</ul>
+</li>
+<li><p><strong>level_roles</strong>: Reward roles for levels</p>
+<ul>
+<li><p><cite>guild_id</cite>: Server ID</p></li>
+<li><p><cite>level</cite>: Level requirement</p></li>
+<li><p><cite>role_id</cite>: Reward role ID</p></li>
+</ul>
+</li>
+<li><p><strong>level_settings</strong>: Server configuration</p>
+<ul>
+<li><p><cite>guild_id</cite>: Server ID</p></li>
+<li><p><cite>enabled</cite>: Level system enabled</p></li>
+<li><p><cite>xp_per_message</cite>: XP per message</p></li>
+<li><p><cite>cooldown_seconds</cite>: Message cooldown</p></li>
+</ul>
+</li>
+</ul>
+<p><strong>Features:</strong></p>
+<ul class="simple">
+<li><p>Anti-spam detection to prevent XP farming</p></li>
+<li><p>Level role rewards</p></li>
+<li><p>Prestige system</p></li>
+<li><p>Caching for performance</p></li>
+<li><p>Comprehensive logging</p></li>
+</ul>
+<p><strong>Key Methods:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Add XP to user (with anti-spam check)</span>
+<span class="n">add_xp</span><span class="p">(</span><span class="n">guild_id</span><span class="p">,</span> <span class="n">user_id</span><span class="p">,</span> <span class="n">xp_amount</span><span class="p">)</span>
+
+<span class="c1"># Get user level data</span>
+<span class="n">get_user_level</span><span class="p">(</span><span class="n">guild_id</span><span class="p">,</span> <span class="n">user_id</span><span class="p">)</span>
+
+<span class="c1"># Set level role reward</span>
+<span class="n">set_level_role</span><span class="p">(</span><span class="n">guild_id</span><span class="p">,</span> <span class="n">level</span><span class="p">,</span> <span class="n">role_id</span><span class="p">)</span>
+
+<span class="c1"># Get leaderboard</span>
+<span class="n">get_leaderboard</span><span class="p">(</span><span class="n">guild_id</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>—</p>
+</section>
+<section id="logging-database">
+<h3>Logging Database<a class="headerlink" href="#logging-database" title="Link to this heading">#</a></h3>
+<p><strong>File:</strong> <cite>data/log_channels.db</cite></p>
+<p><strong>Purpose:</strong> Stores logging channel configuration for different log types.</p>
+<p><strong>Tables:</strong></p>
+<ul class="simple">
+<li><p><strong>log_channels</strong>: Log channel configuration</p>
+<ul>
+<li><p><cite>guild_id</cite>: Server ID</p></li>
+<li><p><cite>log_type</cite>: Type of log (member_join, member_leave, message_delete, etc.)</p></li>
+<li><p><cite>channel_id</cite>: Discord channel ID for logs</p></li>
+<li><p><cite>enabled</cite>: Whether this log type is enabled</p></li>
+<li><p><cite>created_at</cite>: Creation timestamp</p></li>
+<li><p><cite>updated_at</cite>: Last update timestamp</p></li>
+</ul>
+</li>
+</ul>
+<p><strong>Log Types Supported:</strong></p>
+<ul class="simple">
+<li><p><cite>member_join</cite>: New member joins</p></li>
+<li><p><cite>member_leave</cite>: Member leaves</p></li>
+<li><p><cite>member_ban</cite>: Member banned</p></li>
+<li><p><cite>member_kick</cite>: Member kicked</p></li>
+<li><p><cite>member_unban</cite>: Member unbanned</p></li>
+<li><p><cite>message_delete</cite>: Message deletion</p></li>
+<li><p><cite>message_edit</cite>: Message editing</p></li>
+<li><p><cite>role_create</cite>: Role created</p></li>
+<li><p><cite>role_delete</cite>: Role deleted</p></li>
+<li><p><cite>channel_create</cite>: Channel created</p></li>
+<li><p><cite>channel_delete</cite>: Channel deleted</p></li>
+</ul>
+<p><strong>Key Methods:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Set log channel for type</span>
+<span class="n">set_log_channel</span><span class="p">(</span><span class="n">guild_id</span><span class="p">,</span> <span class="n">log_type</span><span class="p">,</span> <span class="n">channel_id</span><span class="p">)</span>
+
+<span class="c1"># Get log channel for type</span>
+<span class="n">get_log_channel</span><span class="p">(</span><span class="n">guild_id</span><span class="p">,</span> <span class="n">log_type</span><span class="p">)</span>
+
+<span class="c1"># Enable/disable log type</span>
+<span class="n">set_log_enabled</span><span class="p">(</span><span class="n">guild_id</span><span class="p">,</span> <span class="n">log_type</span><span class="p">,</span> <span class="n">enabled</span><span class="p">)</span>
+
+<span class="c1"># Get all logs for guild</span>
+<span class="n">get_all_logs</span><span class="p">(</span><span class="n">guild_id</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>—</p>
+</section>
+<section id="notes-database">
+<h3>Notes Database<a class="headerlink" href="#notes-database" title="Link to this heading">#</a></h3>
+<p><strong>File:</strong> <cite>data/notes.db</cite></p>
+<p><strong>Purpose:</strong> Stores moderator notes about users.</p>
+<p><strong>Tables:</strong></p>
+<ul class="simple">
+<li><p><strong>notes</strong>: User notes</p>
+<ul>
+<li><p><cite>id</cite>: Note ID (PRIMARY KEY)</p></li>
+<li><p><cite>guild_id</cite>: Server ID</p></li>
+<li><p><cite>user_id</cite>: User the note is about</p></li>
+<li><p><cite>author_id</cite>: User who created the note</p></li>
+<li><p><cite>author_name</cite>: Name of note author</p></li>
+<li><p><cite>note</cite>: Note content</p></li>
+<li><p><cite>timestamp</cite>: Creation timestamp</p></li>
+</ul>
+</li>
+</ul>
+<p><strong>Key Methods:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Add note to user</span>
+<span class="n">add_note</span><span class="p">(</span><span class="n">guild_id</span><span class="p">,</span> <span class="n">user_id</span><span class="p">,</span> <span class="n">author_id</span><span class="p">,</span> <span class="n">author_name</span><span class="p">,</span> <span class="n">note</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">)</span>
+
+<span class="c1"># Get all notes for user</span>
+<span class="n">get_notes</span><span class="p">(</span><span class="n">guild_id</span><span class="p">,</span> <span class="n">user_id</span><span class="p">)</span>
+
+<span class="c1"># Get specific note</span>
+<span class="n">get_note_by_id</span><span class="p">(</span><span class="n">note_id</span><span class="p">)</span>
+
+<span class="c1"># Delete note</span>
+<span class="n">delete_note</span><span class="p">(</span><span class="n">note_id</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>—</p>
+</section>
+</section>
+<section id="database-patterns-and-best-practices">
+<h2>Database Patterns and Best Practices<a class="headerlink" href="#database-patterns-and-best-practices" title="Link to this heading">#</a></h2>
+<section id="connection-management">
+<h3>Connection Management<a class="headerlink" href="#connection-management" title="Link to this heading">#</a></h3>
+<p>All database handlers use context managers for safe connection handling:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@contextmanager</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_cursor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Context manager for database operations&quot;&quot;&quot;</span>
+    <span class="n">cursor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">yield</span> <span class="n">cursor</span>
+    <span class="k">except</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">Error</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">conn</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Database error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">raise</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="n">cursor</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="error-handling">
+<h3>Error Handling<a class="headerlink" href="#error-handling" title="Link to this heading">#</a></h3>
+<p>Databases include comprehensive error handling:</p>
+<ul class="simple">
+<li><p>Custom exception classes (e.g., <cite>SpamDBError</cite>)</p></li>
+<li><p>Automatic rollback on errors</p></li>
+<li><p>Detailed logging of all operations</p></li>
+<li><p>Graceful degradation when operations fail</p></li>
+</ul>
+</section>
+<section id="caching-and-performance">
+<h3>Caching and Performance<a class="headerlink" href="#caching-and-performance" title="Link to this heading">#</a></h3>
+<p>Some databases implement caching for frequently accessed data:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Example from LevelDatabase</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">level_roles_cache</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">enabled_guilds_cache</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">guild_configs_cache</span> <span class="o">=</span> <span class="p">{}</span>
+</pre></div>
+</div>
+</section>
+<section id="migration-strategy">
+<h3>Migration Strategy<a class="headerlink" href="#migration-strategy" title="Link to this heading">#</a></h3>
+<p>Databases support automatic schema migration:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">_migrate_database</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Handle database migrations for schema changes&quot;&quot;&quot;</span>
+    <span class="c1"># Adds new columns to existing tables</span>
+    <span class="c1"># Migrates data from old structure to new</span>
+    <span class="c1"># Maintains backward compatibility</span>
+</pre></div>
+</div>
+</section>
+<section id="directory-structure">
+<h3>Directory Structure<a class="headerlink" href="#directory-structure" title="Link to this heading">#</a></h3>
+<p>Database files are stored in the <cite>data/</cite> directory:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>data/
+├── autodelete.db
+├── spam.db
+├── welcome.db
+├── levelsystem.db
+├── log_channels.db
+├── notes.db
+├── globalchat.db
+├── vc.db
+├── stats.db
+└── Datenbanken/
+    └── warns.db
+</pre></div>
+</div>
+</section>
+<section id="access-location">
+<h3>Access Location<a class="headerlink" href="#access-location" title="Link to this heading">#</a></h3>
+<p>All database handlers are located in:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>src/DevTools/backend/database/
+├── __init__.py
+├── autodelete_db.py
+├── spam_db.py
+├── warn_db.py
+├── welcome_db.py
+├── levelsystem_db.py
+├── logging_db.py
+├── notes_db.py
+├── globalchat_db.py
+├── vc_db.py
+└── stats_db.py
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../contributing/index.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Contributing to ManagerX</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="autodelete.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">AutoDelete Database</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#database-overview">Database Overview</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#detailed-database-documentation">Detailed Database Documentation</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#autodelete-database">AutoDelete Database</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#spam-detection-database">Spam Detection Database</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#warning-system-database">Warning System Database</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#welcome-system-database">Welcome System Database</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#level-system-database">Level System Database</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#logging-database">Logging Database</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#notes-database">Notes Database</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#database-patterns-and-best-practices">Database Patterns and Best Practices</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#connection-management">Connection Management</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#error-handling">Error Handling</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#caching-and-performance">Caching and Performance</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#migration-strategy">Migration Strategy</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#directory-structure">Directory Structure</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#access-location">Access Location</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/dev_guide/database/index.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, OPPRO.NET Network.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.3.2.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

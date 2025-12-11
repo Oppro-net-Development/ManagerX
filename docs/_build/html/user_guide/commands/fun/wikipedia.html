@@ -1,0 +1,741 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Wikipedia commands &#8212; ManagerX 1.7.2 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../_static/documentation_options.js?v=908dc885"></script>
+    <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'user_guide/commands/fun/wikipedia';</script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Developer Guide" href="../../../dev_guide/index.html" />
+    <link rel="prev" title="Fun Commands Overview" href="index.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="1.7" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">ManagerX 1.7.2 documentation</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../index.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../dev_guide/index.html">
+    Developer Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Oppro-net-Development/ManagerX" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../index.html">
+    User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../dev_guide/index.html">
+    Developer Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Oppro-net-Development/ManagerX" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">Guide:</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../index.html">Commands</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 has-children"><a class="reference internal" href="../moderation/index.html">Moderation Overview</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../moderation/moderation.html">Moderation Commands</a></li>
+
+
+
+
+<li class="toctree-l3"><a class="reference internal" href="../moderation/antispam.html">Antispam Commands</a></li>
+
+
+
+
+
+
+</ul>
+</details></li>
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="index.html">Fun Commands Overview</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">Wikipedia Commands</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">User Guide</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">User Guide - Commands</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="index.html" class="nav-link">Fun Commands Overview</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Wikipedia commands</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="wikipedia-commands">
+<h1>Wikipedia commands<a class="headerlink" href="#wikipedia-commands" title="Link to this heading">#</a></h1>
+<p>This section provides an overview of the Wikipedia commands available in ManagerX. These commands allow users to
+search for and retrieve information from Wikipedia directly within the platform.</p>
+<section id="supported-languages">
+<h2>Supported Languages<a class="headerlink" href="#supported-languages" title="Link to this heading">#</a></h2>
+<p>The Wikipedia bot supports the following languages:</p>
+<ul class="simple">
+<li><p>🇩🇪 Deutsch (German)</p></li>
+<li><p>🇺🇸 English</p></li>
+<li><p>🇫🇷 Français (French)</p></li>
+<li><p>🇪🇸 Español (Spanish)</p></li>
+<li><p>🇮🇹 Italiano (Italian)</p></li>
+<li><p>🇯🇵 日本語 (Japanese)</p></li>
+<li><p>🇷🇺 Русский (Russian)</p></li>
+</ul>
+</section>
+<section id="available-commands">
+<h2>Available Commands<a class="headerlink" href="#available-commands" title="Link to this heading">#</a></h2>
+</section>
+<section id="wikipedia-search-command">
+<h2>Wikipedia Search Command<a class="headerlink" href="#wikipedia-search-command" title="Link to this heading">#</a></h2>
+<div class="admonition-command admonition">
+<p class="admonition-title">Command</p>
+<p><strong>Command:</strong> <cite>/wiki_search</cite></p>
+<p><strong>Description:</strong> Search Wikipedia for articles and information</p>
+<p><strong>Parameters:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">suchbegriff</span></code> (required): The search term you want to look up on Wikipedia (max 100 characters)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">sprache</span></code> (optional): Choose the language for the search (default: Deutsch)</p></li>
+</ul>
+<p><strong>Example:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">wiki_search</span> <span class="n">suchbegriff</span><span class="p">:</span><span class="n">Python</span> <span class="n">sprache</span><span class="p">:</span><span class="n">en</span>
+</pre></div>
+</div>
+<p>The bot displays the article with title, summary, categories, and interactive buttons.</p>
+<p><strong>Features:</strong></p>
+<ul class="simple">
+<li><p>Autocomplete suggestions as you type</p></li>
+<li><p>Displays article title, summary, and categories</p></li>
+<li><p>Shows coordinates if available</p></li>
+<li><p>Provides links to related/similar articles</p></li>
+<li><p>Includes direct link to the full Wikipedia article</p></li>
+<li><p>Caches results for fast repeated access</p></li>
+</ul>
+</div>
+<p>—
+Wikipedia Random Command
+—————————</p>
+<div class="admonition-command admonition">
+<p class="admonition-title">Command</p>
+<p><strong>Command:</strong> <cite>/wiki_random</cite></p>
+<p><strong>Description:</strong> Display a random Wikipedia article</p>
+<p><strong>Parameters:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">sprache</span></code> (optional): Choose the language for the random article (default: Deutsch)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">anzahl</span></code> (optional): Number of random articles to display (1-5, default: 1)</p></li>
+</ul>
+<p><strong>Example:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">wiki_random</span> <span class="n">sprache</span><span class="p">:</span><span class="n">de</span> <span class="n">anzahl</span><span class="p">:</span><span class="mi">3</span>
+</pre></div>
+</div>
+<p>The bot displays one or more random Wikipedia articles with summaries and related information.</p>
+<p><strong>Features:</strong></p>
+<ul class="simple">
+<li><p>Single random article with full details</p></li>
+<li><p>Or multiple random articles (up to 5) with summaries</p></li>
+<li><p>Each article shows title, summary, and related information</p></li>
+<li><p>Articles can be opened individually with buttons</p></li>
+<li><p>Allows quick discovery of new topics</p></li>
+</ul>
+</div>
+<p>—
+Wikipedia Multi-Search Command
+—————————</p>
+<div class="admonition-command admonition">
+<p class="admonition-title">Command</p>
+<p><strong>Command:</strong> <cite>/wiki_multisearch</cite></p>
+<p><strong>Description:</strong> Extended Wikipedia search with multiple results</p>
+<p><strong>Parameters:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">suchbegriff</span></code> (required): The search term (max 100 characters)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">anzahl</span></code> (optional): Number of results to display (1-15, default: 8)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">sprache</span></code> (optional): Language for the search (default: Deutsch)</p></li>
+</ul>
+<p><strong>Example:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">wiki_multisearch</span> <span class="n">suchbegriff</span><span class="p">:</span><span class="n">Klimawandel</span> <span class="n">anzahl</span><span class="p">:</span><span class="mi">10</span> <span class="n">sprache</span><span class="p">:</span><span class="n">de</span>
+</pre></div>
+</div>
+<p>The bot displays multiple search results with summaries and quick access buttons.</p>
+<p><strong>Features:</strong></p>
+<ul class="simple">
+<li><p>Displays multiple search results with summaries</p></li>
+<li><p>Each result shows a preview of the first sentence</p></li>
+<li><p>Quick access buttons to open individual articles</p></li>
+<li><p>Organized list format for easy browsing</p></li>
+<li><p>Shows the language flag and number of results</p></li>
+</ul>
+</div>
+<p>—
+Wikipedia Category Command
+—————————</p>
+<div class="admonition-command admonition">
+<p class="admonition-title">Command</p>
+<p><strong>Command:</strong> <cite>/wiki_category</cite></p>
+<p><strong>Description:</strong> Browse Wikipedia categories</p>
+<p><strong>Parameters:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">kategorie</span></code> (required): Name of the category to search (max 100 characters)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">sprache</span></code> (optional): Language for the category (default: Deutsch)</p></li>
+</ul>
+<p><strong>Example:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">wiki_category</span> <span class="n">kategorie</span><span class="p">:</span><span class="n">Planeten</span> <span class="n">sprache</span><span class="p">:</span><span class="n">de</span>
+</pre></div>
+</div>
+<p>The bot displays articles within the specified category with summaries.</p>
+<p><strong>Features:</strong></p>
+<ul class="simple">
+<li><p>Find articles within a specific category</p></li>
+<li><p>Displays articles categorized under the search term</p></li>
+<li><p>Shows summaries for each article</p></li>
+<li><p>Quick buttons to open full articles</p></li>
+<li><p>Returns up to 8 results from the category</p></li>
+</ul>
+</div>
+<p>—
+Wikipedia Statistics Command
+—————————</p>
+<div class="admonition-command admonition">
+<p class="admonition-title">Command</p>
+<p><strong>Command:</strong> <cite>/wiki_stats</cite></p>
+<p><strong>Description:</strong> Display bot statistics and Wikipedia information</p>
+<p><strong>Parameters:</strong> None</p>
+<p><strong>Example:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">wiki_stats</span>
+</pre></div>
+</div>
+<p>The bot displays comprehensive statistics about usage and available features.</p>
+<p><strong>Features:</strong></p>
+<ul class="simple">
+<li><p>Shows total search queries performed</p></li>
+<li><p>Displays number of articles viewed</p></li>
+<li><p>Bot uptime in days, hours, and minutes</p></li>
+<li><p>Lists languages used since bot startup</p></li>
+<li><p>Shows available languages with flags</p></li>
+<li><p>Technical information (cache entries, rate limiting, features)</p></li>
+</ul>
+</div>
+<p>—
+Wikipedia Cache Management
+—————————</p>
+<div class="admonition-command admonition">
+<p class="admonition-title">Command</p>
+<p><strong>Command:</strong> <cite>/wiki_cache</cite></p>
+<p><strong>Description:</strong> Cache management (Administrator only)</p>
+<p><strong>Parameters:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">aktion</span></code> (required): Cache action to perform</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">status</span></code>: Show current cache statistics</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">clear</span></code>: Clear all cached entries</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cleanup</span></code>: Remove expired cache entries</p></li>
+</ul>
+</li>
+</ul>
+<p><strong>Example:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">/</span><span class="n">wiki_cache</span> <span class="n">aktion</span><span class="p">:</span><span class="n">status</span>
+</pre></div>
+</div>
+<p>The bot displays cache statistics or performs the requested cache action.</p>
+<p><strong>Features:</strong></p>
+<ul class="simple">
+<li><p>View cache performance metrics</p></li>
+<li><p>Total entries count</p></li>
+<li><p>Expired entries count</p></li>
+<li><p>Active entries count</p></li>
+<li><p>Cache duration setting</p></li>
+<li><p>Requires administrator permissions</p></li>
+</ul>
+</div>
+<p>—</p>
+</section>
+<section id="interactive-features">
+<h2>Interactive Features<a class="headerlink" href="#interactive-features" title="Link to this heading">#</a></h2>
+<p>All article results include interactive buttons:</p>
+<ul class="simple">
+<li><p><strong>🔗 Read Full Article</strong>: Direct link to the complete Wikipedia article</p></li>
+<li><p><strong>🌐 Language Selection</strong>: Switch between supported languages</p></li>
+<li><p><strong>📚 Similar Articles</strong>: Quick buttons to view related articles</p></li>
+<li><p><strong>🎲 Random Article</strong>: Get another random article</p></li>
+<li><p><strong>📊 Article Info</strong>: View detailed statistics about the article</p></li>
+<li><p><strong>🔄 Refresh</strong>: Update the article with fresh data</p></li>
+</ul>
+</section>
+<section id="article-information">
+<h2>Article Information<a class="headerlink" href="#article-information" title="Link to this heading">#</a></h2>
+<p>When viewing an article, you get:</p>
+<ul class="simple">
+<li><p><strong>Title and Language</strong>: Article name and which language version</p></li>
+<li><p><strong>Summary</strong>: Concise overview (up to 1500 characters)</p></li>
+<li><p><strong>Categories</strong>: Topics the article is filed under</p></li>
+<li><p><strong>Coordinates</strong>: Geographic location (if applicable)</p></li>
+<li><p><strong>Related Links</strong>: Similar or related articles</p></li>
+<li><p><strong>Images</strong>: Image count (if available)</p></li>
+</ul>
+</section>
+<section id="caching-system">
+<h2>Caching System<a class="headerlink" href="#caching-system" title="Link to this heading">#</a></h2>
+<p>The bot includes an intelligent caching system that:</p>
+<ul class="simple">
+<li><p>Stores frequently accessed articles</p></li>
+<li><p>Improves response time for repeat searches</p></li>
+<li><p>Automatically expires old cache entries after 5 minutes</p></li>
+<li><p>Can be manually managed by administrators</p></li>
+<li><p>Reduces API calls to Wikipedia servers</p></li>
+</ul>
+</section>
+<section id="search-features">
+<h2>Search Features<a class="headerlink" href="#search-features" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><strong>Autocomplete</strong>: Get suggestions as you type (minimum 2 characters)</p></li>
+<li><p><strong>Disambiguation Handling</strong>: When a search term has multiple meanings, shows all options</p></li>
+<li><p><strong>Error Handling</strong>: Friendly error messages with suggestions if an article isn’t found</p></li>
+<li><p><strong>Multi-language Support</strong>: Same search term returns results in different languages</p></li>
+<li><p><strong>Smart Sorting</strong>: Search results ranked by relevance</p></li>
+</ul>
+</section>
+<section id="tips-and-tricks">
+<h2>Tips and Tricks<a class="headerlink" href="#tips-and-tricks" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>Use specific search terms for better results (e.g., “Python (Programmiersprache)” for the programming language)</p></li>
+<li><p>Try different languages to find articles that may not exist in your preferred language</p></li>
+<li><p>Use <code class="docutils literal notranslate"><span class="pre">/wiki_random</span></code> to discover new interesting topics</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">/wiki_multisearch</span></code> command is great for research with multiple related articles</p></li>
+<li><p>Administrator can clean up the cache to free up memory</p></li>
+</ul>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="index.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Fun Commands Overview</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../../../dev_guide/index.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Developer Guide</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#supported-languages">Supported Languages</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#available-commands">Available Commands</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#wikipedia-search-command">Wikipedia Search Command</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#interactive-features">Interactive Features</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#article-information">Article Information</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#caching-system">Caching System</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#search-features">Search Features</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tips-and-tricks">Tips and Tricks</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../../_sources/user_guide/commands/fun/wikipedia.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, OPPRO.NET Network.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.3.2.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
