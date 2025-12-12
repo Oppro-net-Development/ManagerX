@@ -13,3 +13,23 @@ site:
 
 example:
 - "example/**"
+
+
+priority-high:
+- "**/*.py"
+
+priority-medium:
+- "**/*.html"
+- "**/*.css"
+- "**/*.js"
+
+priority-low:
+- "**/*.yml"
+- "**/*.json"
+- "**/*.txt"
+- "**/*.md"
+- "**/*.rst"
+# Exclude files and directories
+--- IGNORE ---
+- "README.md"
+- ".github/**"
