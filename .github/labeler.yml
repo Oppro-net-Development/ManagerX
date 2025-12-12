@@ -10,3 +10,6 @@ documentation:
 
 site:
 - "site/**"
+
+example:
+- "example/**"
