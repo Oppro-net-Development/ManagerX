@@ -1,0 +1,50 @@
+name: Deploy Discord Bot to Ptero
+
+on:
+  push:
+    branches:
+      - main  # oder dein Release-Branch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    # --- 1. Repository auschecken ---
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    # --- 2. lftp installieren für SFTP ---
+    - name: Install lftp
+      run: sudo apt-get update && sudo apt-get install -y lftp
+
+    # --- 3. Bot hochladen, bestimmte Dateien/Ordner schützen ---
+    - name: Upload Bot via SFTP (keep data, config, db/json)
+      env:
+        SFTP_HOST: ${{ secrets.SFTP_HOST }}
+        SFTP_PORT: ${{ secrets.SFTP_PORT }}
+        SFTP_USER: ${{ secrets.SFTP_USER }}
+        SFTP_PASS: ${{ secrets.SFTP_PASS }}
+      run: |
+        lftp -u $SFTP_USER,$SFTP_PASS -p $SFTP_PORT sftp://$SFTP_HOST <<EOF
+        # mirror mit Ausschlüssen
+        mirror -R --delete \
+          --exclude-glob data \
+          --exclude-glob config \
+          --exclude-glob "*.db" \
+          --exclude-glob "*.json" \
+          --exclude DevTools/backend/utils/config.py \
+          ./ /home/lennypegau.107f224c/discord-bot
+        quit
+        EOF
+
+    # --- 4. Bot via Ptero API neu starten ---
+    - name: Restart Bot via Ptero API
+      env:
+        PTERO_API: ${{ secrets.PTERO_API }}
+        PTERO_SERVER_ID: ${{ secrets.PTERO_SERVER_ID }}
+      run: |
+        curl -X POST "https://panel.oppro-network.de/api/servers/$PTERO_SERVER_ID/power" \
+        -H "Authorization: Bearer $PTERO_API" \
+        -H "Content-Type: application/json" \
+        -d '{"signal":"restart"}'
