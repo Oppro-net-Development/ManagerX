@@ -2,8 +2,10 @@ Antispam Commands
 ==============================
 
 This section of the User Guide provides detailed information about the antispam commands available in ManagerX. Each command is explained with its purpose, usage syntax, and examples to help you understand how to effectively utilize them in your projects.
+
 AntiSpam Setup Command
 =========================
+
 .. admonition:: Command
 
     **Command:** `/antispam setup`
@@ -25,8 +27,10 @@ AntiSpam Setup Command
     Enables the antispam system with a log channel of `#spam-logs`, allowing a maximum of 5 messages within 10 seconds.
     
     **Return Value:** Confirmation of the setup or error message.
+
 AntiSpam Set Command
 =========================
+
 .. admonition:: Command
 
     **Command:** `/antispam set`
@@ -47,8 +51,10 @@ AntiSpam Set Command
     Sets the antispam parameters to allow a maximum of 3 messages within 5 seconds.
     
     **Return Value:** Confirmation of the parameter update or error message.
+
 AntiSpam Log Channel Command
 =================================
+
 .. admonition:: Command
 
     **Command:** `/antispam log-channel`
@@ -68,8 +74,10 @@ AntiSpam Log Channel Command
     Sets the log channel to `#new-spam-logs`.
     
     **Return Value:** Confirmation of the log channel update or error message.
+
 AntiSpam View Command
 =========================
+
 .. admonition:: Command
 
     **Command:** `/antispam view`
@@ -85,8 +93,10 @@ AntiSpam View Command
     Displays the current antispam settings including log channel, max messages, and time frame.
     
     **Return Value:** Current antispam settings or error message.
+
 AntiSpam Logs Command
 =========================
+
 .. admonition:: Command
 
     **Command:** `/antispam logs`
@@ -106,8 +116,10 @@ AntiSpam Logs Command
     Displays the 5 most recent antispam log entries.
     
     **Return Value:** Recent antispam logs or error message.
+
 AntiSpam Clear Command
 =========================
+
 .. admonition:: Command
 
     **Command:** `/antispam clear`
@@ -123,8 +135,10 @@ AntiSpam Clear Command
     Clears all antispam log entries.
     
     **Return Value:** Confirmation of log clearance or error message.
+
 AntiSpam Whitelist Command
 =========================
+
 .. admonition:: Command
 
     **Command:** `/antispam whitelist`
@@ -144,7 +158,10 @@ AntiSpam Whitelist Command
     Adds the member `@User` to the antispam whitelist.
     
     **Return Value:** Confirmation of whitelisting or error message.
+
 AntiSpam Disable Command
+=========================
+
 .. admonition:: Command
 
     **Command:** `/antispam disable`

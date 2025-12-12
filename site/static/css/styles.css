@@ -1,0 +1,771 @@
+/*
+|--------------------------------------------------------------------------
+| 🚀 CUSTOM PROPERTIES (VARIABLES)
+|--------------------------------------------------------------------------
+| Define colors, typography, and spacing for easy maintenance.
+*/
+:root {
+    /* Colors */
+    --clr-primary-start: #667eea; /* Purple-Blue */
+    --clr-primary-end: #764ba2;   /* Deep Purple */
+    --clr-bg-gradient: linear-gradient(135deg, var(--clr-primary-start) 0%, var(--clr-primary-end) 100%);
+    --clr-text-light: #fff;
+    --clr-text-dark: #000;
+    --clr-accent: #00D9FF; /* Light Blue for In-Dev badge */
+    --clr-current-badge: #5865F2; /* Discord-like Blue for Current badge */
+    --clr-bg-transparent-dark: rgba(0, 0, 0, 0.2);
+    --clr-bg-card-transparent: rgba(255, 255, 255, 0.1);
+    --clr-bg-card-hover: rgba(255, 255, 255, 0.15);
+    --clr-bg-nav-hover: rgba(255, 255, 255, 0.1);
+
+    /* Typography */
+    --ff-primary: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    --fs-logo: 2rem; /* 32px */
+    --fs-h1: 3.5rem; /* 56px */
+    --fs-h2: 2.625rem; /* 42px */
+    --fs-subtitle: 1.5rem; /* 24px */
+    --line-height-body: 1.6;
+
+    /* Spacing */
+    --space-sm: 10px;
+    --space-md: 20px;
+    --space-lg: 30px;
+    --space-xl: 50px;
+    --space-xxl: 80px;
+
+    /* Borders & Shadows */
+    --br-base: 8px;
+    --br-card: 15px;
+    --br-btn: 30px;
+    --shadow-text: 0 4px 20px rgba(0, 0, 0, 0.3);
+    --shadow-btn-hover: 0 10px 30px rgba(0, 0, 0, 0.3);
+
+    /* Transitions */
+    --tr-base: all 0.3s ease;
+}
+
+/*
+|--------------------------------------------------------------------------
+| ⚙️ BASE STYLES & RESET
+|--------------------------------------------------------------------------
+*/
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    /* Ensures 1rem = 10px for easier calculation (e.g., 1.6rem = 16px) */
+    font-size: 62.5%;
+}
+
+body {
+    font-family: var(--ff-primary);
+    background: var(--clr-bg-gradient);
+    color: var(--clr-text-light);
+    overflow-x: hidden;
+    line-height: var(--line-height-body);
+    font-size: 1.6rem; /* Base font size: 16px */
+}
+
+/* Accessibility: Better focus visibility */
+a:focus-visible,
+button:focus-visible,
+.btn:focus-visible {
+    outline: 2px solid var(--clr-text-light);
+    outline-offset: 4px;
+    border-radius: var(--br-base);
+}
+
+/*
+|--------------------------------------------------------------------------
+| 🌌 STAR BACKGROUND
+|--------------------------------------------------------------------------
+*/
+.stars {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.star {
+    position: absolute;
+    width: 0.2rem; /* 2px */
+    height: 0.2rem; /* 2px */
+    background: white;
+    border-radius: 50%;
+    animation: twinkle 3s infinite;
+}
+
+@keyframes twinkle {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 1; }
+}
+
+.container {
+    max-width: 120rem; /* 1200px */
+    margin: 0 auto;
+    padding: 0 2rem; /* 20px */
+    position: relative;
+    z-index: 1;
+}
+
+/*
+|--------------------------------------------------------------------------
+| 🧭 HEADER & NAVIGATION
+|--------------------------------------------------------------------------
+*/
+header {
+    padding: 2rem 0;
+    background: var(--clr-bg-transparent-dark);
+    backdrop-filter: blur(10px);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-size: var(--fs-logo);
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.logo::before {
+    content: "🤖";
+    font-size: 4rem;
+}
+
+nav {
+    display: flex;
+    gap: 3rem;
+}
+
+nav a {
+    color: var(--clr-text-light);
+    text-decoration: none;
+    font-weight: 500;
+    transition: var(--tr-base);
+    padding: 0.8rem 1.6rem;
+    border-radius: var(--br-base);
+}
+
+nav a:hover {
+    background: var(--clr-bg-nav-hover);
+    transform: translateY(-0.2rem);
+}
+
+/*
+|--------------------------------------------------------------------------
+| 👑 HERO SECTION
+|--------------------------------------------------------------------------
+*/
+.hero {
+    text-align: center;
+    padding: 10rem 0;
+    animation: fadeIn 1s forwards; /* Use 'forwards' to keep the final state */
+}
+
+.hero h1 {
+    font-size: var(--fs-h1);
+    margin-bottom: 2rem;
+    text-shadow: var(--shadow-text);
+}
+
+.subtitle {
+    font-size: var(--fs-subtitle);
+    margin-bottom: 3rem;
+    opacity: 0.9;
+}
+
+.badges {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-bottom: 4rem;
+    flex-wrap: wrap;
+}
+
+.badge {
+    background: var(--clr-bg-card-transparent);
+    backdrop-filter: blur(10px);
+    padding: 1rem 2rem;
+    border-radius: 2rem;
+    font-size: 1.4rem;
+    font-weight: 500;
+}
+
+.cta-buttons {
+    display: flex;
+    gap: 2rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.btn {
+    padding: 1.5rem 3.5rem;
+    border-radius: var(--br-btn);
+    text-decoration: none;
+    font-weight: 600;
+    transition: var(--tr-base);
+    display: inline-block;
+}
+
+.btn-primary {
+    background: var(--clr-text-light);
+    color: var(--clr-primary-start);
+    border: none; /* Add for consistency */
+}
+
+.btn-primary:hover {
+    transform: translateY(-0.3rem);
+    box-shadow: var(--shadow-btn-hover);
+}
+
+.btn-secondary {
+    background: transparent;
+    color: var(--clr-text-light);
+    border: 2px solid var(--clr-text-light);
+}
+
+.btn-secondary:hover {
+    background: var(--clr-bg-nav-hover);
+    transform: translateY(-0.3rem);
+}
+
+/*
+|--------------------------------------------------------------------------
+| 💡 ABOUT SECTION
+|--------------------------------------------------------------------------
+*/
+.about {
+    padding: var(--space-xxl) 0;
+    background: var(--clr-bg-transparent-dark);
+    backdrop-filter: blur(10px);
+}
+
+.about h2 {
+    text-align: center;
+    font-size: var(--fs-h2);
+    margin-bottom: 3rem;
+}
+
+.section-intro {
+    text-align: center;
+    font-size: 1.8rem;
+    max-width: 80rem;
+    margin: 0 auto 5rem;
+    opacity: 0.9;
+}
+
+.why-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(25rem, 1fr));
+    gap: 3rem;
+    margin-top: 5rem;
+}
+
+.why-card {
+    background: var(--clr-bg-card-transparent);
+    padding: 3rem;
+    border-radius: var(--br-card);
+    text-align: center;
+    transition: var(--tr-base);
+}
+
+.why-card:hover {
+    transform: translateY(-1rem);
+    background: var(--clr-bg-card-hover);
+}
+
+.why-icon {
+    font-size: 4.8rem;
+    margin-bottom: 1.5rem;
+}
+
+.why-card h3 {
+    font-size: 2.2rem;
+    margin-bottom: 1rem;
+}
+
+.why-card p {
+    opacity: 0.9;
+}
+
+/*
+|--------------------------------------------------------------------------
+| 🚀 QUICK FEATURES (VISUAL UPGRADE)
+|--------------------------------------------------------------------------
+*/
+
+/* Beibehalten der Basis-Padding und H2 Styles */
+.quick-features {
+    padding: var(--space-xxl) 0;
+}
+
+.quick-features h2 {
+    text-align: center;
+    font-size: var(--fs-h2);
+    margin-bottom: 5rem;
+    /* Optional: Leichte Schattierung für den Titel */
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+}
+
+.feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(28rem, 1fr));
+    gap: 3rem;
+    margin-bottom: 4rem;
+}
+
+/* Neuer Stil für die Feature Box */
+.feature-box {
+    background: var(--clr-bg-card-transparent);
+    /* Entferne den Backdrop-Filter hier, da er die visuelle Tiefe reduziert */
+    padding: 3.5rem;
+    border-radius: var(--br-card);
+    /* Fügen Sie einen subtilen Rand hinzu, der im Hover-Zustand hervorgehoben wird */
+    border: 1px solid rgba(255, 255, 255, 0.05); 
+    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); /* Sanftere, längere Transition */
+    position: relative;
+    overflow: hidden;
+}
+
+/* Hover-Effekt: Mehr Tiefe und Leuchten */
+.feature-box:hover {
+    transform: translateY(-1.5rem) scale(1.02); /* Stärkerer Lift-Effekt */
+    background: var(--clr-bg-card-hover);
+    /* Optional: Leichter blauer Schein (Glow) */
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5), 
+                0 0 20px rgba(102, 126, 234, 0.4); 
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Visuelle Verbesserung des Icons */
+.feature-icon {
+    font-size: 5.5rem; /* Etwas größer */
+    margin-bottom: 2rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    /* Hintergrund für visuelle Hervorhebung des Icons */
+    width: 8rem;
+    height: 8rem;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.05); 
+    color: var(--clr-accent); /* Hebe die Icon-Farbe hervor */
+    transition: var(--tr-base);
+}
+
+/* Icon-Farbe im Hover-Zustand anpassen (optional) */
+.feature-box:hover .feature-icon {
+    transform: rotateY(180deg); /* Kleiner Rotations-Effekt */
+    background: rgba(255, 255, 255, 0.1); 
+    color: var(--clr-text-light);
+}
+
+.feature-box h3 {
+    font-size: 2.6rem; /* Titel etwas größer */
+    margin-bottom: 1rem; /* Abstand reduziert, da der Titel wichtiger ist */
+    font-weight: 700;
+}
+
+.feature-box p {
+    opacity: 0.85; /* Text leicht dunkler/transparenter, damit der Titel heraussticht */
+    margin-bottom: 2rem;
+}
+
+.feature-link {
+    color: var(--clr-accent); /* Link-Farbe mit der Akzentfarbe abgleichen */
+    text-decoration: none;
+    font-weight: 600;
+    transition: var(--tr-base);
+    display: inline-block;
+}
+
+.feature-link::after {
+    content: " →";
+    transition: transform 0.3s;
+    display: inline-block;
+}
+
+.feature-link:hover {
+    opacity: 1;
+    transform: translateX(0.5rem); /* Kleiner Schiebeeffekt beim Hover */
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+}
+
+.feature-link:hover::after {
+    transform: translateX(0.5rem);
+}
+
+.view-all {
+    text-align: center;
+}
+
+/* Responsive Anpassung für die Icons (optional) */
+@media (max-width: 76.8rem) {
+    .feature-icon {
+        font-size: 4.5rem;
+        width: 7rem;
+        height: 7rem;
+    }
+}
+
+/*
+|--------------------------------------------------------------------------
+| 🏁 QUICK START
+|--------------------------------------------------------------------------
+*/
+.quick-start {
+    padding: var(--space-xxl) 0;
+    background: var(--clr-bg-transparent-dark);
+}
+
+.quick-start h2 {
+    text-align: center;
+    font-size: var(--fs-h2);
+    margin-bottom: 5rem;
+}
+
+.start-steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(22rem, 1fr));
+    gap: 3rem;
+    margin-bottom: 4rem;
+}
+
+.step {
+    text-align: center;
+}
+
+.step-number {
+    width: 6rem;
+    height: 6rem;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.8rem;
+    font-weight: bold;
+    margin: 0 auto 2rem;
+}
+
+.step h3 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+
+.step p {
+    opacity: 0.9;
+}
+
+.quick-start .btn-secondary {
+    display: block;
+    width: fit-content;
+    margin: 0 auto;
+}
+
+/*
+|--------------------------------------------------------------------------
+| 📜 CHANGELOG PREVIEW
+|--------------------------------------------------------------------------
+*/
+.changelog-preview {
+    padding: var(--space-xxl) 0;
+}
+
+.changelog-preview h2 {
+    text-align: center;
+    font-size: var(--fs-h2);
+    margin-bottom: 5rem;
+}
+
+.version-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(30rem, 1fr));
+    gap: 3rem;
+}
+
+.version-card {
+    background: var(--clr-bg-card-transparent);
+    backdrop-filter: blur(10px);
+    padding: 3rem;
+    border-radius: var(--br-card);
+}
+
+.version-badge {
+    display: inline-block;
+    padding: 0.5rem 1.5rem;
+    border-radius: 1.5rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+}
+
+.version-card.in-dev .version-badge {
+    background: var(--clr-accent);
+    color: var(--clr-text-dark);
+}
+
+.version-card.current .version-badge {
+    background: var(--clr-current-badge);
+}
+
+.version-card h3 {
+    font-size: 2.8rem;
+    margin-bottom: 1.5rem;
+}
+
+.version-card ul {
+    list-style: none;
+    padding: 0;
+}
+
+.version-card li {
+    padding: 0.5rem 0;
+}
+
+.version-link {
+    color: var(--clr-text-light);
+    text-decoration: none;
+    font-weight: 600;
+    display: inline-block;
+    margin-top: 1.5rem;
+    transition: var(--tr-base);
+}
+
+.version-link:hover {
+    opacity: 0.7;
+}
+
+/*
+|--------------------------------------------------------------------------
+| 🤝 SUPPORT PREVIEW
+|--------------------------------------------------------------------------
+*/
+.support-preview {
+    padding: var(--space-xxl) 0;
+    background: var(--clr-bg-transparent-dark);
+}
+
+.support-preview h2 {
+    text-align: center;
+    font-size: var(--fs-h2);
+    margin-bottom: 2rem;
+}
+
+.support-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(25rem, 1fr));
+    gap: 3rem;
+    margin-top: 5rem;
+}
+
+.support-card {
+    background: var(--clr-bg-card-transparent);
+    backdrop-filter: blur(10px);
+    padding: 4rem;
+    border-radius: var(--br-card);
+    text-align: center;
+    text-decoration: none;
+    color: var(--clr-text-light);
+    transition: var(--tr-base);
+}
+
+.support-card:hover {
+    transform: translateY(-0.5rem);
+    background: var(--clr-bg-card-hover);
+}
+
+.support-icon {
+    font-size: 4.8rem;
+    display: block;
+    margin-bottom: 2rem;
+}
+
+.support-card h3 {
+    font-size: 2.2rem;
+    margin-bottom: 1rem;
+}
+
+.support-card p {
+    opacity: 0.9;
+}
+
+/*
+|--------------------------------------------------------------------------
+| 🖥️ HOSTING
+|--------------------------------------------------------------------------
+*/
+.hosting {
+    padding: var(--space-xxl) 0;
+}
+
+.hosting h2 {
+    text-align: center;
+    font-size: var(--fs-h2);
+    margin-bottom: 5rem;
+}
+
+.hosting-card {
+    background: var(--clr-bg-card-transparent);
+    backdrop-filter: blur(10px);
+    padding: 5rem;
+    border-radius: 2rem;
+    text-align: center;
+    max-width: 60rem;
+    margin: 0 auto;
+}
+
+.hosting-card h3 {
+    font-size: 2.4rem;
+    margin-bottom: 3rem;
+}
+
+.hosting-card img {
+    max-width: 100%;
+    height: auto;
+    margin-bottom: 2.5rem;
+}
+
+.hosting-card p {
+    font-size: 1.8rem;
+    margin-bottom: 3rem;
+    opacity: 0.9;
+}
+
+/*
+|--------------------------------------------------------------------------
+| ⬇️ FOOTER
+|--------------------------------------------------------------------------
+*/
+footer {
+    background: rgba(0, 0, 0, 0.3);
+    padding: 6rem 0 3rem;
+    margin-top: 8rem;
+}
+
+.footer-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+    gap: 4rem;
+    margin-bottom: 4rem;
+}
+
+.footer-section h4 {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+}
+
+.footer-section p {
+    opacity: 0.8;
+}
+
+.footer-section a {
+    color: var(--clr-text-light);
+    text-decoration: none;
+    display: block;
+    margin-bottom: 1rem;
+    opacity: 0.8;
+    transition: opacity 0.3s;
+}
+
+.footer-section a:hover {
+    opacity: 1;
+}
+
+.footer-bottom {
+    text-align: center;
+    padding-top: 3rem;
+    border-top: 0.1rem solid rgba(255, 255, 255, 0.1);
+}
+
+.footer-subtitle {
+    font-style: italic;
+    opacity: 0.7;
+    margin-top: 1rem;
+}
+
+/*
+|--------------------------------------------------------------------------
+| 💫 ANIMATIONS
+|--------------------------------------------------------------------------
+*/
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(2rem);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/*
+|--------------------------------------------------------------------------
+| 📱 RESPONSIVE DESIGN (MEDIA QUERIES)
+|--------------------------------------------------------------------------
+*/
+@media (max-width: 76.8rem) { /* 768px */
+    /* Adjust root font sizes for mobile to reduce overall scale */
+    :root {
+        --fs-h1: 3.6rem;
+        --fs-h2: 3rem;
+        --fs-subtitle: 1.8rem;
+    }
+
+    .hero {
+        padding: 6rem 0; /* Reduced padding on small screens */
+    }
+
+    .hero h1 {
+        font-size: var(--fs-h1);
+    }
+
+    .subtitle {
+        font-size: var(--fs-subtitle);
+    }
+
+    nav {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .header-content {
+        flex-direction: column;
+        gap: 2rem;
+    }
+
+    /* Stack features and start steps */
+    .feature-grid,
+    .start-steps,
+    .why-cards,
+    .footer-content {
+        grid-template-columns: 1fr;
+    }
+    
+    .why-card,
+    .feature-box,
+    .support-card {
+        padding: 2.5rem; /* Slightly smaller card padding */
+    }
+    
+    .hosting-card {
+        padding: 3rem;
+    }
+}

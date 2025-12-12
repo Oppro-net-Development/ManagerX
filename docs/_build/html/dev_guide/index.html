@@ -296,8 +296,7 @@
 </ul>
 </details></li>
 <li class="toctree-l1"><a class="reference internal" href="contributing/index.html">Contributing</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="database/index.html">database</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="database/autodelete.html">AutoDelete Database</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="database/index.html">Database</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
 </ul>
 </details></li>
 </ul>
@@ -360,76 +359,6 @@
   <section id="developer-guide">
 <h1>Developer Guide<a class="headerlink" href="#developer-guide" title="Link to this heading">#</a></h1>
 <p>Welcome to the ManagerX Developer Guide! This section provides in-depth information for developers looking to contribute to or extend ManagerX, including architecture overviews, API references, and development best practices.</p>
-<p>To download and set up the development environment, follow these steps:
-1. Clone the ManagerX repository from GitHub:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/Oppro-net-Development/ManagerX.git
-</pre></div>
-</div>
-<ol class="arabic simple" start="2">
-<li><p>Navigate to the project directory:</p></li>
-</ol>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>ManagerX
-</pre></div>
-</div>
-<ol class="arabic simple" start="3">
-<li><p>Install the required dependencies:</p></li>
-</ol>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>req.txt
-</pre></div>
-</div>
-<div class="admonition-note admonition">
-<p class="admonition-title">note</p>
-<p>Ensure you have Python 3.10 or higher installed to run ManagerX successfully.</p>
-</div>
-</section>
-<section id="dependencies">
-<h1>Dependencies<a class="headerlink" href="#dependencies" title="Link to this heading">#</a></h1>
-<p>The following dependencies are required for developing and running ManagerX:</p>
-<ul class="simple">
-<li><p>Python 3.10+</p></li>
-<li><p>aiocache</p></li>
-<li><p>aiohappyeyeballs</p></li>
-<li><p>aiohttp</p></li>
-<li><p>aiosqlite</p></li>
-<li><p>annotated-types</p></li>
-<li><p>anyio</p></li>
-<li><p>attrs</p></li>
-<li><p>beautifulsoup4</p></li>
-<li><p>certifi</p></li>
-<li><p>charset-normalizer</p></li>
-<li><p>click</p></li>
-<li><p>colorama</p></li>
-<li><p>ezcord</p></li>
-<li><p>frozenlist</p></li>
-<li><p>h11</p></li>
-<li><p>idna</p></li>
-<li><p>Jinja2</p></li>
-<li><p>MarkupSafe</p></li>
-<li><p>multidict</p></li>
-<li><p>propcache</p></li>
-<li><p>py-cord==2.7.0rc2</p></li>
-<li><p>pydantic</p></li>
-<li><p>pydantic_core</p></li>
-<li><p>python-dotenv</p></li>
-<li><p>PyYAML</p></li>
-<li><p>requests</p></li>
-<li><p>six</p></li>
-<li><p>sniffio</p></li>
-<li><p>soupsieve</p></li>
-<li><p>starlette</p></li>
-<li><p>typing_extensions</p></li>
-<li><p>typing-inspection</p></li>
-<li><p>urllib3</p></li>
-<li><p>wikipedia</p></li>
-<li><p>yarl</p></li>
-<li><p>timedelta</p></li>
-<li><p>sphinx</p></li>
-<li><p>pydata-sphinx-theme</p></li>
-<li><p>sphinx-autodoc-typehints</p></li>
-<li><p>myst-parser</p></li>
-<li><p>SimpleColoredLogs – Another Project of OPPRO.NET Development</p></li>
-<li><p>sphinx-copybutton</p></li>
-</ul>
 <div class="toctree-wrapper compound">
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Developer Guide:</span></p>
 <ul>
@@ -446,8 +375,7 @@
 <li class="toctree-l2"><a class="reference internal" href="contributing/index.html#community-guidelines">Community Guidelines</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="database/index.html">database</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="database/autodelete.html">AutoDelete Database</a></li>
+<li class="toctree-l1"><a class="reference internal" href="database/index.html">Database</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="database/index.html#database-overview">Database Overview</a></li>
 <li class="toctree-l2"><a class="reference internal" href="database/index.html#detailed-database-documentation">Detailed Database Documentation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="database/index.html#database-patterns-and-best-practices">Database Patterns and Best Practices</a></li>
@@ -495,20 +423,6 @@
                 <dialog id="pst-secondary-sidebar-modal"></dialog>
                 <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
-
-  <div class="sidebar-secondary-item">
-<div
-    id="pst-page-navigation-heading-2"
-    class="page-toc tocsection onthispage">
-    <i class="fa-solid fa-list"></i> On this page
-  </div>
-  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
-    <ul class="visible nav section-nav flex-column">
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Developer Guide</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#dependencies">Dependencies</a></li>
-</ul>
-
-  </nav></div>
 
   <div class="sidebar-secondary-item">
   <div role="note" aria-label="source link">
