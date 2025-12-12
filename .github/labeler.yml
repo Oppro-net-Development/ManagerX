@@ -1,0 +1,12 @@
+cogs:
+- "src/cogs/**"
+
+handler:
+- "src/handler/**"
+
+documentation:
+- "docs/**"
+- "**/*.md"
+
+site:
+- "site/**"
