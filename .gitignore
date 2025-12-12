@@ -23,7 +23,7 @@ Thumbs.db
 # Sonstiges
 *.bak
 *.tmp
-FastCoding/backend/utils/config.py
+DevTools/backend/utils/config.py
 command.yaml
 wiki_stats.json
 checker.py
