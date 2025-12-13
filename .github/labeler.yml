@@ -14,6 +14,15 @@ site:
 example:
 - "example/**"
 
+backend:
+- "src/DevTools/backend/**"
+- "site/backend/**"
+
+ui:
+- "src/DevTools/ui/**"
+
+static:
+- "site/static/**"
 
 priority-high:
 - "**/*.py"
@@ -22,13 +31,36 @@ priority-medium:
 - "**/*.html"
 - "**/*.css"
 - "**/*.js"
+- "**/*.yml"
+- "**/*.yaml"
 
 priority-low:
-- "**/*.yml"
 - "**/*.json"
 - "**/*.txt"
 - "**/*.md"
 - "**/*.rst"
+
+translation-message:
+- "translation/message/**"
+
+translation-commands:
+- "translation/commands/**"
+
+translation:
+- "translation/**"
+
+python:
+- "**/*.py"
+
+javascript:
+- "**/*.js"
+
+html:
+- "**/*.html"
+
+css:
+- "**/*.css"
+
 # Exclude files and directories
 --- IGNORE ---
 - "README.md"
