@@ -1,62 +1,98 @@
 cogs:
-- "src/cogs/**"
+  files:
+    any:
+    - "src/cogs/**"
 
 handler:
-- "src/handler/**"
+  files:
+    any:
+    - "src/handler/**"
 
 documentation:
-- "docs/**"
-- "**/*.md"
+  files:
+    any:
+    - "docs/**"
+    - "**/*.md"
 
 site:
-- "site/**"
+  files:
+    any:
+    - "site/**"
 
 example:
-- "example/**"
+  files:
+    any:
+    - "example/**"
 
 backend:
-- "src/DevTools/backend/**"
-- "site/backend/**"
+  files:
+    any:
+    - "src/DevTools/backend/**"
+    - "site/backend/**"
 
 ui:
-- "src/DevTools/ui/**"
+  files:
+    any:
+    - "src/DevTools/ui/**"
 
 static:
-- "site/static/**"
+  files:
+    any:
+    - "site/static/**"
 
 priority-high:
-- "**/*.py"
+  files:
+    any:
+    - "**/*.py"
 
 priority-medium:
-- "**/*.html"
-- "**/*.css"
-- "**/*.js"
-- "**/*.yml"
-- "**/*.yaml"
+  files:
+    any:
+    - "**/*.html"
+    - "**/*.css"
+    - "**/*.js"
+    - "**/*.yml"
+    - "**/*.yaml"
 
 priority-low:
-- "**/*.json"
-- "**/*.txt"
-- "**/*.md"
-- "**/*.rst"
+  files:
+    any:
+    - "**/*.json"
+    - "**/*.txt"
+    - "**/*.md"
+    - "**/*.rst"
 
 translation-message:
-- "translation/message/**"
+  files:
+    any:
+    - "translation/message/**"
 
 translation-commands:
-- "translation/commands/**"
+  files:
+    any:
+    - "translation/commands/**"
 
 translation:
-- "translation/**"
+  files:
+    any:
+    - "translation/**"
 
 python:
-- "**/*.py"
+  files:
+    any:
+    - "**/*.py"
 
 javascript:
-- "**/*.js"
+  files:
+    any:
+    - "**/*.js"
 
 html:
-- "**/*.html"
+  files:
+    any:
+    - "**/*.html"
 
 css:
-- "**/*.css"
+  files:
+    any:
+    - "**/*.css"
