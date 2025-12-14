@@ -1,0 +1,37 @@
+general:
+  error_types:
+    no_permission: "You do not have permission to execute this command."
+    user_not_found: "User not found."
+    bot_error: "An error occurred within the bot. Please try again later."
+    option_missing: "A required option is missing."
+    bot_has_no_permission: "The bot does not have the necessary permissions to execute this command."
+
+cog_4gewinnt:
+  error_types:
+    not_your_turn: "It's not your turn."
+    this_column_full: "This column is full!"
+    is_opponent_bot: "You cannot play against a bot!"
+    is_opponent_self: "You cannot play against yourself!"
+
+  win_types:
+    win: "Game over! {winner} won!\n\n{board_str}"
+    draw: "It's a draw!\n\n{board_str}"
+  
+  message:
+    start_game: "Connect Four: {author_mention} (🔴) vs {opponent_mention} (🟡)\n{author_mention} starts!\n\n"
+    player_turn: "{view.current_player.mention}'s turn now!\n\n{board_str}"
+
+cog_tictactoe:
+  error_types:
+    not_your_turn: "It's not your turn."
+    this_cell_taken: "This cell is already taken!"
+    is_opponent_bot: "You cannot play against a bot!"
+    is_opponent_self: "You cannot play against yourself!"
+
+  win_types:
+    win: "Game over! {winner} won!"
+    draw: "It's a draw!"
+
+  message: 
+    # NEU: Nur einfache Schlüssel verwenden
+    start_game: "Tic Tac Toe: {author_mention} (X) vs {opponent_mention} (O)\n{author_mention} starts!"

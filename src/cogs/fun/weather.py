@@ -1,12 +1,13 @@
 # Copyright (c) 2025 OPPRO.NET Network
 import requests
-from src.DevTools.backend import discord, slash_command, ezcord
-from src.DevTools.backend import WEATHER_API
+
 import discord
 from discord import slash_command
 from discord.ui import Container
 import ezcord
+import os
 
+WEATHER_API = os.getenv("WEATHER_API")
 
 class Weather(ezcord.Cog, group="fun"):
     def __init__(self, bot: ezcord.Bot):
