@@ -60,8 +60,3 @@ html:
 
 css:
 - "**/*.css"
-
-# Exclude files and directories
---- IGNORE ---
-- "README.md"
-- ".github/**"
