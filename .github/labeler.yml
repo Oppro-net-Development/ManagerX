@@ -1,62 +1,66 @@
 cogs:
-- "src/cogs/**"
+  - "src/cogs/**"
 
 handler:
-- "src/handler/**"
+  - "src/handler/**"
 
 documentation:
-- "docs/**"
-- "**/*.md"
+  - "docs/**"
+  - "**/*.md"
 
 site:
-- "site/**"
+  - "site/**"
 
 example:
-- "example/**"
+  - "example/**"
 
 backend:
-- "src/DevTools/backend/**"
-- "site/backend/**"
+  - "src/DevTools/backend/**"
+  - "site/backend/**"
 
 ui:
-- "src/DevTools/ui/**"
+  - "src/DevTools/ui/**"
 
 static:
-- "site/static/**"
+  - "site/static/**"
 
 priority-high:
-- "**/*.py"
+  - "**/*.py"
 
 priority-medium:
-- "**/*.html"
-- "**/*.css"
-- "**/*.js"
-- "**/*.yml"
-- "**/*.yaml"
+  - "**/*.html"
+  - "**/*.css"
+  - "**/*.js"
+  - "**/*.yml"
+  - "**/*.yaml"
 
 priority-low:
-- "**/*.json"
-- "**/*.txt"
-- "**/*.md"
-- "**/*.rst"
+  - "**/*.json"
+  - "**/*.txt"
+  - "**/*.md"
+  - "**/*.rst"
 
 translation-message:
-- "translation/message/**"
+  - "translation/message/**"
 
 translation-commands:
-- "translation/commands/**"
+  - "translation/commands/**"
 
 translation:
-- "translation/**"
+  - "translation/**"
 
 python:
-- "**/*.py"
+  - "**/*.py"
 
 javascript:
-- "**/*.js"
+  - "**/*.js"
 
 html:
-- "**/*.html"
+  - "**/*.html"
 
 css:
-- "**/*.css"
+  - "**/*.css"
+
+ignore:
+  - "README.md"
+  - ".github/**"
