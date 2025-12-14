@@ -11,13 +11,12 @@ jobs:
       pull-requests: write
 
     steps:
-    # 1. Fügt den Checkout-Schritt hinzu, um sicherzustellen, 
-    #    dass die Dateien, einschließlich labeler.yml, lokal vorhanden sind.
+    # Schritt 1: Fügt den Checkout-Schritt hinzu, um die Dateien lokal abzurufen
     - uses: actions/checkout@v4 
 
-    # 2. Führt den Labeler aus.
+    # Schritt 2: Führt den Labeler aus.
     - uses: actions/labeler@v5
       with:
-        # Dies ist jetzt optional, aber gut zur Sicherheit.
+        # configuration-path ist jetzt optional, aber sicherheitshalber belassen wir ihn
         configuration-path: .github/labeler.yml
         repo-token: "${{ secrets.GITHUB_TOKEN }}"
