@@ -1,8 +1,3 @@
-cog:
-- any:
-  - changed-files:
-    - any-glob-to-any-file: 'src/cogs/**'
-
 cogs:
 - any:
   - changed-files:
