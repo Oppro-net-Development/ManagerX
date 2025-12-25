@@ -1,4 +1,4 @@
-cogs:
+cog:
   files:
     any:
     - "src/cogs/**"
