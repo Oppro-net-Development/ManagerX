@@ -1,98 +1,99 @@
-cog:
-  files:
-    any:
-    - "src/cogs/**"
+labels:
+  - name: cog
+    files:
+      any:
+        - "src/cogs/**"
 
-handler:
-  files:
-    any:
-    - "src/handler/**"
+  - name: handler
+    files:
+      any:
+        - "src/handler/**"
 
-documentation:
-  files:
-    any:
-    - "docs/**"
-    - "**/*.md"
+  - name: documentation
+    files:
+      any:
+        - "docs/**"
+        - "**/*.md"
 
-site:
-  files:
-    any:
-    - "site/**"
+  - name: site
+    files:
+      any:
+        - "site/**"
 
-example:
-  files:
-    any:
-    - "example/**"
+  - name: example
+    files:
+      any:
+        - "example/**"
 
-backend:
-  files:
-    any:
-    - "src/DevTools/backend/**"
-    - "site/backend/**"
+  - name: backend
+    files:
+      any:
+        - "src/DevTools/backend/**"
+        - "site/backend/**"
 
-ui:
-  files:
-    any:
-    - "src/DevTools/ui/**"
+  - name: ui
+    files:
+      any:
+        - "src/DevTools/ui/**"
 
-static:
-  files:
-    any:
-    - "site/static/**"
+  - name: static
+    files:
+      any:
+        - "site/static/**"
 
-priority-high:
-  files:
-    any:
-    - "**/*.py"
+  - name: priority-high
+    files:
+      any:
+        - "**/*.py"
 
-priority-medium:
-  files:
-    any:
-    - "**/*.html"
-    - "**/*.css"
-    - "**/*.js"
-    - "**/*.yml"
-    - "**/*.yaml"
+  - name: priority-medium
+    files:
+      any:
+        - "**/*.html"
+        - "**/*.css"
+        - "**/*.js"
+        - "**/*.yml"
+        - "**/*.yaml"
 
-priority-low:
-  files:
-    any:
-    - "**/*.json"
-    - "**/*.txt"
-    - "**/*.md"
-    - "**/*.rst"
+  - name: priority-low
+    files:
+      any:
+        - "**/*.json"
+        - "**/*.txt"
+        - "**/*.md"
+        - "**/*.rst"
 
-translation-message:
-  files:
-    any:
-    - "translation/message/**"
+  - name: translation-message
+    files:
+      any:
+        - "translation/message/**"
 
-translation-commands:
-  files:
-    any:
-    - "translation/commands/**"
+  - name: translation-commands
+    files:
+      any:
+        - "translation/commands/**"
 
-translation:
-  files:
-    any:
-    - "translation/**"
+  - name: translation
+    files:
+      any:
+        - "translation/**"
 
-python:
-  files:
-    any:
-    - "**/*.py"
+  - name: python
+    files:
+      any:
+        - "**/*.py"
 
-javascript:
-  files:
-    any:
-    - "**/*.js"
+  - name: javascript
+    files:
+      any:
+        - "**/*.js"
 
-html:
-  files:
-    any:
-    - "**/*.html"
+  - name: html
+    files:
+      any:
+        - "**/*.html"
 
-css:
-  files:
-    any:
-    - "**/*.css"
+  - name: css
+    files:
+      any:
+        - "**/*.css"
