@@ -1,99 +1,98 @@
-labels:
-  - name: cog
-    files:
-      any:
-        - "src/cogs/**"
+cog:
+- any:
+  - changed-files:
+    - any-glob-to-any-file: 'src/cogs/**'
 
-  - name: handler
-    files:
-      any:
-        - "src/handler/**"
+handler:
+- any:
+  - changed-files:
+    - any-glob-to-any-file: 'src/handler/**'
 
-  - name: documentation
-    files:
-      any:
-        - "docs/**"
-        - "**/*.md"
+documentation:
+- any:
+  - changed-files:
+    - any-glob-to-any-file: 'docs/**'
+    - any-glob-to-any-file: '**/*.md'
 
-  - name: site
-    files:
-      any:
-        - "site/**"
+site:
+- any:
+  - changed-files:
+    - any-glob-to-any-file: 'site/**'
 
-  - name: example
-    files:
-      any:
-        - "example/**"
+example:
+- any:
+  - changed-files:
+    - any-glob-to-any-file: 'example/**'
 
-  - name: backend
-    files:
-      any:
-        - "src/DevTools/backend/**"
-        - "site/backend/**"
+backend:
+- any:
+  - changed-files:
+    - any-glob-to-any-file: 'src/DevTools/backend/**'
+    - any-glob-to-any-file: 'site/backend/**'
 
-  - name: ui
-    files:
-      any:
-        - "src/DevTools/ui/**"
+ui:
+- any:
+  - changed-files:
+    - any-glob-to-any-file: 'src/DevTools/ui/**'
 
-  - name: static
-    files:
-      any:
-        - "site/static/**"
+static:
+- any:
+  - changed-files:
+    - any-glob-to-any-file: 'site/static/**'
 
-  - name: priority-high
-    files:
-      any:
-        - "**/*.py"
+priority-high:
+- any:
+  - changed-files:
+    - any-glob-to-any-file: '**/*.py'
 
-  - name: priority-medium
-    files:
-      any:
-        - "**/*.html"
-        - "**/*.css"
-        - "**/*.js"
-        - "**/*.yml"
-        - "**/*.yaml"
+priority-medium:
+- any:
+  - changed-files:
+    - any-glob-to-any-file: '**/*.html'
+    - any-glob-to-any-file: '**/*.css'
+    - any-glob-to-any-file: '**/*.js'
+    - any-glob-to-any-file: '**/*.yml'
+    - any-glob-to-any-file: '**/*.yaml'
 
-  - name: priority-low
-    files:
-      any:
-        - "**/*.json"
-        - "**/*.txt"
-        - "**/*.md"
-        - "**/*.rst"
+priority-low:
+- any:
+  - changed-files:
+    - any-glob-to-any-file: '**/*.json'
+    - any-glob-to-any-file: '**/*.txt'
+    - any-glob-to-any-file: '**/*.md'
+    - any-glob-to-any-file: '**/*.rst'
 
-  - name: translation-message
-    files:
-      any:
-        - "translation/message/**"
+translation-message:
+- any:
+  - changed-files:
+    - any-glob-to-any-file: 'translation/message/**'
 
-  - name: translation-commands
-    files:
-      any:
-        - "translation/commands/**"
+translation-commands:
+- any:
+  - changed-files:
+    - any-glob-to-any-file: 'translation/commands/**'
 
-  - name: translation
-    files:
-      any:
-        - "translation/**"
+translation:
+- any:
+  - changed-files:
+    - any-glob-to-any-file: 'translation/**'
 
-  - name: python
-    files:
-      any:
-        - "**/*.py"
+python:
+- any:
+  - changed-files:
+    - any-glob-to-any-file: '**/*.py'
 
-  - name: javascript
-    files:
-      any:
-        - "**/*.js"
+javascript:
+- any:
+  - changed-files:
+    - any-glob-to-any-file: '**/*.js'
 
-  - name: html
-    files:
-      any:
-        - "**/*.html"
+html:
+- any:
+  - changed-files:
+    - any-glob-to-any-file: '**/*.html'
 
-  - name: css
-    files:
-      any:
-        - "**/*.css"
+css:
+- any:
+  - changed-files:
+    - any-glob-to-any-file: '**/*.css'
