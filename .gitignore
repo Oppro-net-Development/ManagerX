@@ -39,13 +39,4 @@ docs/_build/html/_sources/
 furo.js.LICENSE.txt
 fontawesome.js.LICENSE.txt
 .map
-docs/_build/doctrees/
-
-
-# ...außer HTML & CSS im html-Ordner
-!_build/html/
-!_build/html/**/*.html
-!_build/html/**/*.css
-!_build/html/_static/
-!_build/html/_static/**/*.css
-!_build/html/_static/**/*.js
+docs/_build/*
