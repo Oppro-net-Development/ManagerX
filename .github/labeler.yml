@@ -1,0 +1,99 @@
+cogs:
+- any:
+  - changed-files:
+    - any-glob-to-any-file: 'src/cogs/**'
+
+
+handler:
+- any:
+  - changed-files:
+    - any-glob-to-any-file: 'src/handler/**'
+
+documentation:
+- any:
+  - changed-files:
+    - any-glob-to-any-file: 'docs/**'
+    - any-glob-to-any-file: '**/*.md'
+
+site:
+- any:
+  - changed-files:
+    - any-glob-to-any-file: 'site/**'
+
+example:
+- any:
+  - changed-files:
+    - any-glob-to-any-file: 'example/**'
+
+backend:
+- any:
+  - changed-files:
+    - any-glob-to-any-file: 'src/DevTools/backend/**'
+    - any-glob-to-any-file: 'site/backend/**'
+
+ui:
+- any:
+  - changed-files:
+    - any-glob-to-any-file: 'src/DevTools/ui/**'
+
+static:
+- any:
+  - changed-files:
+    - any-glob-to-any-file: 'site/static/**'
+
+priority-high:
+- any:
+  - changed-files:
+    - any-glob-to-any-file: '**/*.py'
+
+priority-medium:
+- any:
+  - changed-files:
+    - any-glob-to-any-file: '**/*.html'
+    - any-glob-to-any-file: '**/*.css'
+    - any-glob-to-any-file: '**/*.js'
+    - any-glob-to-any-file: '**/*.yml'
+    - any-glob-to-any-file: '**/*.yaml'
+
+priority-low:
+- any:
+  - changed-files:
+    - any-glob-to-any-file: '**/*.json'
+    - any-glob-to-any-file: '**/*.txt'
+    - any-glob-to-any-file: '**/*.md'
+    - any-glob-to-any-file: '**/*.rst'
+
+translation-message:
+- any:
+  - changed-files:
+    - any-glob-to-any-file: 'translation/message/**'
+
+translation-commands:
+- any:
+  - changed-files:
+    - any-glob-to-any-file: 'translation/commands/**'
+
+translation:
+- any:
+  - changed-files:
+    - any-glob-to-any-file: 'translation/**'
+
+python:
+- any:
+  - changed-files:
+    - any-glob-to-any-file: '**/*.py'
+
+javascript:
+- any:
+  - changed-files:
+    - any-glob-to-any-file: '**/*.js'
+
+html:
+- any:
+  - changed-files:
+    - any-glob-to-any-file: '**/*.html'
+
+css:
+- any:
+  - changed-files:
+    - any-glob-to-any-file: '**/*.css'
