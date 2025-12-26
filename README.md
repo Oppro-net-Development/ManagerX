@@ -88,6 +88,23 @@ ManagerX ist ein leistungsstarker, vielseitiger Discord-Bot, der speziell für u
   - Performance-Tracking und Analytics
   - Persönliche Erfolge und Meilensteine
 
+### 🌐 Web-Interface
+
+- **Intuitive Dashboard**
+  - Moderne, responsive Weboberfläche
+  - Serverübersicht und schnelle Navigation
+  - Discord OAuth2 Authentifizierung
+
+- **Modul-Konfiguration**
+  - TempVC, Welcome und Levelsystem verwalten
+  - Live-Konfiguration ohne Bot-Neustart
+  - Sicherheitsprüfungen und Validierung
+
+- **Echtzeit-Statistiken**
+  - Bot-Status und Server-Informationen
+  - Live-Updates und Performance-Metriken
+  - Admin-übersicht für alle Server
+
 ---
 
 ## 📋 Changelog
@@ -123,7 +140,19 @@ pip install -r requirements.txt
 # TOKEN Anpassung mehr in unserer Dokumention
 # Bot starten
 python main.py
+
+# Weboberfläche starten (in separatem Terminal)
+python api.py
 ```
+
+### 🌐 Weboberfläche verwenden
+
+Nach dem Start der API ist die Weboberfläche verfügbar unter:
+```
+http://127.0.0.1:3002/
+```
+
+**Wichtig:** Öffne die HTML-Dateien nicht direkt im Browser! Verwende immer den Webserver über die API, da sonst CORS-Fehler und Token-Probleme auftreten.
 
 ### 📖 Detaillierte Installation
 

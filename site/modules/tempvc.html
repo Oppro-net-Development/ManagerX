@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>ManagerX - TempVC Einstellungen</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <script src="../js/api.js" defer></script>
+</head>
+<body class="module-page">
+    <canvas id="particleCanvas"></canvas>
+
+    <nav>
+        <div class="nav-content">
+            <div class="logo">ManagerX</div>
+            <div class="links">
+                <a id="back-link" href="#">← Server-Hub</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+        <div class="module-header">
+            <div class="module-icon-large">🔊</div>
+            <h1>TempVC Konfiguration</h1>
+            <p>Verwalte temporäre Voice-Channels für deinen Server</p>
+        </div>
+
+        <form id="tempvc-form" class="glass-card">
+            <div class="form-section">
+                <h3>🎯 Kern-Einstellungen</h3>
+                <div class="form-grid">
+                    <div class="input-group">
+                        <label for="creator_channel_id">Creator Channel</label>
+                        <select id="creator_channel_id" required>
+                            <option value="">-- Wähle einen Voice-Channel --</option>
+                        </select>
+                        <small>Wähle den Channel, bei dem Mitglieder Voice-Channels erstellen können</small>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="category_id">Kategorie</label>
+                        <select id="category_id" required>
+                            <option value="">-- Wähle eine Kategorie --</option>
+                        </select>
+                        <small>Kategorie, in der die temporären Channels erstellt werden</small>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="auto_delete_time">Auto-Delete Zeit (Sekunden)</label>
+                        <input type="number" id="auto_delete_time" value="0" min="0" max="86400">
+                        <small>Zeit bis zum automatischen Löschen leerer Channels (0 = deaktiviert)</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3>🎨 UI / Interface</h3>
+                <div class="form-grid">
+                    <div class="input-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="ui_enabled">
+                            <span class="checkmark"></span>
+                            Interface aktivieren
+                        </label>
+                        <small>Zeigt Interface-Buttons in Voice-Channels an</small>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="ui_prefix">UI Prefix / Emoji</label>
+                        <input type="text" id="ui_prefix" maxlength="5" placeholder="🔧">
+                        <small>Emoji oder Text für Interface-Buttons</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn-primary">
+                    💾 Speichern
+                </button>
+                <div class="save-status" id="save-status"></div>
+            </div>
+        </form>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Partikel initialisieren
+            if (typeof initParticles === 'function') {
+                initParticles();
+            }
+
+            const params = new URLSearchParams(window.location.search);
+            const guildId = params.get('id');
+            if (!guildId) return window.location.href = '../dashboard.html';
+
+            document.getElementById('back-link').href = `../guild.html?id=${guildId}`;
+
+            // Logik aus api.js
+            if (typeof loadTempVCModule === 'function') {
+                loadTempVCModule(guildId);
+            }
+
+            const form = document.getElementById('tempvc-form');
+            if (form) {
+                form.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const status = document.getElementById('save-status');
+                    status.textContent = '⏳ Speichere...';
+                    status.style.color = '#ffa500';
+
+                    try {
+                        await saveTempVC(e, guildId);
+                        status.textContent = '✅ Erfolgreich gespeichert!';
+                        status.style.color = '#00ff00';
+                        setTimeout(() => status.textContent = '', 3000);
+                    } catch (err) {
+                        status.textContent = '❌ Fehler beim Speichern';
+                        status.style.color = '#ff4444';
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

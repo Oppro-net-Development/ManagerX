@@ -15,13 +15,16 @@
         <div class="links">
             <a href="index.html">Home</a>
             <a href="#stats">Stats</a>
-            <a href="https://discord.com" class="btn-primary">Login</a>
+            <a href="https://discord.com/oauth2/authorize?client_id=1401881188242821142&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A5500%2Fsite%2Fcallback.html&scope=identify+guilds" class="btn-primary">Login</a>
         </div>
     </nav>
 
     <header class="hero">
         <h1>ManagerX Dashboard</h1>
         <p>Live-Statistiken deines Discord-Bots.</p>
+        <div id="login-message" style="display: none; background: rgba(255,0,0,0.1); border: 1px solid #ff4444; padding: 10px; border-radius: 8px; margin-top: 20px;">
+            <strong>🔄 Ausgeloggt:</strong> Deine Sitzung ist abgelaufen. Bitte logge dich neu ein.
+        </div>
     </header>
 
     <section id="stats" class="stats-container">
@@ -49,5 +52,22 @@
 
     <script src="js/particles.js"></script>
     <script src="js/api.js"></script>
+    <script>
+        // Stats beim Laden laden
+        document.addEventListener('DOMContentLoaded', () => {
+            loadBotStats();
+            
+            // Prüfen, ob User ausgeloggt wurde
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('logged_out') === 'true') {
+                const message = document.getElementById('login-message');
+                message.style.display = 'block';
+                // Nachricht nach 5 Sekunden ausblenden
+                setTimeout(() => {
+                    message.style.display = 'none';
+                }, 5000);
+            }
+        });
+    </script>
 </body>
 </html>
