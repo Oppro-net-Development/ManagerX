@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ManagerX | Home</title>
+    <title>ManagerX | Dashboard</title>
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
@@ -14,39 +14,40 @@
         <div class="logo">ManagerX</div>
         <div class="links">
             <a href="index.html">Home</a>
-            <a href="features.html">Features</a>
             <a href="#stats">Stats</a>
-            <a href="#" class="btn-small">Invite</a>
+            <a href="https://discord.com" class="btn-primary">Login</a>
         </div>
     </nav>
 
     <header class="hero">
-        <h1>ManagerX Bot</h1>
-        <p>Moderation, Economy und mehr für deinen Discord.</p>
-        <div class="cta-group">
-            <a href="https://discord.com" class="btn-primary">Invite Bot</a>
-        </div>
+        <h1>ManagerX Dashboard</h1>
+        <p>Live-Statistiken deines Discord-Bots.</p>
     </header>
 
     <section id="stats" class="stats-container">
         <div class="stat-card">
-            <div class="stat-value">500+</div>
+            <div class="stat-value" id="server-count">0</div>
             <div class="stat-label">Server</div>
         </div>
         <div class="stat-card">
-            <div class="stat-value">24/7</div>
-            <div class="stat-label">Online</div>
+            <div class="stat-value" id="user-count">0</div>
+            <div class="stat-label">Nutzer</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" id="bot-ping">--ms</div>
+            <div class="stat-label">Latenz (Ping)</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" id="bot-status">Offline</div>
+            <div class="stat-label">System-Status</div>
         </div>
     </section>
 
     <footer>
         <p>&copy; 2024-2025 OPPRO.NET Development</p>
-        <p> 
-            <a href="tos.html">Nutzungsbedingungen</a> | 
-            <a href="privacy.html">Datenschutz</a> 
-        </p>
     </footer>
 
     <script src="js/particles.js"></script>
+    <script src="js/api.js"></script>
 </body>
 </html>
