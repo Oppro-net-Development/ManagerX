@@ -41,28 +41,6 @@ static:
   - changed-files:
     - any-glob-to-any-file: 'site/static/**'
 
-priority-high:
-- any:
-  - changed-files:
-    - any-glob-to-any-file: '**/*.py'
-
-priority-medium:
-- any:
-  - changed-files:
-    - any-glob-to-any-file: '**/*.html'
-    - any-glob-to-any-file: '**/*.css'
-    - any-glob-to-any-file: '**/*.js'
-    - any-glob-to-any-file: '**/*.yml'
-    - any-glob-to-any-file: '**/*.yaml'
-
-priority-low:
-- any:
-  - changed-files:
-    - any-glob-to-any-file: '**/*.json'
-    - any-glob-to-any-file: '**/*.txt'
-    - any-glob-to-any-file: '**/*.md'
-    - any-glob-to-any-file: '**/*.rst'
-
 translation-message:
 - any:
   - changed-files:
@@ -97,3 +75,10 @@ css:
 - any:
   - changed-files:
     - any-glob-to-any-file: '**/*.css'
+
+api:
+- any:
+  - changed-files:
+    - any-glob-to-any-file: '**/api.py'
+    - any-glob-to-any-file: '**/api.js'
+
