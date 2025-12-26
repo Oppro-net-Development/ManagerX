@@ -1,0 +1,139 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
+
+:root {
+    --primary: #5865F2;
+    --primary-glow: rgba(88, 101, 242, 0.2); /* Glow reduziert für Performance */
+    --bg: #0b0e14;
+    --card-bg: rgba(255, 255, 255, 0.04);
+    --border: rgba(255, 255, 255, 0.06);
+    --text: #ffffff;
+    --text-muted: #a0a0a0;
+}
+
+* { 
+    margin: 0; 
+    padding: 0; 
+    box-sizing: border-box; 
+    font-family: 'Inter', sans-serif; 
+    /* Verbessert das Rendering von Text */
+    -webkit-font-smoothing: antialiased;
+}
+
+body { 
+    background: var(--bg); 
+    color: var(--text); 
+    line-height: 1.6; 
+    overflow-x: hidden; 
+}
+
+/* Hintergrund-Optimierung */
+#particleCanvas { 
+    position: fixed; 
+    top: 0; 
+    left: 0; 
+    z-index: -1; 
+    opacity: 0.4; 
+    pointer-events: none; /* Verhindert Klick-Interaktionen auf dem Canvas */
+}
+
+/* Nav & Footer - Performance-Blur */
+nav { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    padding: 20px 10%; 
+    background: rgba(11, 14, 20, 0.85); 
+    /* Backdrop-filter ist teuer, wir nutzen ihn hier nur einmal */
+    backdrop-filter: blur(10px); 
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border); 
+    position: sticky; 
+    top: 0; 
+    z-index: 100; 
+}
+
+.logo { 
+    font-size: 1.6rem; 
+    font-weight: 800; 
+    background: linear-gradient(90deg, #fff, var(--primary)); 
+    -webkit-background-clip: text; 
+    -webkit-text-fill-color: transparent; 
+}
+
+.links a { 
+    color: var(--text-muted); 
+    text-decoration: none; 
+    margin-left: 20px; 
+    font-weight: 600; 
+    transition: color 0.2s ease; 
+}
+
+.links a:hover { color: var(--primary); }
+
+/* Buttons mit Hardware-Beschleunigung */
+.btn-primary, .contact-link { 
+    background: var(--primary); 
+    color: white !important; 
+    padding: 14px 32px; 
+    border-radius: 12px; 
+    text-decoration: none; 
+    font-weight: 700; 
+    display: inline-block; 
+    transition: transform 0.2s ease, box-shadow 0.2s ease; 
+    will-change: transform; /* Aktiviert GPU */
+    box-shadow: 0 4px 15px var(--primary-glow);
+}
+
+.btn-primary:hover, .contact-link:hover { 
+    transform: translateY(-2px); 
+    box-shadow: 0 8px 25px var(--primary-glow); 
+}
+
+/* Legal Container Optimierung */
+.legal-container { 
+    max-width: 900px; 
+    margin: 60px auto; 
+    padding: 40px; 
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    /* Wir verzichten hier auf Blur, um die CPU beim Scrollen massiv zu entlasten */
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+}
+
+.legal-header { text-align: center; margin-bottom: 40px; }
+.legal-header h1 { font-size: 3rem; font-weight: 800; margin-bottom: 10px; }
+
+.legal-content section { margin-bottom: 40px; }
+.legal-content h2 { color: var(--primary); margin-bottom: 15px; font-size: 1.5rem; }
+.legal-content p, .legal-content li { color: var(--text-muted); margin-bottom: 10px; }
+
+/* Kontakt Box - Schlicht & Schnell */
+.contact-box { 
+    text-align: center; 
+    margin-top: 40px; 
+    padding: 40px;
+    background: rgba(88, 101, 242, 0.05);
+    border: 1px solid rgba(88, 101, 242, 0.2); 
+    border-radius: 20px;
+}
+
+.contact-box h2 { color: #fff; font-size: 2rem; margin-bottom: 15px; }
+
+/* Footer */
+footer { 
+    padding: 40px 10%; 
+    border-top: 1px solid var(--border); 
+    text-align: center; 
+    background: rgba(0,0,0,0.2); 
+    color: var(--text-muted);
+}
+
+footer a { color: var(--text-muted); text-decoration: none; margin: 0 10px; transition: color 0.2s; }
+footer a:hover { color: var(--primary); }
+
+/* Verhindert Ruckeln auf Mobile */
+@media (max-width: 768px) {
+    .legal-container { margin: 20px; padding: 25px; }
+    #particleCanvas { opacity: 0.2; } /* Noch weniger Partikel-Sichtbarkeit auf Mobile */
+}
