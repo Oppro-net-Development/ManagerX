@@ -27,6 +27,7 @@ DevTools/backend/utils/config.py
 command.yaml
 wiki_stats.json
 checker.py
+bot_stats.json
 
 # Build-Ordner: alles ignorieren...
 _build/*
