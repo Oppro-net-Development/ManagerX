@@ -6,7 +6,11 @@ from src.DevTools.ui import (
     emoji_no, emoji_yes, emoji_warn, emoji_member, emoji_staff, emoji_slowmode, emoji_summary
 )
 from src.DevTools.backend import WarnDatabase
-from src.DevTools.backend import discord, slash_command, Option, datetime, os, ezcord
+import discord
+from discord import slash_command, Option
+import os
+import datetime
+import ezcord
 import asyncio
 from typing import Optional
 

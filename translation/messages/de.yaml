@@ -1,0 +1,44 @@
+general:
+
+  error_types:
+    no_permission: "Du hast keine Berechtigung, diesen Befehl auszuführen."
+    user_not_found: "Benutzer nicht gefunden."
+    bot_error: "Ein Fehler ist im Bot aufgetreten. Bitte versuche es später erneut."
+    option_missing: "Eine erforderliche Option fehlt."
+    bot_has_no_permission: "Der Bot hat nicht die erforderlichen Berechtigungen, um diesen Befehl auszuführen."
+
+
+cog_4gewinnt:
+  error_types:
+    not_your_turn: "Es ist nicht dein Zug."
+    this_column_full: "Diese Spalte ist voll!"
+    is_opponent_bot: "Du kannst nicht gegen einen Bot spielen!"
+    is_opponent_self: "Du kannst nicht gegen dich selbst spielen!"
+
+
+
+  win_types:
+    win: "Spiel vorbei! {winner} hat gewonnen!\n\n{board_str}"
+    draw: "Unentschieden!\n\n{board_str}"
+
+  message:
+    start_game: "4 Gewinnt: {author_mention} (🔴) vs {opponent_mention} (🟡)\n{author_mention} fängt an!\n\n"
+    player_turn: "{view.current_player.mention} ist jetzt dran!\n\n{board_str}"
+
+
+
+cog_tictactoe:
+  error_types:
+    not_your_turn: "Es ist nicht dein Zug."
+    this_cell_taken: "Dieses Feld ist bereits belegt!"
+    is_opponent_bot: "Du kannst nicht gegen einen Bot spielen!"
+    is_opponent_self: "Du kannst nicht gegen dich selbst spielen!"
+
+
+
+  win_types:
+    win: "Spiel vorbei! {winner} hat gewonnen!"
+    draw: "Unentschieden!"
+
+  message: 
+    start_game: "Tic Tac Toe: {author_mention} (X) gegen {opponent_mention} (O)\n{author_mention} fängt an!"

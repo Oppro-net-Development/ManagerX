@@ -2,7 +2,10 @@
 # ───────────────────────────────────────────────
 # >> Imports
 # ───────────────────────────────────────────────
-from src.DevTools.backend import discord, SlashCommandGroup, ezcord, datetime
+import discord 
+from discord import SlashCommandGroup
+import datetime
+import ezcord
 from src.DevTools.backend import NotesDatabase
 from src.DevTools.ui import emoji_no, emoji_yes
 # ───────────────────────────────────────────────

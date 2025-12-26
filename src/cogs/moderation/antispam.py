@@ -1,8 +1,12 @@
 # Copyright (c) 2025 OPPRO.NET Network
 from collections import defaultdict
 import asyncio
+import discord
+from discord import SlashCommandGroup
+import ezcord
+import datetime
+from datetime import timedelta
 
-from src.DevTools.backend import discord, SlashCommandGroup, ezcord, datetime, timedelta
 
 from src.DevTools.ui import (
     emoji_yes,
