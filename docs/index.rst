@@ -131,7 +131,7 @@ Frequently Asked Questions
    Python 3.8 or higher is required.
 
 **Q: Is ManagerX open source?**
-   Yes, ManagerX is fully open source under the MIT License.
+   Yes, ManagerX is fully open source under the GPL.3-0 License.
 
 Contributing
 ------------
@@ -143,12 +143,14 @@ We welcome contributions! Please see our GitHub repository for:
 - Code contributions
 - Documentation improvements
 
+More Information under Contributing in the `Developer Guide <dev_guide/contributing/index.html>`_.
+
 Community & Support
 -------------------
 
 - **GitHub:** `Oppro-net-Development/ManagerX <https://github.com/Oppro-net-Development/ManagerX>`_
 - **Issues:** `Report bugs or request features <https://github.com/Oppro-net-Development/ManagerX/issues>`_
-- **License:** MIT License
+- **License:** GPL.3-0 License
 
 .. toctree::
    :maxdepth: 2
