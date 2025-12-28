@@ -36,9 +36,9 @@ SimpleColoredLogs
 timedelta==2020.12.3
 
 # Docs
-sphinx==9.0.4
-pydata-sphinx-theme==0.16.1
-sphinx-autodoc-typehints==3.6.0
-myst-parser==2.0.0
-sphinx-copybutton==0.5.2
-sphinx-autobuild==2025.8.25
+sphinx
+pydata-sphinx-theme
+sphinx-autodoc-typehints
+myst-parser
+sphinx-copybutton
+sphinx-autobuild
