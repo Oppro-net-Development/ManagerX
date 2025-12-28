@@ -1,0 +1,17 @@
+Release of Version 1.7.2 Alpha
+==============================
+
+🛠️ **Update:** Version 1.7.2 Alpha  
+**Released by:** @Medicopter117  
+**Release Date:** Nov 20  
+
+---
+
+📝 **Description**
+This is the latest Alpha release of ManagerX.  
+Full changelog: v1.7.2-beta → v1.7.2-alpha
+
+---
+
+**Contributors**
+- @Medicopter117

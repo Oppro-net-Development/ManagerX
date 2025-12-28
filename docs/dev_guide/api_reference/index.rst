@@ -40,6 +40,9 @@ Contents
 --------
 .. toctree::
     :maxdepth: 2
+    :caption: API Reference:
 
-    endpoints/index
-    examples/index
+    endpoints/stats
+    endpoints/guilds
+    endpoints/authentication
+    examples/api_js

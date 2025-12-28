@@ -153,15 +153,16 @@ Community & Support
 - **License:** GPL.3-0 License
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
    :caption: Documentation:
    :hidden:
 
    User Guide <user_guide/index>
    Developer Guide <dev_guide/index>
+   Changelog & Releases <releases/index>
 
 ---
 
 **© 2025 OPPRO.NET Network**
 
-Version 1.7.2-alpha | Last Updated: December 7, 2025
+Version 2.0.0-dev | Last Updated: December 7, 2025

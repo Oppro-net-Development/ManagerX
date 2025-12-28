@@ -1,0 +1,26 @@
+Release of Version 1.6.5
+=========================
+
+🛠️ **Update:** Version 1.6.5  
+**Released by:** @Medicopter117  
+**Release Date:** Sep 10  
+
+---
+
+📦 **New Files**
+- `cogs/Servermanament/welcome.py`
+- `FastCoding/backend/database/welcome_db.py`
+
+✏️ **Modified Files**
+- `FastCoding/backend/database/__init__.py`
+- `cogs/Servermanament/stats.py`
+- `cogs/fun/wikipedia.py`
+- `cogs/levelsystem/levelsystem.py`
+- `cogs/moderation/moderation.py`
+
+📝 **Description**
+Db memory patch and updates to welcome_db.py and welcome.py. Full changelog: V1.6.4 → V1.6.5  
+
+**New Contributors**
+- @verleihernix
+- @Medicopter117

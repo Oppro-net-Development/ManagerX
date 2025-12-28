@@ -1,0 +1,23 @@
+Release of Version 1.4LOG
+==========================
+
+🛠️ **Update:** Version 1.4LOG  
+**Released by:** @Medicopter117  
+
+---
+
+📦 **New Files**
+- `cogs/informationen/serverinfo.py` – New cog for server information
+
+✏️ **Modified Files**
+- `cogs/Servermanament/globalchat.py`
+- `cogs/Servermanament/logging.py`
+- `main.py`
+
+🐞 **Bugfixes**
+- Fixed issue with duplicate messages when editing in `cogs/Servermanament/logging.py`
+
+📝 **Description**
+This update adds a new information cog, improves global chat and logging modules, and fixes a critical logging cog bug that caused message duplication.
+
+✨ **Developed by:** OPPRO.NET Development

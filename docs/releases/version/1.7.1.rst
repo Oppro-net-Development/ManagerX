@@ -1,0 +1,38 @@
+Release of Version 1.7.1
+=========================
+
+🛠️ **Update:** Version 1.7.1  
+**Released by:** @Medicopter117  
+**Release Date:** Oct 10  
+
+---
+
+✏️ **Modified Files**
+- `.gitignore`
+- `DevTools/backend/database/welcome_db.py`
+- `DevTools/ui/emojis.py`
+- `DevTools/ui/templates/embeds.py`
+- `README.md`
+- `cogs/Servermanament/autodelete.py`
+- `cogs/Servermanament/levelsystem.py`
+- `cogs/Servermanament/logging.py`
+- `cogs/Servermanament/stats.py`
+- `cogs/Servermanament/tempvc.py`
+- `cogs/Servermanament/welcome.py`
+- `cogs/fun/gewinnt.py`
+- `cogs/fun/tictactoe.py`
+- `cogs/fun/weather.py`
+- `cogs/fun/wikipedia.py`
+- `cogs/informationen/serverinfo.py`
+- `cogs/informationen/usermanagemt.py`
+- `cogs/moderation/antispam.py`
+- `cogs/moderation/moderation.py`
+- `cogs/moderation/notes.py`
+- `cogs/moderation/warningsystem.py`
+- `version.txt`
+
+📝 **Description**
+Update & docs changes, Pycache removed. Full changelog: V1.7 → V1.7.1  
+
+**Contributors**
+- @Medicopter117

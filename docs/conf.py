@@ -53,6 +53,7 @@ myst_enable_extensions = [
 
 # -- Options for HTML output -------------------------------------------------
 html_theme = 'pydata_sphinx_theme'
+html_favicon = "_static/managerx.png"
 html_static_path = ['_static']
 html_css_files = [
     'custom.css',

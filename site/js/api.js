@@ -1,4 +1,7 @@
-const API_BASE = "http://127.0.0.1:3002/api";
+// Konfiguriere hier deine Server-URL für die API
+// Für lokale Entwicklung: "http://127.0.0.1:3002/api"
+// Für Produktion: "https://deine-domain.com/api"
+const API_BASE = "https://managerx-api.oppro.net/api";
 
 // Hilfsfunktion: Token holen
 const getToken = () => localStorage.getItem('discord_token');
