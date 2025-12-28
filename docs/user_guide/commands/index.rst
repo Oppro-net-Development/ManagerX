@@ -6,5 +6,5 @@ This section of the User Guide provides detailed information about the various c
    :maxdepth: 2
    :caption: Commands:
 
-   Moderation Overview <moderation/index>
+   Moderation <moderation/moderation>
    Fun Commands Overview <fun/index>

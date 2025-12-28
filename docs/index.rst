@@ -8,8 +8,8 @@ Welcome to ManagerX Documentation
 .. image:: https://img.shields.io/badge/Python-3.8+-green.svg
    :alt: Python 3.8+
 
-.. image:: https://img.shields.io/badge/License-MIT-yellow.svg
-   :alt: MIT License
+.. image:: https://img.shields.io/badge/License-GPL.3.0-yellow.svg
+   :alt: GPL.3.0 License
 
 Welcome! 👋
 -----------
