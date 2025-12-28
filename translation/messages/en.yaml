@@ -35,3 +35,17 @@ cog_tictactoe:
   message: 
     # NEU: Nur einfache Schlüssel verwenden
     start_game: "Tic Tac Toe: {author_mention} (X) vs {opponent_mention} (O)\n{author_mention} starts!"
+
+cog_weather:
+  error_types:
+    city_not_found: "⚠️ City not found."
+    api_error: "❌ Error with the weather API."
+
+  messages:
+    weather_report: "🌤️ Weather report for {city}, {country}:\n\n"
+    temperature: "🌡️ Temperature: {temperature}°C\n"
+    humidity: "💧 Humidity: {humidity}%\n"
+    wind_speed: "💨 Wind: {wind_speed} km/h ({wind_dir})\n"
+    condition: "☁️ Condition: {condition}\n"
+    visibility: "🌫️ Visibility: {visibility} km\n"
+    pressure: "🧭 Pressure: {pressure} hPa\n"

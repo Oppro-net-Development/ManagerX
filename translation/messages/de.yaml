@@ -42,3 +42,17 @@ cog_tictactoe:
 
   message: 
     start_game: "Tic Tac Toe: {author_mention} (X) gegen {opponent_mention} (O)\n{author_mention} fängt an!"
+
+cog_weather:
+  error_types:
+    city_not_found: "⚠️ Stadt nicht gefunden."
+    api_error: "❌ Fehler bei der Wetter-API."
+
+  messages:
+    weather_report: "🌤️ Wetterbericht für {city}, {country}:\n\n"
+    temperature: "🌡️ Temperatur: {temperature}°C\n"
+    humidity: "💧 Luftfeuchtigkeit: {humidity}%\n"
+    wind_speed: "💨 Windgeschwindigkeit: {wind_speed} km/h ({wind_dir})\n"
+    condition: "☁️ Wetterbedingungen: {condition}\n"
+    visibility: "🌫️ Sichtweite: {visibility} km\n"
+    pressure: "🧭 Luftdruck: {pressure} hPa\n"
