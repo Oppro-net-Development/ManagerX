@@ -2,22 +2,30 @@ Release of Version 1.6
 =======================
 
 🛠️ **Update:** Version 1.6  
+
 **Released by:** @Oppro-net-Development, @Medicopter117  
 
 ---
 
 ✏️ **Modified Files**
+
 - `FastCoding/backend/database/autodelete_db.py`
+
 - `FastCoding/backend/database/logging_db.py`
+
 - `cogs/Servermanament/autodelete.py`
+
 - `cogs/moderation/moderation.py`
+
 - `main.py`
 
 📝 **Description**
+
 This update extends server management with an automatic message system, improves existing modules, and further structures database connections.
 
 ✨ **Developed by:** @Oppro-net-Development, @Medicopter117
 
 **Contributors**
+
 - @Medicopter117
 - @Oppro-net-Development

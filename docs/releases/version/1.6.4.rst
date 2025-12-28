@@ -2,17 +2,22 @@ Release of Version 1.6.4
 =========================
 
 🛠️ **Update:** Version 1.6.4  
+
 **Released by:** @Medicopter117  
+
 **Release Date:** Aug 15  
 
 ---
 
 📦 **New Files**
+
 - `cogs/Servermanament/welcome.py`
 - `FastCoding/backend/database/welcome_db.py`
 
 ✏️ **Modified Files**
+
 - `FastCoding/backend/database/__init__.py`
 
 **Contributors**
+
 - @Medicopter117

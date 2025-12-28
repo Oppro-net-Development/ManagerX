@@ -2,21 +2,29 @@ Release of Version 1.6.3
 =========================
 
 🛠️ **Update:** Version 1.6.3  
+
 **Released by:** @Medicopter117  
+
 **Release Date:** Aug 6  
 
 ---
 
 📦 **New Files**
+
 - `cogs/informationen/usermanagemt.py`
+
 - `template.env`
+
 - `cogs/moderation/anticapslock.py`  *(may be faulty, report if errors occur)*
 
 ✏️ **Modified Files**
+
 - `CHANGELOG.md`
+
 
 ⭕ **Deleted Files**
 - `user.py`
 
 **Contributors**
+
 - @Medicopter117

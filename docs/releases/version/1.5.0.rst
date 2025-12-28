@@ -2,29 +2,41 @@ Release of Version 1.5
 =======================
 
 🛠️ **Update:** Version 1.5  
+
 **Released by:** @Medicopter117  
 
 ---
 
 📦 **New Files**
+
 - `cogs/Servermanament/autodelete.py` – Automatic message deletion cog
+
 - `FastCoding/backend/database/autodelete_db.py` – Database module for autodelete
 
 ✏️ **Modified Files**
+
 - `FastCoding/backend/database/__init__.py`
+
 - `FastCoding/ui/templates/embeds.py`
+
 - `cogs/Servermanament/stats.py`
+
 - `cogs/fun/wikipedia.py`
+
 - `cogs/levelsystem/levelsystem.py`
+
 - `cogs/moderation/moderation.py`
 
 🐞 **Bugfixes**
+
 - No specific bugfixes reported
 
 📝 **Description**
+
 This update extends server management with an automatic message system, improves existing modules, and further structures database connections.
 
 ✨ **Developed by:** OPPRO.NET Development, @Medicopter117
 
 **Contributors**
+
 - @Medicopter117

@@ -2,13 +2,16 @@ Release of Version 1.7.2 Beta
 =============================
 
 🛠️ **Update:** Version 1.7.2 Beta  
+
 **Released by:** @Medicopter117  
+
 **Release Date:** Nov 11  
 
 ---
 
 📝 **Description**
 This is a pre-release Beta version.  
+
 Update includes container added.  
 
 **Contributors**
