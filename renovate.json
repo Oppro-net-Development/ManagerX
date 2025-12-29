@@ -1,7 +1,7 @@
 {
   "extends": ["config:base"],
   "labels": ["dependencies"],
-  "prHourlyLimit": 2,
+  "prHourlyLimit": 1,
   "prConcurrentLimit": 3,
   "dependencyDashboard": true,
   "dependencyDashboardTitle": "ManagerX – Dependency Updates",
@@ -14,14 +14,18 @@
   },
   "packageRules": [
     {
+      "matchDepTypes": ["dependencies"],
       "matchUpdateTypes": ["patch", "minor"],
-      "groupName": "Patch & Minor updates",
-      "automerge": false
+      "groupName": "All Patch & Minor Python Updates"
     },
     {
+      "matchDepTypes": ["dependencies"],
       "matchUpdateTypes": ["major"],
-      "groupName": "Major updates",
-      "automerge": false
+      "groupName": "All Major Python Updates"
+    },
+    {
+      "matchDepTypes": ["github-actions"],
+      "groupName": "All GitHub Actions Updates"
     }
   ]
 }
