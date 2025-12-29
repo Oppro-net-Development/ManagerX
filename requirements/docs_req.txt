@@ -1,4 +1,7 @@
-pydata-sphinx-theme
-sphinx-autodoc-typehints
-myst-parser
-sphinx-copybutton
+# You need to install Sphinx with `pip install sphinx` and these extensions to build the docs
+pydata-sphinx-theme      # for a modern documentation theme
+sphinx-autodoc-typehints # for better type hinting support
+myst-parser              # for Markdown support
+sphinx-copybutton        # adds copy buttons to code blocks
+sphinx-autobuild         # optional: live preview during development
+                         # (remove this before pushing; ReadTheDocs doesn't need it)

@@ -1,0 +1,38 @@
+{
+  "extends": ["config:base"],
+  "labels": ["dependencies"],
+  "prHourlyLimit": 5,
+  "prConcurrentLimit": 10,
+  "dependencyDashboard": true,
+  "dependencyDashboardTitle": "ManagerX – Dependency Updates",
+  "automerge": false,
+  "rangeStrategy": "pin",
+  "timezone": "Europe/Berlin",
+  "schedule": ["immediately"],
+  "pip_requirements": {
+    "fileMatch": [
+      "requirements/docs_req\\.txt",
+      "requirements/dev_req\\.txt",
+      "requirements/bot_req\\.txt",
+      "requirements/req\\.txt"
+    ]
+  },
+  "packageRules": [
+    {
+      "matchPaths": ["requirements/docs_req.txt"],
+      "groupName": "docs_req.txt updates"
+    },
+    {
+      "matchPaths": ["requirements/dev_req.txt"],
+      "groupName": "dev_req.txt updates"
+    },
+    {
+      "matchPaths": ["requirements/bot_req.txt"],
+      "groupName": "bot_req.txt updates"
+    },
+    {
+      "matchPaths": ["requirements/req.txt"],
+      "groupName": "req.txt updates"
+    }
+  ]
+}
