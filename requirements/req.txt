@@ -9,7 +9,7 @@ wikipedia==1.4.0
 beautifulsoup4==4.13.4
 soupsieve==2.7
 yarl==1.22.0
-frozenlist==1.6.0
+frozenlist==1.8.0
 h11==0.16.0
 multidict==6.7.0
 
