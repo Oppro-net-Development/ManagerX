@@ -6,6 +6,18 @@ general:
     option_missing: "A required option is missing."
     bot_has_no_permission: "The bot does not have the necessary permissions to execute this command."
 
+cog_setlang:
+  error_types:
+    unsupported_language: "The specified language is not supported."
+    same_language: "The specified language is already set."
+
+  message:
+    language_set: "Language has been set to {language}."
+###################################################################
+#
+# Cog Folder: cogs/fun 
+#
+####################################################################
 cog_4gewinnt:
   error_types:
     not_your_turn: "It's not your turn."

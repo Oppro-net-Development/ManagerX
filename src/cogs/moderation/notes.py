@@ -6,8 +6,8 @@ import discord
 from discord import SlashCommandGroup
 import datetime
 import ezcord
-from src.DevTools.backend import NotesDatabase
-from src.DevTools.ui import emoji_no, emoji_yes
+from DevTools import NotesDatabase
+from DevTools import emoji_no, emoji_yes
 # ───────────────────────────────────────────────
 # >> Cog
 # ───────────────────────────────────────────────

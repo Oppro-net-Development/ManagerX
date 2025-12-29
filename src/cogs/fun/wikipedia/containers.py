@@ -59,12 +59,9 @@ def create_article_container(
     
     container.add_separator()
     
-    # Link zum vollständigen Artikel (als Button, nicht Text)
+    # Link zum vollständigen Artikel
     if info.get('url'):
-        container.add_link_button(
-            label="🔗 Vollständigen Artikel lesen",
-            url=info['url']
-        )
+        container.add_text(f"🔗 [Vollständigen Artikel lesen]({info['url']})")
     
     # Sprachauswahl
     if cog_instance and search_term:
@@ -200,10 +197,7 @@ def create_random_article_container(
     container.add_separator()
     
     if info.get('url'):
-        container.add_link_button(
-            label="🔗 Vollständigen Artikel lesen",
-            url=info['url']
-        )
+        container.add_text(f"🔗 [Vollständigen Artikel lesen]({info['url']})")
     
     if cog_instance:
         lang_select = LanguageSelectContainer(random_title, language, cog_instance)

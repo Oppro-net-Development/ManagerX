@@ -24,8 +24,11 @@ import aiohttp
 import traceback 
 from pathlib import Path 
 import ezcord
+from ezcord import CogLog
 import yaml
 from discord.ext import tasks
+from log import logger, LogLevel, LogFormat, Category 
+
 
 BASEDIR = Path(__file__).resolve().parent
 load_dotenv(dotenv_path=BASEDIR / 'config' / '.env')
@@ -33,9 +36,8 @@ load_dotenv(dotenv_path=BASEDIR / 'config' / '.env')
 
 # ❗ LOKALE BIBLIOTHEKEN
 try:
-    from log import logger, LogLevel, LogFormat, Category 
-    from src.handler.update_checker import VersionChecker 
-    from src.DevTools.backend.database.lang_db import SettingsDB 
+    from handler import VersionChecker 
+    from DevTools import SettingsDB 
     
     class BotConfig:
         VERSION = "2.0.0-dev"
@@ -101,11 +103,80 @@ except Exception as e:
     print(f"[{Fore.RED}ERROR{Style.RESET_ALL}] Fehler beim Laden der config.yaml: {e}")
     sys.exit(1)
 
+# =============================================================================
+# COG LOGIK
+# =============================================================================
+
+def get_ignored_list(cogs_config):
+    """
+    Erstellt eine Liste von Dateinamen (ohne .py), die EzCord ignorieren soll.
+    """
+    # 1. Manuelle Liste von Hilfsdateien, die KEINE Cogs sind
+    ignored = [
+        "autocomplete", 
+        "cache", 
+        "components", 
+        "config", 
+        "containers", 
+        "utils",
+        "backend", # Falls DevTools Ordner gescannt werden würden
+        "emojis"
+    ]
+    
+    # Mapping für Deaktivierung via config.yaml
+    # Hier prüfen wir nur, welche Cogs laut Config auf 'false' stehen
+    cog_mapping = {
+        'fun': {
+            'gewinnt': 'gewinnt',
+            'tictactoe': 'tictactoe',
+            'weather': 'weather',
+            'wikipedia': 'cog' # Die Wikipedia Hauptdatei heißt 'cog.py'
+        },
+        'information': {
+            'botstatus': 'botstatus',
+            'serverinfo': 'serverinfo',
+            'usermanagemt': 'usermanagemt'
+        },
+        'moderation': {
+            'antispam': 'antispam',
+            'moderation': 'moderation',
+            'notes': 'notes',
+            'warningsystem': 'warningsystem'
+        },
+        'server_management': {
+            'autodelete': 'autodelete',
+            'globalchat': 'globalchat',
+            'levelsystem': 'levelsystem',
+            'logging': 'logging',
+            'stats': 'stats',
+            'tempvc': 'tempvc',
+            'welcome': 'welcome'
+        },
+        'other': {
+            'setlang': 'setlang'
+        }
+    }
+    
+    for category, cogs in cog_mapping.items():
+        category_config = cogs_config.get(category, {})
+        for cog_key, file_name in cogs.items():
+            if not category_config.get(cog_key, True):
+                ignored.append(file_name)
+                
+    return ignored
+
+# =============================================================================
+# BOT INITIALISIERUNG
+# =============================================================================
+
 intents = discord.Intents.default()
 intents.members = True 
 intents.message_content = True 
 
-bot = ezcord.Bot(intents=intents)
+bot = ezcord.Bot(
+    intents=intents,
+    language="de"
+)
 
 bot.config = {
     'embed_color': embed_color,
@@ -125,16 +196,12 @@ bot.config = {
     'enable_gc_optimization': enable_gc_optimization
 }
 
-user_cooldowns = {}
-user_message_counts = {}
-
 # =============================================================================
 # DASHBOARD EXPORT TASK
 # =============================================================================
 
 @tasks.loop(minutes=1)
 async def update_dashboard_data():
-    """Exportiert Live-Statistiken für die api.py."""
     try:
         stats = {
             "bot_info": {
@@ -150,187 +217,26 @@ async def update_dashboard_data():
             },
             "updated_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         }
-        
-        stats_path = BASEDIR / 'bot_stats.json'
-        with open(stats_path, 'w', encoding='utf-8') as f:
+        with open(BASEDIR / 'bot_stats.json', 'w', encoding='utf-8') as f:
             json.dump(stats, f, indent=4, ensure_ascii=False)
-            
-    except Exception as e:
-        if hasattr(logger, 'error'):
-            logger.error(Category.BOT, f"Dashboard-Export fehlgeschlagen: {e}")
+    except:
+        pass
 
 # =============================================================================
 # EVENTS
 # =============================================================================
 
 @bot.event
-async def on_application_command(ctx):
-    if bot.config['maintenance_mode']:
-        await ctx.respond("🚧 Der Bot befindet sich im Wartungsmodus.", ephemeral=True)
-        return
-
-@bot.event
-async def on_message(message):
-    if message.author.bot: 
-        return
-
-try:
-    db = SettingsDB()
-    bot.settings_db = db
-    logger.info(Category.DATABASE, "Settings Database initialized ✓")
-except Exception as e:
-    logger.critical(Category.DATABASE, f"Datenbankfehler: {e}")
-    sys.exit(1)
-
-# =============================================================================
-# COG LOADING LOGIK - ANGEPASST FÜR WIKIPEDIA PACKAGE
-# =============================================================================
-
-def get_enabled_cogs(cogs_config):
-    """
-    Gibt eine Liste der aktivierten Cogs zurück.
-    Unterstützt jetzt auch Package-basierte Cogs (wie wikipedia).
-    """
-    enabled_cogs = []
-    
-    # Mapping von config.yaml Keys zu Modul-Pfaden
-    cog_mapping = {
-        'fun': {
-            'gewinnt': 'fun.gewinnt',
-            'tictactoe': 'fun.tictactoe',
-            'weather': 'fun.weather',
-            'wikipedia': 'fun.wikipedia.cog'  # Package -> direkt zu cog.py
-        },
-        'information': {
-            'botstatus': 'informationen.botstatus',
-            'serverinfo': 'informationen.serverinfo',
-            'usermanagemt': 'informationen.usermanagemt'
-        },
-        'moderation': {
-            'antispam': 'moderation.antispam',
-            'moderation': 'moderation.moderation',
-            'notes': 'moderation.notes',
-            'warningsystem': 'moderation.warningsystem'
-        },
-        'server_management': {
-            'autodelete': 'Servermanament.autodelete',
-            'globalchat': 'Servermanament.globalchat',
-            'levelsystem': 'Servermanament.levelsystem',
-            'logging': 'Servermanament.logging',
-            'stats': 'Servermanament.stats',
-            'tempvc': 'Servermanament.tempvc',
-            'welcome': 'Servermanament.welcome'
-        },
-        'dev_tools': {
-            'logging': 'DevTools.backend.logging',
-            'emojis': 'DevTools.ui.emojis'
-        },
-        'other': {
-            'setlang': 'setlang'
-        }
-    }
-    
-    for category, cogs in cog_mapping.items():
-        category_config = cogs_config.get(category, {})
-        for cog_key, module_path in cogs.items():
-            # Prüfen ob der Cog in der Config aktiviert ist (Standard: True)
-            if category_config.get(cog_key, True):
-                enabled_cogs.append(module_path)
-                
-    return enabled_cogs
-
-def is_cog_enabled(module_path, enabled_cogs, cogs_module_path):
-    """
-    Prüft ob ein Cog aktiviert ist.
-    Unterstützt sowohl Einzeldateien als auch Packages.
-    """
-    full_module = f"{cogs_module_path}.{module_path}"
-    
-    # Direkter Match
-    if full_module in [f"{cogs_module_path}.{cog}" for cog in enabled_cogs]:
-        return True
-    
-    # Package-Match (z.B. wikipedia/__init__.py sollte geladen werden wenn fun.wikipedia aktiviert ist)
-    for enabled_cog in enabled_cogs:
-        enabled_full = f"{cogs_module_path}.{enabled_cog}"
-        # Wenn module_path ein Untermodul eines aktivierten Packages ist
-        if full_module.startswith(enabled_full):
-            return True
-            
-    return False
-
-@bot.event
 async def on_ready():
     logger.success(Category.BOT, f"Logged in as {bot.user.name}")
-    
-    # Dashboard Task starten
     if not update_dashboard_data.is_running():
         update_dashboard_data.start()
-        logger.info(Category.STARTUP, "Dashboard Data Export Task gestartet ✓")
-
+    
     if bot_status_enabled:
-        await bot.change_presence(
-            activity=discord.Activity(
-                type=discord.ActivityType.watching, 
-                name=f"ManagerX v{BotConfig.VERSION}"
-            )
-        )
+        await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=f"ManagerX v{BotConfig.VERSION}"))
 
-    try:
-        loaded_count = 0
-        skipped_count = 0
-        enabled_cogs = get_enabled_cogs(cogs_config)
-        cogs_dir_path = BASEDIR / "src" / "cogs"
-        cogs_module_path = "src.cogs"
-        
-        # Alle Python-Dateien im cogs-Verzeichnis finden
-        for item in cogs_dir_path.rglob("*.py"):
-            # __init__.py und __pycache__ überspringen
-            if item.name == "__init__.py" or "__pycache__" in str(item):
-                continue
-                
-            # Relativen Pfad berechnen
-            relative_path = item.relative_to(cogs_dir_path).with_suffix('')
-            module_path = str(relative_path).replace(os.sep, '.')
-            full_module_name = f"{cogs_module_path}.{module_path}"
-            
-            # Debugging-Output
-            logger.debug(Category.DEBUG, f"Gefundene Datei: {module_path}")
-            
-            # Prüfen ob der Cog aktiviert ist
-            if is_cog_enabled(module_path, enabled_cogs, cogs_module_path):
-                try:
-                    bot.load_extension(full_module_name)
-                    loaded_count += 1
-                    logger.info(Category.COGS, f"✓ Geladen: {module_path}")
-                except Exception as e:
-                    logger.error(Category.COGS, f"✗ Fehler beim Laden von {module_path}: {e}")
-                    import traceback
-                    traceback.print_exc()
-            else:
-                skipped_count += 1
-                logger.debug(Category.COGS, f"⊘ Übersprungen (deaktiviert): {module_path}")
-        
-        logger.success(Category.COGS, f"{loaded_count} Cogs geladen, {skipped_count} übersprungen.")
-        
-        # Commands synchronisieren
-        await bot.sync_commands()
-        logger.success(Category.COMMANDS, "Application Commands synchronisiert.")
-
-    except Exception as e:
-        logger.critical(Category.DEBUG, f"Fehler beim Laden: {e}")
-        traceback.print_exc()
-        sys.exit(1)
-
-    # Update Checker
-    if update_checker_enabled:
-        version_checker = VersionChecker()
-        asyncio.create_task(
-            version_checker.check_update(
-                current_version=BotConfig.VERSION,
-                version_url="https://raw.githubusercontent.com/Oppro-net-Development/ManagerX/main/config/version.txt"
-            )
-        )
+    await bot.sync_commands()
+    logger.success(Category.COMMANDS, "Application Commands synchronisiert.")
 
 # =============================================================================
 # MAIN EXECUTION
@@ -341,8 +247,26 @@ if __name__ == '__main__':
     print(f" ManagerX Discord Bot v{BotConfig.VERSION}")
     print(f"{'=' * 60}{Style.RESET_ALL}\n")
     
+    try:
+        db = SettingsDB()
+        bot.settings_db = db
+        logger.info(Category.DATABASE, "Settings Database initialized ✓")
+    except Exception as e:
+        logger.critical(Category.DATABASE, f"Datenbankfehler: {e}")
+
+    # --- GEFIXTER LOAD-PROZESS ---
+    # EzCord's ignored_cogs filtert gegen den Dateinamen (z.B. "autocomplete")
+    ignored = get_ignored_list(cogs_config)
+    
+    bot.load_cogs(
+        "src/cogs", 
+        subdirectories=True, 
+        ignored_cogs=ignored,
+        log=CogLog.sum
+    )
+
     if not BotConfig.TOKEN:
         logger.critical(Category.DEBUG, "Kein TOKEN gefunden!")
         sys.exit(1)
-        
+    
     bot.run(BotConfig.TOKEN)

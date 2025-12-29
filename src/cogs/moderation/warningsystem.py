@@ -2,10 +2,10 @@
 # ───────────────────────────────────────────────
 # >> Imports
 # ───────────────────────────────────────────────
-from src.DevTools.ui import (
+from DevTools import (
     emoji_no, emoji_yes, emoji_warn, emoji_member, emoji_staff, emoji_slowmode, emoji_summary
 )
-from src.DevTools.backend import WarnDatabase
+from DevTools import WarnDatabase
 import discord
 from discord import slash_command, Option
 import os

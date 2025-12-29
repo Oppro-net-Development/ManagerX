@@ -8,6 +8,14 @@ general:
     bot_has_no_permission: "Der Bot hat nicht die erforderlichen Berechtigungen, um diesen Befehl auszuführen."
 
 
+cog_setlang:
+  error_types:
+    unsupported_language: "Die angegebene Sprache wird nicht unterstützt."
+    same_language: "Die angegebene Sprache ist bereits eingestellt."
+
+  message:
+    language_set: "Die Sprache wurde auf {language} gesetzt."
+
 cog_4gewinnt:
   error_types:
     not_your_turn: "Es ist nicht dein Zug."

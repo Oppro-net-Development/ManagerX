@@ -1,9 +1,9 @@
 # Copyright (c) 2025 OPPRO.NET Network
-from src.DevTools import TempVCDatabase
+from DevTools import TempVCDatabase
 import discord
 from discord import slash_command, option, SlashCommandGroup
 from discord.ext import commands
-from src.DevTools import emoji_yes, emoji_no
+from DevTools import emoji_yes, emoji_no
 from discord.ui import Container
 import ezcord
 

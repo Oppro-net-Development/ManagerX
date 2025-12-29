@@ -8,7 +8,7 @@ import datetime
 from datetime import timedelta
 
 
-from src.DevTools.ui import (
+from DevTools.ui import (
     emoji_yes,
     emoji_no,
     emoji_forbidden,
@@ -23,7 +23,7 @@ from src.DevTools.ui import (
     emoji_owner,
 )
 
-from src.DevTools.backend import SpamDB
+from DevTools import SpamDB
 
 
 class AntiSpam(ezcord.Cog):
