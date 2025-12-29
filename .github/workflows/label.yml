@@ -15,7 +15,7 @@ jobs:
     - uses: actions/checkout@v4 
 
     # Schritt 2: Führt den Labeler aus.
-    - uses: actions/labeler@v5
+    - uses: actions/labeler@v6
       with:
         # configuration-path ist jetzt optional, aber sicherheitshalber belassen wir ihn
         configuration-path: .github/labeler.yml
