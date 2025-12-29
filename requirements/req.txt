@@ -19,7 +19,7 @@ python-dotenv==1.2.1
 click==8.3.1
 colorama==0.4.6
 typing_extensions==4.15.0
-typing-inspection==0.4.1
+typing-inspection==0.4.2
 attrs==25.4.0
 annotated-types==0.7.0
 anyio==4.12.0
