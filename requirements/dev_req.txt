@@ -12,7 +12,7 @@ idna==3.10
 urllib3==2.6.2
 Jinja2==3.1.6
 MarkupSafe==3.0.2
-starlette==0.46.2
+starlette==0.50.0
 FastAPI
 uvicorn
 SimpleColoredLogs
