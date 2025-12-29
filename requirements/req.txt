@@ -18,7 +18,7 @@ multidict==6.7.0
 python-dotenv==1.1.0
 click==8.2.1
 colorama==0.4.6
-typing_extensions==4.13.2
+typing_extensions==4.15.0
 typing-inspection==0.4.1
 attrs==25.3.0
 annotated-types==0.7.0
