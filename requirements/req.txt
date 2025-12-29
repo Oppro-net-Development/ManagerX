@@ -1,4 +1,4 @@
-ezcord==0.7.2
+ezcord==0.7.4
 py-cord==2.7.0
 aiosqlite==0.21.0
 aiohttp==3.13.2
