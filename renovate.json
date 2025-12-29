@@ -1,0 +1,20 @@
+{
+  "extends": ["config:base"],
+  "labels": ["dependencies"],
+  "prHourlyLimit": 1,
+  "prConcurrentLimit": 2,
+  "dependencyDashboard": true,
+  "dependencyDashboardTitle": "ManagerX – Dependency Updates",
+  "automerge": false,
+  "rangeStrategy": "pin",
+  "timezone": "Europe/Berlin",
+  "schedule": ["after 18:00 and before 22:00"],
+  "pip_requirements": {
+    "fileMatch": [
+      "requirements/docs_req\\.txt",
+      "requirements/dev_req\\.txt",
+      "requirements/bot_req\\.txt",
+      "requirements/req\\.txt"
+    ]
+  }
+}
