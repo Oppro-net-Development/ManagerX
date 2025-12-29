@@ -12,7 +12,7 @@ jobs:
 
     steps:
     # Schritt 1: Fügt den Checkout-Schritt hinzu, um die Dateien lokal abzurufen
-    - uses: actions/checkout@v4 
+    - uses: actions/checkout@v6 
 
     # Schritt 2: Führt den Labeler aus.
     - uses: actions/labeler@v5
