@@ -1,6 +1,10 @@
 {
-  "extends": ["config:base"],
-  "labels": ["dependencies"],
+  "extends": [
+    "config:recommended"
+  ],
+  "labels": [
+    "dependencies"
+  ],
   "prHourlyLimit": 1,
   "prConcurrentLimit": 3,
   "dependencyDashboard": true,
@@ -8,6 +12,7 @@
   "automerge": false,
   "rangeStrategy": "pin",
   "timezone": "Europe/Berlin",
+
   "schedule": ["immediately"],
   "pip_requirements": {
     "fileMatch": ["requirements/.*\\.txt"]
@@ -28,4 +33,5 @@
       "groupName": "All GitHub Actions Updates"
     }
   ]
+
 }
