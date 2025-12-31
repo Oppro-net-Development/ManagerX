@@ -10,3 +10,4 @@ from .logging_db import *
 from .autodelete_db import *
 from .welcome_db import *
 from .lang_db import *
+from .autorole_db import AutoRoleDatabase

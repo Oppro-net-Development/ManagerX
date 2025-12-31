@@ -86,3 +86,4 @@ class TranslationHandler:
 
 # Optionaler Alias
 MessagesHandler = TranslationHandler
+LangHandler = TranslationHandler

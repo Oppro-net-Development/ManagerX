@@ -154,9 +154,11 @@ http://127.0.0.1:3002/
 
 **Wichtig:** Öffne die HTML-Dateien nicht direkt im Browser! Verwende immer den Webserver über die API, da sonst CORS-Fehler und Token-Probleme auftreten.
 
-### 📖 Detaillierte Installation
+### 📖 Webseiten
 
-Eine ausführliche Installationsanleitung findest du in unserer [Dokumentation](docs/INSTALLATION.md).
+Dokumentation: [https://docs.oppro-network.de/en/latest/](https://docs.oppro-network.de/en/latest/)
+Website: [https://development.oppro-network.de/ManagerX/](https://development.oppro-network.de/ManagerX/)
+Hauptseite: [https://development.oppro-network.de](https://development.oppro-network.de)
 
 ---
 
