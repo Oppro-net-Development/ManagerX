@@ -28,7 +28,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4 # Updated to stable v4
+        uses: actions/checkout@v6 # Updated to stable v4
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
@@ -38,7 +38,6 @@ jobs:
         with:
           # This points to your specific folder
           path: 'site/'
-
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
