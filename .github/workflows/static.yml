@@ -38,7 +38,7 @@ name: Deploy static content to Pages
 
 on:
   # Runs on pushes targeting the default branchsitesh:
-    branches: ["main"]
+    branches: ["2.0.0"]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
