@@ -1,0 +1,32 @@
+Release of Version 1.6.1
+=========================
+
+🛠️ **Update:** Version 1.6.1  
+
+**Released by:** @Medicopter117  
+
+**Release Date:** Jul 30  
+
+✏️ **Modified Files**
+
+- `.gitignore`
+
+- `cogs/Servermanament/globalchat.py`
+
+- `cogs/Servermanament/logging.py`
+
+- `cogs/Servermanament/stats.py`
+
+- `cogs/Temp/tempvc.py`
+
+- `cogs/levelsystem/levelsystem.py`
+
+- `cogs/moderation/moderation.py`
+
+📝 **Description**
+
+Mainly adds slash command groups.
+
+**Contributors**
+
+- @Medicopter117

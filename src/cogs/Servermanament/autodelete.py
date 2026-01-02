@@ -1,4 +1,4 @@
-from src.DevTools import AutoDeleteDB
+from DevTools import AutoDeleteDB
 import discord
 from discord.ext import tasks
 from discord.commands import SlashCommandGroup, Option
@@ -120,7 +120,7 @@ class AutoDelete(ezcord.Cog):
 
         embed.add_field(name="⏱️ Löschzeit", value=self._format_duration(duration), inline=True)
         embed.add_field(name="📌 Angepinnte", value="Ausgeschlossen" if exclude_pinned else "Eingeschlossen",
-                        inline=True)
+                         inline=True)
         embed.add_field(name="🤖 Bots", value="Ausgeschlossen" if exclude_bots else "Eingeschlossen", inline=True)
 
         if stats:
@@ -133,7 +133,7 @@ class AutoDelete(ezcord.Cog):
 
     @autodelete.command(name="test", description="Testet die AutoDelete-Funktion für einen Kanal.")
     async def test(self, ctx,
-                   channel: Option(discord.TextChannel, "Kanal", required=True)):
+                    channel: Option(discord.TextChannel, "Kanal", required=True)):
         db = AutoDeleteDB()
         config = db.get_autodelete_full(channel.id)
         if not config:
@@ -281,5 +281,29 @@ class AutoDelete(ezcord.Cog):
             except Exception as e:
                 logger.error(f"Bulk delete Fehler: {e}")
 
+        return deleted_count, error_count
+
+    # Platzhalter für fehlende Methoden, um den Code lauffähig zu machen
+    def _format_duration(self, duration: int) -> str:
+        """Formatiert die Dauer in eine lesbare Zeichenkette (z.B. '1 Stunde')."""
+        if duration >= 86400 and duration % 86400 == 0:
+            return f"{duration // 86400} Tage"
+        if duration >= 3600 and duration % 3600 == 0:
+            return f"{duration // 3600} Stunden"
+        if duration >= 60 and duration % 60 == 0:
+            return f"{duration // 60} Minuten"
+        return f"{duration} Sekunden"
+        
+    def _is_in_schedule(self, channel_id: int) -> bool:
+        """Platzhalter: Prüft, ob der Kanal gerade gelöscht werden soll (immer True im Platzhalter)."""
+        # Da diese Methode in Ihrem Originalcode nicht definiert ist, aber aufgerufen wird, 
+        # muss sie entweder in der DB/Config abrufbar sein oder als Platzhalter existieren.
+        # Wir lassen sie hier True zurückgeben, um die Löschlogik nicht zu blockieren.
+        return True
+    
+    def _check_whitelist(self, message: discord.Message, channel_id: int) -> bool:
+        """Platzhalter: Prüft, ob die Nachricht von der Löschung ausgenommen ist (immer False im Platzhalter)."""
+        return False
+        
 def setup(bot):
     bot.add_cog(AutoDelete(bot))

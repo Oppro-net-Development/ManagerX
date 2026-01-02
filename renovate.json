@@ -6,21 +6,32 @@
     "dependencies"
   ],
   "prHourlyLimit": 1,
-  "prConcurrentLimit": 2,
+  "prConcurrentLimit": 3,
   "dependencyDashboard": true,
   "dependencyDashboardTitle": "ManagerX – Dependency Updates",
   "automerge": false,
   "rangeStrategy": "pin",
   "timezone": "Europe/Berlin",
-  "schedule": [
-    "after 18:00 and before 22:00"
-  ],
+
+  "schedule": ["immediately"],
   "pip_requirements": {
-    "managerFilePatterns": [
-      "/requirements/docs_req\\.txt/",
-      "/requirements/dev_req\\.txt/",
-      "/requirements/bot_req\\.txt/",
-      "/requirements/req\\.txt/"
-    ]
-  }
+    "fileMatch": ["requirements/.*\\.txt"]
+  },
+  "packageRules": [
+    {
+      "matchDepTypes": ["dependencies"],
+      "matchUpdateTypes": ["patch", "minor"],
+      "groupName": "All Patch & Minor Python Updates"
+    },
+    {
+      "matchDepTypes": ["dependencies"],
+      "matchUpdateTypes": ["major"],
+      "groupName": "All Major Python Updates"
+    },
+    {
+      "matchDepTypes": ["github-actions"],
+      "groupName": "All GitHub Actions Updates"
+    }
+  ]
+
 }

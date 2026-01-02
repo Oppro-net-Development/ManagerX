@@ -4,8 +4,8 @@
 
 ### *Der ultimative All-in-One Discord Bot für deine Community*
 
-[![Version](https://img.shields.io/badge/Version-1.7.1-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://github.com/Oppro-net-Development/ManagerX)
-[![Next Release](https://img.shields.io/badge/Next_Release-v1.7.2-00D9FF?style=for-the-badge&logo=rocket&logoColor=white)](https://github.com/Oppro-net-Development/ManagerX)
+[![Version](https://img.shields.io/badge/Version-2.0.0-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://github.com/Oppro-net-Development/ManagerX)
+[![Next Release](https://img.shields.io/badge/Next_Release-v2.0.1-00D9FF?style=for-the-badge&logo=rocket&logoColor=white)](https://github.com/Oppro-net-Development/ManagerX)
 [![Last Commit](https://img.shields.io/github/last-commit/Oppro-net-Development/ManagerX?style=for-the-badge&logo=git&logoColor=white&color=F05032)](https://github.com/Oppro-net-Development/ManagerX/commits)
 [![License](https://img.shields.io/badge/License-GPL--3.0-blue?style=for-the-badge&logo=opensourceinitiative&logoColor=white)](LICENSE)
 
@@ -88,6 +88,23 @@ ManagerX ist ein leistungsstarker, vielseitiger Discord-Bot, der speziell für u
   - Performance-Tracking und Analytics
   - Persönliche Erfolge und Meilensteine
 
+### 🌐 Web-Interface
+
+- **Intuitive Dashboard**
+  - Moderne, responsive Weboberfläche
+  - Serverübersicht und schnelle Navigation
+  - Discord OAuth2 Authentifizierung
+
+- **Modul-Konfiguration**
+  - TempVC, Welcome und Levelsystem verwalten
+  - Live-Konfiguration ohne Bot-Neustart
+  - Sicherheitsprüfungen und Validierung
+
+- **Echtzeit-Statistiken**
+  - Bot-Status und Server-Informationen
+  - Live-Updates und Performance-Metriken
+  - Admin-übersicht für alle Server
+
 ---
 
 ## 📋 Changelog
@@ -123,11 +140,25 @@ pip install -r requirements.txt
 # TOKEN Anpassung mehr in unserer Dokumention
 # Bot starten
 python main.py
+
+# Weboberfläche starten (in separatem Terminal)
+python api.py
 ```
 
-### 📖 Detaillierte Installation
+### 🌐 Weboberfläche verwenden
 
-Eine ausführliche Installationsanleitung findest du in unserer [Dokumentation](docs/INSTALLATION.md).
+Nach dem Start der API ist die Weboberfläche verfügbar unter:
+```
+http://127.0.0.1:3002/
+```
+
+**Wichtig:** Öffne die HTML-Dateien nicht direkt im Browser! Verwende immer den Webserver über die API, da sonst CORS-Fehler und Token-Probleme auftreten.
+
+### 📖 Webseiten
+
+Dokumentation: [https://docs.oppro-network.de/en/latest/](https://docs.oppro-network.de/en/latest/)
+Website: [https://development.oppro-network.de/ManagerX/](https://development.oppro-network.de/ManagerX/)
+Hauptseite: [https://development.oppro-network.de](https://development.oppro-network.de)
 
 ---
 

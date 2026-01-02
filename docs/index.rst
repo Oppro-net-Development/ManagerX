@@ -8,8 +8,8 @@ Welcome to ManagerX Documentation
 .. image:: https://img.shields.io/badge/Python-3.8+-green.svg
    :alt: Python 3.8+
 
-.. image:: https://img.shields.io/badge/License-MIT-yellow.svg
-   :alt: MIT License
+.. image:: https://img.shields.io/badge/License-GPL.3.0-yellow.svg
+   :alt: GPL.3.0 License
 
 Welcome! 👋
 -----------
@@ -131,7 +131,7 @@ Frequently Asked Questions
    Python 3.8 or higher is required.
 
 **Q: Is ManagerX open source?**
-   Yes, ManagerX is fully open source under the MIT License.
+   Yes, ManagerX is fully open source under the GPL.3-0 License.
 
 Contributing
 ------------
@@ -143,23 +143,26 @@ We welcome contributions! Please see our GitHub repository for:
 - Code contributions
 - Documentation improvements
 
+More Information under Contributing in the `Developer Guide <dev_guide/contributing/index.html>`_.
+
 Community & Support
 -------------------
 
 - **GitHub:** `Oppro-net-Development/ManagerX <https://github.com/Oppro-net-Development/ManagerX>`_
 - **Issues:** `Report bugs or request features <https://github.com/Oppro-net-Development/ManagerX/issues>`_
-- **License:** MIT License
+- **License:** GPL.3-0 License
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
    :caption: Documentation:
    :hidden:
 
    User Guide <user_guide/index>
    Developer Guide <dev_guide/index>
+   Changelog & Releases <releases/index>
 
 ---
 
 **© 2025 OPPRO.NET Network**
 
-Version 1.7.2-alpha | Last Updated: December 7, 2025
+Version 2.0.0-dev | Last Updated: December 7, 2025

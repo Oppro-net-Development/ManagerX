@@ -3,7 +3,7 @@
 ManagerX Discord Bot - Main Entry Point
 ========================================
 
-Version: 1.7.2-alpha
+Version: 2.0.0
 """
 
 # =============================================================================
@@ -16,325 +16,257 @@ import logging
 import re
 import sys
 import glob 
+import json
 from datetime import datetime
 from dotenv import load_dotenv
 from colorama import Fore, Style, init as colorama_init
 import aiohttp
-import traceback
-from log import logger, LogLevel, Category, LogFormat
+import traceback 
+from pathlib import Path 
+import ezcord
+from ezcord import CogLog
+import yaml
+from discord.ext import tasks
+from log import logger, LogLevel, LogFormat, Category 
+
+
+BASEDIR = Path(__file__).resolve().parent
+load_dotenv(dotenv_path=BASEDIR / 'config' / '.env')
+
+
+# ❗ LOKALE BIBLIOTHEKEN
+try:
+    from handler import VersionChecker 
+    from DevTools import SettingsDB 
+    
+    class BotConfig:
+        VERSION = "2.0.0-dev"
+        TOKEN = os.getenv("TOKEN") 
+        
+except ImportError as e:
+    print(f"[{Fore.RED}CRITICAL{Style.RESET_ALL}] [STARTUP] Fataler Fehler beim Import der lokalen Bibliotheken: {e.__class__.__name__}: {e}")
+    sys.exit(1)
 
 
 if os.path.dirname(os.path.abspath(__file__)) not in sys.path:
     sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
-import ezcord
-from ezcord import log
-# ❗ KORRIGIERTER PFAD: DevTools liegt jetzt in src/ vom Root-Verzeichnis aus
-from src.DevTools.backend import init_all
-from src.handler.update_checker import VersionChecker, UpdateCheckerConfig
-
-# WICHTIG: Lade Environment-Variablen NUR HIER am Anfang
-load_dotenv(os.path.join("config", ".env"))
 
 # =============================================================================
-# CONFIGURATION
+# INITIALISIERUNG & CONFIG LOADING
 # =============================================================================
-class BotConfig:
-    """
-    Zentrale Bot-Konfiguration.
-    """
-    VERSION = "1.7.2-alpha"
-    VERSION_URL = UpdateCheckerConfig.VERSION_URL
-    GITHUB_REPO = UpdateCheckerConfig.GITHUB_REPO
+
+colorama_init(autoreset=True)
+
+config_path = BASEDIR / 'config' / 'config.yaml'
+try:
+    with open(config_path, 'r', encoding='utf-8') as f:
+        config = yaml.safe_load(f)
     
-    # Intents
-    INTENTS = discord.Intents.default()
-    INTENTS.members = True
-    INTENTS.guilds = True
-    INTENTS.messages = True
-    INTENTS.message_content = True
+    if not config.get('enabled', True):
+        print(f"[{Fore.YELLOW}INFO{Style.RESET_ALL}] Bot ist in config.yaml deaktiviert. Beende...")
+        sys.exit(0)
+    
+    config_version = config.get('version', '1.0.0')
+    BotConfig.VERSION = config_version
+    
+    features = config.get('features', {})
+    update_checker_enabled = features.get('update_checker', True)
+    bot_status_enabled = features.get('bot_status', True)
+    cogs_config = features.get('cogs', {})
+    
+    bot_behavior = config.get('bot_behavior', {})
+    command_prefix = bot_behavior.get('command_prefix', '!')
+    global_cooldown = bot_behavior.get('global_cooldown_seconds', 5)
+    max_messages_per_minute = bot_behavior.get('max_messages_per_minute', 10)
+    maintenance_mode = bot_behavior.get('maintenance_mode', False)
+    
+    ui_config = config.get('ui', {})
+    embed_color = ui_config.get('embed_color', '#00ff00')
+    footer_text = ui_config.get('footer_text', 'ManagerX Bot')
+    theme = ui_config.get('theme', 'dark')
+    show_timestamps = ui_config.get('show_timestamps', True)
+    
+    security_config = config.get('security', {})
+    required_permissions = security_config.get('required_permissions', [])
+    blacklist_servers = security_config.get('blacklist_servers', [])
+    whitelist_users = security_config.get('whitelist_users', [])
+    enable_command_logging = security_config.get('enable_command_logging', True)
+    
+    performance_config = config.get('performance', {})
+    max_concurrent_tasks = performance_config.get('max_concurrent_tasks', 10)
+    task_timeout = performance_config.get('task_timeout_seconds', 30)
+    memory_limit = performance_config.get('memory_limit_mb', 512)
+    enable_gc_optimization = performance_config.get('enable_gc_optimization', True)
+    
+except Exception as e:
+    print(f"[{Fore.RED}ERROR{Style.RESET_ALL}] Fehler beim Laden der config.yaml: {e}")
+    sys.exit(1)
 
-logger.configure(
-    format_type=LogFormat.SIMPLE
+# =============================================================================
+# COG LOGIK
+# =============================================================================
+
+def get_ignored_list(cogs_config):
+    """
+    Erstellt eine Liste von Dateinamen (ohne .py), die EzCord ignorieren soll.
+    """
+    # 1. Manuelle Liste von Hilfsdateien, die KEINE Cogs sind
+    ignored = [
+        "autocomplete", 
+        "cache", 
+        "components", 
+        "config", 
+        "containers", 
+        "utils",
+        "backend", # Falls DevTools Ordner gescannt werden würden
+        "emojis"
+    ]
+    
+    # Mapping für Deaktivierung via config.yaml
+    # Hier prüfen wir nur, welche Cogs laut Config auf 'false' stehen
+    cog_mapping = {
+        'fun': {
+            'gewinnt': 'gewinnt',
+            'tictactoe': 'tictactoe',
+            'weather': 'weather',
+            'wikipedia': 'cog' # Die Wikipedia Hauptdatei heißt 'cog.py'
+        },
+        'information': {
+            'botstatus': 'botstatus',
+            'serverinfo': 'serverinfo',
+            'usermanagemt': 'usermanagemt'
+        },
+        'moderation': {
+            'antispam': 'antispam',
+            'moderation': 'moderation',
+            'notes': 'notes',
+            'warningsystem': 'warningsystem'
+        },
+        'server_management': {
+            'autodelete': 'autodelete',
+            'globalchat': 'globalchat',
+            'levelsystem': 'levelsystem',
+            'logging': 'logging',
+            'stats': 'stats',
+            'tempvc': 'tempvc',
+            'welcome': 'welcome'
+        },
+        'other': {
+            'setlang': 'setlang'
+        }
+    }
+    
+    for category, cogs in cog_mapping.items():
+        category_config = cogs_config.get(category, {})
+        for cog_key, file_name in cogs.items():
+            if not category_config.get(cog_key, True):
+                ignored.append(file_name)
+                
+    return ignored
+
+# =============================================================================
+# BOT INITIALISIERUNG
+# =============================================================================
+
+intents = discord.Intents.default()
+intents.members = True 
+intents.message_content = True 
+
+bot = ezcord.Bot(
+    intents=intents,
+    language="de"
 )
 
-# -----------------------------------------------------------------------------
-# MESSAGE HANDLER
-# -------
-
-class MessageHandler:
-    @staticmethod
-    def parse_time(text: str) -> int | None:
-        match = re.search(r'slowmode\s*(\d+)\s*(s|sec|min|m)?', text.lower())
-        if not match:
-            return None
-        
-        value = int(match.group(1))
-        unit = match.group(2)
-        
-        if unit in ("min", "m"):
-            return value * 60
-        return value
-    
-    @staticmethod
-    async def handle_delete_message(message: discord.Message):
-        if not message.reference:
-            return False
-        
-        content_lower = message.content.lower()
-        if "lösch das" not in content_lower:
-            return False
-        
-        if not (message.mentions and message.guild.me in message.mentions):
-            return False
-        
-        if not message.author.guild_permissions.manage_messages:
-            await message.channel.send(
-                f"{message.author.mention} ❌ Du hast keine Berechtigung zum Löschen!",
-                delete_after=5
-            )
-            return True
-        
-        try:
-            replied_msg = await message.channel.fetch_message(message.reference.message_id)
-            await replied_msg.delete()
-            await message.delete()
-            await message.channel.send("✅ Nachricht gelöscht!", delete_after=3)
-        except discord.Forbidden:
-            await message.channel.send("❌ Keine Berechtigung!", delete_after=5)
-        except discord.NotFound:
-            await message.channel.send("❌ Nachricht nicht gefunden!", delete_after=5)
-        except Exception as e:
-            logger.error("MESSAGE", f"Delete failed: {e}")
-        
-        return True
-    
-    @staticmethod
-    async def handle_slowmode(message: discord.Message):
-        content_lower = message.content.lower()
-        
-        if not (message.mentions and message.guild.me in message.mentions):
-            return False
-        
-        if "slowmode" not in content_lower:
-            return False
-        
-        seconds = MessageHandler.parse_time(content_lower)
-        if seconds is None:
-            await message.channel.send(
-                "❌ Ungültige Zeitangabe!\n"
-                "**Beispiele:** `@Bot slowmode 10s`, `@Bot slowmode 5min`",
-                delete_after=7
-            )
-            return True
-        
-        if not message.author.guild_permissions.manage_channels:
-            await message.channel.send(
-                f"{message.author.mention} ❌ Du darfst den Slowmode nicht ändern!",
-                delete_after=5
-            )
-            return True
-        
-        try:
-            await message.channel.edit(slowmode_delay=seconds)
-            
-            if seconds == 0:
-                await message.channel.send("✅ Slowmode deaktiviert!", delete_after=5)
-            else:
-                time_str = f"{seconds}s" if seconds < 60 else f"{seconds // 60}min"
-                await message.channel.send(
-                    f"✅ Slowmode auf **{time_str}** gesetzt!",
-                    delete_after=5
-                )
-        except discord.Forbidden:
-            await message.channel.send("❌ Keine Berechtigung!", delete_after=5)
-        except Exception as e:
-            await message.channel.send(f"⚠️ Fehler: {e}", delete_after=5)
-            logger.error("SLOWMODE", str(e))
-        
-        return True
-
+bot.config = {
+    'embed_color': embed_color,
+    'footer_text': footer_text,
+    'theme': theme,
+    'show_timestamps': show_timestamps,
+    'maintenance_mode': maintenance_mode,
+    'global_cooldown': global_cooldown,
+    'max_messages_per_minute': max_messages_per_minute,
+    'required_permissions': required_permissions,
+    'blacklist_servers': blacklist_servers,
+    'whitelist_users': whitelist_users,
+    'enable_command_logging': enable_command_logging,
+    'max_concurrent_tasks': max_concurrent_tasks,
+    'task_timeout': task_timeout,
+    'memory_limit': memory_limit,
+    'enable_gc_optimization': enable_gc_optimization
+}
 
 # =============================================================================
-# BOT CLASS
+# DASHBOARD EXPORT TASK
 # =============================================================================
-class ManagerXBot(ezcord.Bot):
-    
-    def __init__(self, config: BotConfig):
-        self.config = config
-        
-        colorama_init(autoreset=True)
-        
-        ezcord.set_log(
-            webhook_url=os.getenv("LOGGING_WEBHOOK_URL"),
-        )
-        
-        super().__init__(
-            intents=config.INTENTS,
-            language="auto",
-            error_webhook_url=os.getenv("ERROR_WEBHOOK_URL"),
-            ready_event=None
-        )
-        
-        logger.loading("INIT", "Bot initialized")
 
-    def _load_all_cogs(self):
-        """
-        Dynamisches Laden aller Cogs basierend auf dem Dateisystem.
-        KORREKTUR: Normalisiert die Pfad-Trennung für Windows, damit der 
-        Check 'startswith("src.cogs")' funktioniert.
-        """
-        cogs_dir = "src/cogs"
-        
-        # Sucht rekursiv nach allen Python-Dateien in Unterordnern von cogs
-        cog_files = glob.glob(f"{cogs_dir}/**/[!__]*.py", recursive=True)
-        total_cogs = 0
-
-        for file_path in cog_files:
-            # 1. Normalisiere den Pfad: Ersetze alle Slashes und Backslashes durch Punkte.
-            #    Wir ersetzen zuerst os.path.sep (\ unter Windows) und dann /
-            #    Dies stellt sicher, dass der gesamte Pfad in Python-Modulnamen-Konvention umgewandelt wird.
-            normalized_path = file_path.replace(os.path.sep, ".").replace("/", ".")
-            
-            # 2. Entferne die Dateiendung '.py'
-            module_name = normalized_path[:-3]
-            
-            # 3. PRÜFUNG: Stellt sicher, dass der Modulname mit 'src.cogs' beginnt
-            if not module_name.startswith("src.cogs"):
-                 logger.warn("COGS SKIP", f"Skipping non-standard cog path: {file_path}")
-                 continue
-
-            try:
-                self.load_extension(module_name)
-                logger.info(Category.COGS, f"Loaded: {module_name}")
-                total_cogs += 1
-            except Exception as e:
-                logger.error("COGS FAIL", f"Laden von {module_name} fehlgeschlagen: {e.__class__.__name__}: {e}")
-                logger.info("COGS FAIL", "--- Start Traceback ---")
-                traceback.print_exc()
-                logger.info("COGS FAIL", "--- Ende Traceback ---")
-                
-        logger.success(Category.COGS, f"Insgesamt {total_cogs} Cogs dynamisch geladen.")
-        return total_cogs
-    
-    async def on_ready(self):
-        logger.success("READY", f"Logged in as {self.user}")
-
-        # --- COG LADUNG (Kurzform) ---
-        logger.loading(Category.COGS, "Starting dynamic cog loading...")
-        self._load_all_cogs()
-        # -----------------------------
-
-        
-        
-        # --- REST DER ON_READY LOGIK FOLGT ---
-        
-        await VersionChecker.check_update(
-            self.config.VERSION,
-            self.config.VERSION_URL
-        )
-        
-        await asyncio.sleep(0.5)
-        
-        try:
-            init_all()
-            logger.success("DEVTOOLS", "DevTools initialized successfully")
-        except Exception as e:
-            logger.error("DEVTOOLS", f"Initialization failed: {e}")
-        
-        await asyncio.sleep(0.5)
-        logger.info(Category.SYSTEM, "All systems operational")
-        
-        await self.change_presence(
-            activity=discord.Activity(
-                type=discord.ActivityType.watching,
-                name=f"v{self.config.VERSION} | /help"
-            )
-        )
-    
-    async def on_message(self, message: discord.Message):
-        if message.author.bot:
-            return
-        
-        if not message.guild:
-            return
-        
-        if await MessageHandler.handle_delete_message(message):
-            return
-        
-        if await MessageHandler.handle_slowmode(message):
-            return
-        
-        proc = getattr(self, 'process_commands', None)
-        if callable(proc):
-            try:
-                await proc(message)
-            except Exception as e:
-                logger.error(Category.COMMANDS, f"process_commands raised: {e}")
-    
-    def start_bot(self):
-        token = os.getenv("TOKEN")
-        
-        if not token:
-            logger.error(Category.AUTH, "Discord bot token not found in environment variables!")
-            return
-        
-        self.add_help_command()
-        
-        logger.info(Category.BOT, f"Starting ManagerX v{self.config.VERSION}...")
-        
-        try:
-            self.run(token)
-        
-        except discord.LoginFailure:
-            logger.error(Category.AUTH, "Invalid bot token!")
-        
-        except KeyboardInterrupt:
-            logger.warn(Category.SHUTDOWN, "Bot shutdown requested by user")
-        
-        except Exception as e:
-            logger.error(f"Unexpected error: {e}")
-            raise
-
-
-# =============================================================================
-# MAIN ENTRY POINT
-# =============================================================================
-def main():
-    
-    # --- DEBUG-CHECK ---
+@tasks.loop(minutes=1)
+async def update_dashboard_data():
     try:
-        current_dir = os.path.dirname(os.path.abspath(__file__))
-        cogs_test_path = os.path.join(current_dir, "src", "cogs")
-        
-        logger.info("DEBUG START", f"__file__ dir: {current_dir} (ROOT)")
-        logger.info("DEBUG START", f"Cog Path: {cogs_test_path}")
-        
-        if os.path.exists(cogs_test_path):
-            logger.success("DEBUG START", "Cogs Ordner EXISTIERT am erwarteten Pfad!")
-        else:
-            logger.error("DEBUG START", "Cogs Ordner NICHT gefunden! Pfad ist falsch.")
-            
-    except Exception as e:
-        logger.error(Category.DEBUG, f"Debug check failed: {e}")
-    # --- ENDE DEBUG-CHECK ---
+        stats = {
+            "bot_info": {
+                "name": str(bot.user.name),
+                "version": BotConfig.VERSION,
+                "status": "online",
+                "latency": round(bot.latency * 1000, 1)
+            },
+            "stats": {
+                "server_count": len(bot.guilds),
+                "user_count": sum(g.member_count for g in bot.guilds if g.member_count),
+                "shards": bot.shard_count or 1
+            },
+            "updated_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        }
+        with open(BASEDIR / 'bot_stats.json', 'w', encoding='utf-8') as f:
+            json.dump(stats, f, indent=4, ensure_ascii=False)
+    except:
+        pass
 
-    try:
-        # Banner ausgeben
-        print(f"\n{Fore.CYAN}{'=' * 60}{Style.RESET_ALL}")
-        print(f"{Fore.CYAN}  ManagerX Discord Bot v{BotConfig.VERSION}{Style.RESET_ALL}")
-        print(f"{Fore.CYAN}  © 2025 OPPRO.NET Network{Style.RESET_ALL}")
-        print(f"{Fore.CYAN}{'=' * 60}{Style.RESET_ALL}\n")
-        
-        # Bot erstellen und starten
-        config = BotConfig()
-        bot = ManagerXBot(config)
-        bot.start_bot()
+# =============================================================================
+# EVENTS
+# =============================================================================
+
+@bot.event
+async def on_ready():
+    logger.success(Category.BOT, f"Logged in as {bot.user.name}")
+    if not update_dashboard_data.is_running():
+        update_dashboard_data.start()
     
+    if bot_status_enabled:
+        await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=f"ManagerX v{BotConfig.VERSION}"))
+
+    await bot.sync_commands()
+    logger.success(Category.COMMANDS, "Application Commands synchronisiert.")
+
+# =============================================================================
+# MAIN EXECUTION
+# =============================================================================
+
+if __name__ == '__main__':
+    print(f"\n{Fore.CYAN}{'=' * 60}")
+    print(f" ManagerX Discord Bot v{BotConfig.VERSION}")
+    print(f"{'=' * 60}{Style.RESET_ALL}\n")
+    
+    try:
+        db = SettingsDB()
+        bot.settings_db = db
+        logger.info(Category.DATABASE, "Settings Database initialized ✓")
     except Exception as e:
-        logger.error(Category.DEBUG, f"Failed to start bot: {e}")
-        raise
+        logger.critical(Category.DATABASE, f"Datenbankfehler: {e}")
 
+    # --- GEFIXTER LOAD-PROZESS ---
+    # EzCord's ignored_cogs filtert gegen den Dateinamen (z.B. "autocomplete")
+    ignored = get_ignored_list(cogs_config)
+    
+    bot.load_cogs(
+        "src/cogs", 
+        subdirectories=True, 
+        ignored_cogs=ignored,
+        log=CogLog.sum
+    )
 
-if __name__ == "__main__":
-    main()
+    if not BotConfig.TOKEN:
+        logger.critical(Category.DEBUG, "Kein TOKEN gefunden!")
+        sys.exit(1)
+    
+    bot.run(BotConfig.TOKEN)
