@@ -234,3 +234,135 @@ dt.sig {
 [data-theme="dark"] .mx-box {
     background: #1e293b;
 }
+
+/* --- 14. SEARCH EXPERIENCE (Modal & Input) --- */
+/* Das Suchfeld oben rechts im ManagerX Look */
+.bd-search .form-control {
+    border-radius: 50px !important;
+    border: 1px solid rgba(225, 29, 72, 0.2) !important;
+    transition: all 0.3s ease;
+}
+
+.bd-search .form-control:focus {
+    border-color: var(--mx-red-primary) !important;
+    box-shadow: 0 0 0 4px var(--mx-red-glow) !important;
+    outline: none;
+}
+
+/* Such-Shortcut KBD im Input */
+.search-button__kbd-shortcut {
+    background: var(--mx-red-light) !important;
+    color: var(--mx-red-primary) !important;
+    border: none !important;
+}
+
+/* --- 15. INTERACTIVE LINKS & INLINE ELEMENTS --- */
+/* Hover-Effekt für normale Textlinks */
+article a.reference.internal, 
+article a.reference.external {
+    position: relative;
+    text-decoration: none !important;
+    transition: color 0.3s ease;
+}
+
+article a.reference:after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    transform: scaleX(0);
+    height: 1px;
+    bottom: -1px;
+    left: 0;
+    background-color: var(--mx-red-primary);
+    transform-origin: bottom right;
+    transition: transform 0.25s ease-out;
+}
+
+article a.reference:hover:after {
+    transform: scaleX(1);
+    transform-origin: bottom left;
+}
+
+/* --- 16. IMAGE & FIGURE STYLING --- */
+/* Bilder erhalten einen dezenten Shadow und abgerundete Ecken */
+figure.align-default {
+    margin: 2rem 0;
+    padding: 10px;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    text-align: center;
+}
+
+[data-theme="dark"] figure.align-default {
+    background: #1e293b;
+}
+
+figure.align-default img {
+    border-radius: 10px;
+}
+
+figcaption {
+    margin-top: 10px;
+    font-size: 0.85rem;
+    color: #64748b;
+    font-style: italic;
+}
+
+/* --- 17. IMPROVED TYPOGRAPHY (Vertical Rhythm) --- */
+h1, h2, h3, h4 {
+    color: #0f172a;
+    margin-top: 2.5rem !important;
+    margin-bottom: 1.25rem !important;
+}
+
+[data-theme="dark"] h1, 
+[data-theme="dark"] h2, 
+[data-theme="dark"] h3 {
+    color: #f1f5f9;
+}
+
+/* Marker vor Überschriften (Dezenter ManagerX-Dot) */
+h2::before {
+    content: "◢";
+    font-size: 0.6em;
+    margin-right: 10px;
+    color: var(--mx-red-primary);
+    vertical-align: middle;
+}
+
+/* --- 18. VERSION SWITCHER & DROPDOWNS --- */
+.bd-version-switcher__button {
+    border-radius: 8px !important;
+    border: 1px solid var(--mx-red-glow) !important;
+}
+
+.bd-version-switcher__button:hover {
+    background-color: var(--mx-red-light) !important;
+    color: var(--mx-red-primary) !important;
+}
+
+/* --- 19. FOOTER CLEANUP --- */
+.bd-footer {
+    padding: 3rem 0;
+    font-size: 0.9rem;
+    border-top: 1px solid rgba(0,0,0,0.05);
+}
+
+.footer-items__end {
+    color: #94a3b8;
+}
+
+.footer-items__end strong {
+    color: var(--mx-red-primary);
+}
+
+/* --- 20. CUSTOM NOTIFICATIONS (Banner) --- */
+/* Falls du oben eine Ankündigung einblendest (.. announcement::) */
+.bd-header-announcement {
+    background: linear-gradient(90deg, var(--mx-red-dark), var(--mx-red-primary)) !important;
+    color: white !important;
+    font-weight: 600;
+}
+
+/* --- END OF MANAGERX ULTIMATE RED THEME --- */
