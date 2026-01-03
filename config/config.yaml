@@ -1,0 +1,88 @@
+# ManagerX Bot Configuration
+# Diese Datei steuert die Funktionen des Bots
+
+# Ob der Bot überhaupt aktiviert ist
+enabled: true
+
+# Version des Bots (wird in der Presence angezeigt)
+version: "2.0.0"
+
+# Features aktivieren/deaktivieren
+features:
+  # Update-Checker aktivieren
+  update_checker: true
+
+  # Bot-Status in Presence anzeigen
+  bot_status: true
+
+  # Cogs (Module) aktivieren/deaktivieren
+  cogs:
+    # Spaß-Commands
+    fun:
+      gewinnt: true
+      tictactoe: true
+      weather: true
+      # Wikipedia-Modul (vollständiges Package mit 8 Submodulen)
+      # Wenn aktiviert: Lädt alle Wikipedia-Features (Suche, Zufall, Multi-Suche, etc.)
+      # Wenn deaktiviert: Wikipedia-Commands sind nicht verfügbar
+      wikipedia: true  # ← Hier auf false setzen zum Deaktivieren
+
+    # Informations-Commands
+    information:
+      botstatus: true
+      serverinfo: true
+      usermanagemt: true
+
+    # Moderations-Features
+    moderation:
+      antispam: true
+      moderation: true
+      notes: true
+      warningsystem: true
+
+    # Server-Management
+    server_management:
+      autodelete: true
+      globalchat: true
+      levelsystem: true
+      logging: true
+      stats: true
+      tempvc: true
+      welcome: true
+
+    # Entwickler-Tools
+    dev_tools:
+      logging: true
+      emojis: true
+
+    # Sonstige
+    other:
+      setlang: true
+
+# Bot-Verhalten und Limits
+bot_behavior:
+  command_prefix: "!"              # Fallback-Prefix für nicht-slash Commands
+  global_cooldown_seconds: 5       # Cooldown zwischen Commands pro User
+  max_messages_per_minute: 10      # Anti-Spam-Limit pro User
+  maintenance_mode: false          # Wartungsmodus (deaktiviert alle Commands)
+
+# UI und Embeds
+ui:
+  embed_color: "#00ff00"            # Hex-Farbe für Embeds (z.B. grün)
+  footer_text: "ManagerX Bot"      # Standard-Footer-Text
+  theme: "dark"                    # dark, light, custom
+  show_timestamps: true            # Timestamps in Embeds anzeigen
+
+# Sicherheit und Permissions
+security:
+  required_permissions: ["manage_messages", "kick_members"]  # Erforderliche Permissions für Moderations-Commands
+  blacklist_servers: []            # Liste verbotener Server-IDs
+  whitelist_users: []              # Erlaubte User-IDs (für private Bots)
+  enable_command_logging: true     # Commands loggen
+
+# Performance und Ressourcen
+performance:
+  max_concurrent_tasks: 10         # Max. gleichzeitige Tasks
+  task_timeout_seconds: 30         # Timeout für langlaufende Tasks
+  memory_limit_mb: 512             # Memory-Limit für den Bot
+  enable_gc_optimization: true     # Garbage Collection optimieren

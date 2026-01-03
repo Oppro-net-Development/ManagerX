@@ -12,8 +12,8 @@ sys.path.insert(0, os.path.abspath('../src'))
 project = 'ManagerX'
 copyright = '2025, OPPRO.NET Network'
 author = 'OPPRO.NET Development'
-release = '1.7.2'
-version = '1.7'       # Kurzversion
+release = '2.0.0'
+version = '2.0'       # Kurzversion
 language = 'en'
 
 # -- General configuration ---------------------------------------------------
@@ -53,7 +53,11 @@ myst_enable_extensions = [
 
 # -- Options for HTML output -------------------------------------------------
 html_theme = 'pydata_sphinx_theme'
+html_favicon = "_static/managerx.png"
 html_static_path = ['_static']
+html_css_files = [
+    'custom.css',
+]
 html_theme_options = {
     "icon_links": [
         {

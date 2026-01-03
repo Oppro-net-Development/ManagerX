@@ -1,109 +1,80 @@
-Welcome to ManagerX Documentation
-==================================
+==========================
+ManagerX Documentation
+==========================
 
-.. image:: https://img.shields.io/badge/Version-1.7.2-blue.svg
-   :target: https://github.com/Oppro-net-Development/ManagerX
-   :alt: Version 1.7.2
+.. container:: mx-hero
 
-.. image:: https://img.shields.io/badge/Python-3.8+-green.svg
-   :alt: Python 3.8+
+   .. image:: https://img.shields.io/badge/Version-1.7.2-e11d48?style=for-the-badge
+      :target: https://github.com/Oppro-net-Development/ManagerX
+      :alt: Version 1.7.2
 
-.. image:: https://img.shields.io/badge/License-MIT-yellow.svg
-   :alt: MIT License
+   .. image:: https://img.shields.io/badge/Python-3.8+-green.svg?style=for-the-badge
+      :alt: Python 3.8+
 
-Welcome! 👋
------------
+   .. image:: https://img.shields.io/badge/License-GPL.3.0-yellow.svg?style=for-the-badge
+      :alt: GPL.3.0 License
 
-**ManagerX** is a powerful and feature-rich Discord bot designed to help server administrators manage their communities effectively. With comprehensive moderation tools, fun commands, information services, and customization options, ManagerX provides everything you need to create an engaging and well-managed Discord server.
+   **The Ultimate Discord Management Solution**
+   
+   ManagerX is a powerful, feature-rich Discord bot designed to help server administrators manage their communities with precision. From advanced moderation to engaging entertainment, ManagerX is your all-in-one tool.
 
-Quick Links
------------
+   `GitHub Repository <https://github.com/Oppro-net-Development/ManagerX>`_ | `Report an Issue <https://github.com/Oppro-net-Development/ManagerX/issues>`_
 
-- 📖 `User Guide <user_guide/index.html>`_ - Learn how to use ManagerX commands
-- 👨‍💻 `Developer Guide <dev_guide/index.html>`_ - Understand the architecture and extend ManagerX
-- 🐙 `GitHub Repository <https://github.com/Oppro-net-Development/ManagerX>`_
-- 📋 `License <https://github.com/Oppro-net-Development/ManagerX/blob/main/LICENSE>`_
+---
+
+.. container:: mx-grid-2
+
+   .. container:: mx-card
+
+      **📖 User Guide**
+      Learn how to invite ManagerX, set up your server, and master all available commands.
+      
+      `Open User Guide <user_guide/index.html>`_
+
+   .. container:: mx-card
+
+      **👨‍💻 Developer Guide**
+      Deep dive into the architecture, SQLite database schemas, and how to extend the bot.
+      
+      `Open Developer Guide <dev_guide/index.html>`_
+
+---
 
 Key Features
 ------------
 
-🛡️ **Moderation**
-   - Comprehensive anti-spam system
-   - Warning and timeout system
-   - User ban and kick functionality
-   - Slowmode and message management
+.. container:: mx-grid-2
 
-🎮 **Fun Commands**
-   - Wikipedia search and random articles
-   - Jokes and entertainment
-   - Tic Tac Toe and Connect 4 games
-   - Weather information
-
-📊 **Information & Statistics**
-   - Server info and statistics
-   - User profiles and information
-   - Bot status and uptime tracking
-   - Level system with XP tracking
-
-⚙️ **Server Management**
-   - Welcome messages with customization
-   - Auto-delete messages
-   - Global chat network
-   - Temporary voice channels
-   - Custom logging and notifications
-
-🗄️ **Data Persistence**
-   - SQLite databases for all features
-   - Automatic data migration
-   - Configuration management
-
-Documentation Structure
------------------------
-
-This documentation is organized into two main sections:
-
-**User Guide**
-   Everything you need to know to use ManagerX on your Discord server. Includes:
+   .. container:: mx-box
    
-   - Command reference for all features
-   - Setup and configuration instructions
-   - Feature guides and tutorials
+      🛡️ **Advanced Moderation**
+      Comprehensive anti-spam, warning systems, timeouts, and automated ban/kick functionality to keep your server safe.
 
-**Developer Guide**
-   For developers who want to understand or extend ManagerX. Includes:
+   .. container:: mx-box
    
-   - Architecture overview
-   - Cog system documentation
-   - Database structure and handlers
-   - Error handling and logging
-   - Best practices and patterns
+      🎮 **Entertainment & Fun**
+      Integrated Wikipedia search, Jokes, Weather info, and classic games like Tic Tac Toe and Connect 4.
 
-Getting Started
----------------
+   .. container:: mx-box
+   
+      📊 **Stats & Information**
+      Detailed server statistics, user profiles, bot status tracking, and a robust XP-based leveling system.
 
-**For Users:**
+   .. container:: mx-box
+   
+      ⚙️ **Server Management**
+      Custom welcome messages, auto-delete filters, global chat networks, and temporary voice channels.
 
-1. Invite ManagerX to your server
-2. Read the `User Guide <user_guide/index.html>`_
-3. Configure commands for your needs
-4. Start using ManagerX!
-
-**For Developers:**
-
-1. Clone the `GitHub repository <https://github.com/Oppro-net-Development/ManagerX>`_
-2. Review the `Developer Guide <dev_guide/index.html>`_
-3. Explore the codebase
-4. Contribute improvements!
-
-Supported Features by Category
-------------------------------
+Detailed Feature Overview
+-------------------------
 
 .. list-table::
    :header-rows: 1
    :widths: 25 75
+   :class: docutils
 
    * - Category
-     - Features
+     - Included Features
    * - **Fun Commands**
      - Wikipedia (search, random), Jokes, Tic Tac Toe, Connect 4, Weather
    * - **Moderation**
@@ -119,36 +90,21 @@ Frequently Asked Questions
 --------------------------
 
 **Q: How do I invite ManagerX to my server?**
-   Visit the GitHub repository and follow the invitation link.
+   Visit the GitHub repository and follow the invitation link provided in the README.
 
 **Q: How do I report bugs or request features?**
-   Open an issue on the `GitHub repository <https://github.com/Oppro-net-Development/ManagerX/issues>`_.
+   Please open an issue on the `GitHub Issues page <https://github.com/Oppro-net-Development/ManagerX/issues>`_.
 
 **Q: Can I self-host ManagerX?**
-   Yes! Check the `Developer Guide <dev_guide/index.html>`_ for setup instructions.
+   Yes! Detailed setup instructions for self-hosting can be found in the `Developer Guide <dev_guide/index.html>`_.
 
 **Q: Which Python version is required?**
-   Python 3.8 or higher is required.
-
-**Q: Is ManagerX open source?**
-   Yes, ManagerX is fully open source under the MIT License.
+   ManagerX requires **Python 3.8** or higher to function correctly.
 
 Contributing
 ------------
 
-We welcome contributions! Please see our GitHub repository for:
-
-- Bug reports
-- Feature requests
-- Code contributions
-- Documentation improvements
-
-Community & Support
--------------------
-
-- **GitHub:** `Oppro-net-Development/ManagerX <https://github.com/Oppro-net-Development/ManagerX>`_
-- **Issues:** `Report bugs or request features <https://github.com/Oppro-net-Development/ManagerX/issues>`_
-- **License:** MIT License
+We welcome contributions from the community! Whether it's bug reports, feature requests, or code improvements, feel free to get involved via our `GitHub Repository <https://github.com/Oppro-net-Development/ManagerX>`_. For more details, check the **Contributing** section in the Developer Guide.
 
 .. toctree::
    :maxdepth: 2
@@ -157,9 +113,9 @@ Community & Support
 
    User Guide <user_guide/index>
    Developer Guide <dev_guide/index>
+   Changelog & Releases <releases/index>
 
 ---
 
 **© 2025 OPPRO.NET Network**
-
-Version 1.7.2-alpha | Last Updated: December 7, 2025
+*Version 2.0.0-dev | Last Updated: December 7, 2025*

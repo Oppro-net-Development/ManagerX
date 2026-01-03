@@ -1,0 +1,30 @@
+Release of Version 1.3LOG
+==========================
+
+🛠️ **Update:** Version 1.3LOG  
+
+**Released by:** @Medicopter117  
+
+---
+
+📦 **New Files**
+
+- `FastCoding/backend/database/logging_db.py` – New database module for logging functions
+
+- `cogs/Servermanament/logging.py` – New cog for logging management
+
+✏️ **Modified Files**
+
+- `FastCoding/backend/database/__init__.py`
+
+- `FastCoding/backend/database/globalchat_db.py`
+
+- `FastCoding/backend/logging.py`
+
+- `cogs/informationen/botstatus.py`
+
+📝 **Description**
+
+This update extends the backend with a new logging system including database integration and a bot cog. Existing modules were also improved and optimized.
+
+✨ **Developed by:** OPPRO.NET Development

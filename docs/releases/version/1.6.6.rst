@@ -1,0 +1,16 @@
+Release of Version 1.6.6
+=========================
+
+🛠️ **Update:** Version 1.6.6  
+
+**Released by:** @Medicopter117  
+
+**Release Date:** Sep 11  
+
+📝 **Description**
+
+Minor fixes and updates. Full changelog: V1.6.5 → V1.6.6  
+
+**Contributors**
+
+- @Medicopter117
