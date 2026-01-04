@@ -66,3 +66,12 @@ Best Practices
 - Use ManagerX’s `SimpleColoredLogs` for logging plugin events and errors.
 - Follow existing naming and coding conventions for compatibility.
 - For PyPi plugins, include versioning, dependencies, and metadata in your package.
+
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Next Steps
+
+   Create a PyPi Plugin <create_pypi_plugin>
+   Local Cog Development <create_local_plugin>
+    Plugin Guidelines <plugin_guidelines>
