@@ -41,3 +41,5 @@ furo.js.LICENSE.txt
 fontawesome.js.LICENSE.txt
 .map
 docs/_build/*
+ManagerX.egg-info/
+dist/

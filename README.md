@@ -2,46 +2,103 @@
 
 ![ManagerX Banner](assets/img/ManagerX_banner.png)
 
-<h1>🤖 ManagerX Discord Bot</h1>
+# 🤖 ManagerX Discord Bot
 
-<h3>Der ultimative All-in-One Discord Bot für deine Community</h3>
+### *Der ultimative All-in-One Bot für professionelles Community Management*
 
 <br>
 
-<!-- Status Badges -->
+<!-- Haupt-Badges -->
 <p align="center">
-  <img src="https://img.shields.io/badge/Version-2.0.0-5865F2?style=for-the-badge&logo=discord&logoColor=white" alt="Version">
-  <img src="https://img.shields.io/badge/Next_Release-v2.1.0-00D9FF?style=for-the-badge&logo=rocket&logoColor=white" alt="Next Release">
-  <img src="https://img.shields.io/github/last-commit/Oppro-net-Development/ManagerX?style=for-the-badge&logo=git&logoColor=white&color=F05032&label=Last%20Commit" alt="Last Commit">
-  <img src="https://img.shields.io/badge/License-GPL--3.0-blue?style=for-the-badge&logo=opensourceinitiative&logoColor=white" alt="License">
+  <a href="https://github.com/Oppro-net-Development/ManagerX/releases">
+    <img src="https://img.shields.io/badge/Version-2.0.0-5865F2?style=for-the-badge&logo=discord&logoColor=white" alt="Version">
+  </a>
+  <a href="#-roadmap">
+    <img src="https://img.shields.io/badge/Next_Release-v2.1.0-00D9FF?style=for-the-badge&logo=rocket&logoColor=white" alt="Next Release">
+  </a>
+  <a href="https://github.com/Oppro-net-Development/ManagerX/commits/main">
+    <img src="https://img.shields.io/github/last-commit/Oppro-net-Development/ManagerX?style=for-the-badge&logo=git&logoColor=white&color=F05032&label=Last%20Commit" alt="Last Commit">
+  </a>
+  <a href="LICENSE">
+    <img src="https://img.shields.io/badge/License-GPL--3.0-blue?style=for-the-badge&logo=opensourceinitiative&logoColor=white" alt="License">
+  </a>
 </p>
 
+<!-- Technologie-Badges -->
 <p align="center">
   <img src="https://img.shields.io/badge/Python-3.10+-3776AB?style=flat-square&logo=python&logoColor=white" alt="Python">
   <img src="https://img.shields.io/badge/Pycord-Latest-5865F2?style=flat-square&logo=discord&logoColor=white" alt="Pycord">
+  <img src="https://img.shields.io/badge/SQLite-3-003B57?style=flat-square&logo=sqlite&logoColor=white" alt="SQLite">
   <img src="https://img.shields.io/github/issues/Oppro-net-Development/ManagerX?style=flat-square&logo=github&logoColor=white" alt="Issues">
   <img src="https://img.shields.io/github/stars/Oppro-net-Development/ManagerX?style=flat-square&logo=github&logoColor=white&color=FFD700" alt="Stars">
+  <img src="https://img.shields.io/github/forks/Oppro-net-Development/ManagerX?style=flat-square&logo=github&logoColor=white&color=00D26A" alt="Forks">
 </p>
 
 <br>
 
 ```ascii
-╔════════════════════════════════════════════════════════════════════╗
-║                                                                    ║
-║   🤖  Der professionelle Discord Bot für deine Community  🚀      ║
-║                                                                    ║
-║      Moderation • Leveling • Welcome • TempVC • Globalchat       ║
-║                                                                    ║
-╚════════════════════════════════════════════════════════════════════╝
+╔══════════════════════════════════════════════════════════════════════╗
+║                                                                      ║
+║     🤖  Professionelles Discord Bot Framework für Communities  🚀   ║
+║                                                                      ║
+║   Moderation • Leveling • Welcome • TempVC • Globalchat • Stats    ║
+║                                                                      ║
+╚══════════════════════════════════════════════════════════════════════╝
 ```
 
 <br>
 
-**Entwickelt von** [**OPPRO.NET Development**](https://github.com/Oppro-net-Development) **|** **© OPPRO.NET Network™**
+**Entwickelt von** [**OPPRO.NET Development**](https://github.com/Oppro-net-Development) **|** ⚡ **Powered by OPPRO.NET Network™**
 
 <br>
 
-[📥 Installation](#-installation) • [✨ Features](#-features) • [📖 Docs](https://docs.oppro-network.de) • [💬 Support](#-support--community)
+---
+
+## 📦 Quick Install
+
+<table>
+<tr>
+<td width="50%">
+
+### 🎯 Für End-User
+
+```bash
+# Bot direkt nutzen
+pip install ManagerX
+```
+
+**Mit Dokumentation:**
+```bash
+pip install ManagerX[docs]
+```
+
+</td>
+<td width="50%">
+
+### 👨‍💻 Für Entwickler
+
+```bash
+# Development Setup
+pip install ManagerX[dev]
+```
+
+**Vollständige Installation:**
+```bash
+pip install ManagerX[all]
+```
+
+</td>
+</tr>
+</table>
+
+<br>
+
+<p align="center">
+  <a href="#-installation"><b>📥 Detaillierte Installation</b></a> •
+  <a href="#-features"><b>✨ Features</b></a> •
+  <a href="https://docs.oppro-network.de"><b>📖 Dokumentation</b></a> •
+  <a href="#-support--community"><b>💬 Support</b></a>
+</p>
 
 </div>
 
@@ -49,45 +106,85 @@
 
 ---
 
+<div align="center">
+
 ## 🎯 Was ist ManagerX?
+
+</div>
 
 <table>
 <tr>
-<td width="60%">
+<td width="55%">
 
-**ManagerX** ist ein hochmoderner, leistungsstarker Discord-Bot, der speziell für professionelles Community-Management entwickelt wurde. Mit einer Vielzahl an Features von automatisierter Moderation über interaktive Levelsysteme bis hin zu globaler Kommunikation bietet ManagerX alles, was moderne Discord-Server benötigen.
+**ManagerX** ist ein hochmoderner, leistungsstarker Discord-Bot, der speziell für professionelles Community-Management entwickelt wurde. Mit modernster Architektur und einer Vielzahl an Features bietet ManagerX alles, was anspruchsvolle Discord-Server benötigen.
 
-### 🌟 Warum ManagerX wählen?
+<br>
 
-- ⚡ **Performance** – Optimierte Datenbank-Architektur mit SQLite
-- 🛡️ **Sicherheit** – Integriertes Anti-Spam und umfassende Moderationstools
-- 🎨 **Flexibilität** – Vollständig konfigurierbare Module für jeden Server
-- 🌍 **Konnektivität** – Globalchat verbindet Communities weltweit
-- 📈 **Aktive Entwicklung** – Regelmäßige Updates und neue Features
-- 🆓 **Open Source** – Transparent und community-driven
+### 🌟 Warum ManagerX?
+
+<table>
+<tr>
+<td align="center">⚡</td>
+<td><b>Blazing Fast</b><br>Optimierte SQLite-Architektur für maximale Performance</td>
+</tr>
+<tr>
+<td align="center">🛡️</td>
+<td><b>Enterprise Security</b><br>Anti-Spam, Moderation-Logs und umfassende Sicherheitsfeatures</td>
+</tr>
+<tr>
+<td align="center">🎨</td>
+<td><b>Hochgradig Anpassbar</b><br>Jedes Modul vollständig konfigurierbar für deine Bedürfnisse</td>
+</tr>
+<tr>
+<td align="center">🌍</td>
+<td><b>Global Connected</b><br>Verbinde deine Community mit Servern weltweit via Globalchat</td>
+</tr>
+<tr>
+<td align="center">📈</td>
+<td><b>Aktive Entwicklung</b><br>Regelmäßige Updates mit neuen Features und Verbesserungen</td>
+</tr>
+<tr>
+<td align="center">🆓</td>
+<td><b>100% Open Source</b><br>Transparent, community-driven und kostenlos verfügbar</td>
+</tr>
+</table>
 
 </td>
-<td width="40%">
+<td width="45%">
 
 ```yaml
-Quick Stats:
-  Status: Production Ready
-  Version: 2.0.0
-  Python: 3.10+
-  Framework: py-cord + ezcord
-  Database: SQLite3
-  Hosting: Linux Compatible
-  License: GPL-3.0
+⚙️ Technical Specifications
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Status:         Production Ready ✓
+Current:        v2.0.0
+Next Release:   v2.1.0 (Q1 2025)
 
-Active Modules:
-  - Moderation System
-  - Level & XP System
-  - Welcome System
-  - Temporary Voice Channels
-  - Global Chat
-  - Weather Integration
-  - Wikipedia Search
-  - Stats & Analytics
+🔧 Technology Stack
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Language:       Python 3.10+
+Framework:      py-cord + ezcord
+Database:       SQLite3
+API:            Discord API v10
+Architecture:   Modular Cogs System
+
+🌐 Deployment
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Platforms:      Linux, Windows, macOS
+Hosting:        Cloud-Ready
+Requirements:   512MB RAM (1GB+ rec.)
+Uptime:         99.9%+ Verfügbarkeit
+
+📦 Active Modules
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✓ Advanced Moderation System
+✓ Dynamic Leveling & XP Engine
+✓ Smart Welcome Automation
+✓ Temporary Voice Channels
+✓ Global Cross-Server Chat
+✓ Real-Time Weather Data
+✓ Wikipedia Integration
+✓ Comprehensive Statistics
+✓ Custom Command Framework
 ```
 
 </td>
@@ -98,7 +195,15 @@ Active Modules:
 
 ---
 
+<div align="center">
+
 ## ✨ Feature-Übersicht
+
+*Entdecke die leistungsstarken Module von ManagerX*
+
+</div>
+
+<br>
 
 <table>
 <tr>
@@ -106,81 +211,159 @@ Active Modules:
 
 ### 🛡️ Moderation & Sicherheit
 
-**Advanced Moderation Tools**
-- ✅ Ban, Kick, Mute, Warn Befehle
-- ✅ Intelligentes Anti-Spam System
-- ✅ Automatisches Warning-Management
-- ✅ Detaillierte Moderation-Logs
-- ✅ Temporäre Strafen (Timeout)
-- ✅ Reason-Tracking für alle Actions
+<div align="center">
 
-**Konfigurierbare Schwellenwerte**
-- Nachrichten pro Zeiteinheit
-- Duplicate Message Detection
-- Mention Spam Protection
-- Link Spam Filter
-- Custom Regex Patterns
+**🔒 Advanced Moderation Toolkit**
+
+</div>
+
+```yaml
+Moderation Commands:
+  /ban      - Permanenter Server-Ausschluss
+  /kick     - User vom Server entfernen
+  /mute     - Temporäres Timeout verhängen
+  /warn     - Verwarnungen aussprechen
+  /timeout  - Zeitlich begrenzte Stummschaltung
+  /purge    - Massen-Nachrichtenlöschung
+
+Anti-Spam Engine:
+  ✓ Intelligente Spam-Erkennung
+  ✓ Duplicate Message Detection
+  ✓ Mention Spam Protection
+  ✓ Link & URL Filter
+  ✓ Custom Regex Patterns
+  ✓ Configurable Thresholds
+
+Moderation Logs:
+  ✓ Vollständige Action History
+  ✓ Reason Tracking
+  ✓ Moderator Attribution
+  ✓ Automatic Evidence Collection
+  ✓ Appeal System Ready
+```
 
 <br>
 
 ### 📊 Community Engagement
 
-**Levelsystem**
-- ✅ Vollständig anpassbares XP-System
-- ✅ Rollenbelohnungen für Level-Ups
-- ✅ Server & Global Leaderboards
-- ✅ Individuelle Level-Up Notifications
-- ✅ XP-Multiplikatoren & Boosts
-- ✅ Voice-Channel XP-Tracking
+<div align="center">
 
-**Welcome-System**
-- ✅ Automatische Begrüßungsnachrichten
-- ✅ Custom Embed Designs
-- ✅ Regel- & Informationsnachrichten
-- ✅ Automatische Autorollen
-- ✅ User-Counter Integration
+**🎮 Gamification & Engagement**
+
+</div>
+
+```yaml
+Levelsystem Features:
+  XP System:
+    - Vollständig anpassbare XP-Raten
+    - Text & Voice Channel XP
+    - XP-Multiplier & Boosts
+    - Daily/Weekly Bonuses
+  
+  Rewards:
+    - Automatische Rollenbelohnungen
+    - Custom Level-Up Messages
+    - Achievement System
+    - Milestone Rewards
+  
+  Leaderboards:
+    - Server Top Rankings
+    - Global Leaderboards
+    - Category-Specific Rankings
+    - Historical Statistics
+
+Welcome System:
+  ✓ Benutzerdefinierte Embed-Designs
+  ✓ Auto-Role Assignment
+  ✓ Regel- & Info-Nachrichten
+  ✓ User Counter Integration
+  ✓ Custom Welcome Images
+  ✓ Join/Leave Logging
+```
 
 </td>
 <td width="50%" valign="top">
 
-### 🌐 Social & Information
+### 🌐 Social & Communication
 
-**Globalchat System**
-- ✅ Echtzeit-Chat mit anderen Servern
-- ✅ Moderierte und sichere Kommunikation
-- ✅ Blacklist-System für Content-Filterung
-- ✅ Server-übergreifende Reputation
-- ✅ Report & Block Funktionen
-- ✅ Admin-Kontrolle & Moderation
+<div align="center">
 
-**Wikipedia Integration**
-- ✅ Direkte Wikipedia-Suche
-- ✅ Formatierte Artikel-Previews
-- ✅ Mehrsprachige Unterstützung
-- ✅ Schnelle Informationsabfrage
+**💬 Cross-Server Communication**
 
-**Weather System**
-- ✅ Live-Wetterinformationen
-- ✅ Detaillierte Vorhersagen
-- ✅ Temperatur, Luftfeuchtigkeit, Wind
-- ✅ Automatische Standorterkennung
+</div>
+
+```yaml
+Globalchat System:
+  Core Features:
+    - Echtzeit Cross-Server Chat
+    - Moderierte Kommunikation
+    - Server-übergreifende Community
+    - Report & Block Funktionen
+    - User Reputation System
+  
+  Safety Features:
+    ✓ Content-Filterung
+    ✓ Blacklist System
+    ✓ Admin-Kontrolle
+    ✓ Spam Prevention
+    ✓ Moderation Queue
+    ✓ Appeal Process
+
+Information Tools:
+  Wikipedia Integration:
+    - Direkte Artikelsuche
+    - Formatierte Previews
+    - Multi-Language Support
+    - Related Articles
+    - Quick Summaries
+  
+  Weather System:
+    - Live-Wetterdaten
+    - 5-Tage Vorhersage
+    - Detaillierte Metriken
+    - Location Auto-Detection
+    - Weather Alerts
+```
 
 <br>
 
 ### 🎮 Interaktive Features
 
-**Temporary Voice Channels**
-- ✅ User erstellen eigene Voice-Channel
-- ✅ Individuelle Kanalverwaltung
-- ✅ User-Limit & Permissions
-- ✅ Auto-Delete bei Inaktivität
-- ✅ Custom Namen & Kategorien
+<div align="center">
 
-**Stats & Analytics**
-- ✅ Server-Statistiken in Echtzeit
-- ✅ User-Activity Tracking
-- ✅ Command-Usage Analytics
-- ✅ Performance Metriken
+**🎙️ Dynamic Voice & Analytics**
+
+</div>
+
+```yaml
+Temporary Voice Channels:
+  User Control:
+    ✓ Eigene Voice-Channel erstellen
+    ✓ Custom Namen & Beschreibung
+    ✓ User-Limit Management
+    ✓ Permission Control
+    ✓ Channel Transfer
+  
+  Automation:
+    - Auto-Delete bei Inaktivität
+    - Category Organization
+    - Template System
+    - VIP Channel Options
+
+Stats & Analytics:
+  Real-Time Metrics:
+    - Server Activity Tracking
+    - User Engagement Stats
+    - Command Usage Analytics
+    - Voice Channel Statistics
+    - Growth Metrics
+  
+  Reports:
+    ✓ Daily/Weekly Summaries
+    ✓ Performance Dashboards
+    ✓ Member Insights
+    ✓ Trend Analysis
+```
 
 </td>
 </tr>
@@ -190,100 +373,426 @@ Active Modules:
 
 ---
 
-## 🚀 Installation
+<div align="center">
+
+## 🚀 Installation & Setup
+
+*Starte ManagerX in wenigen Minuten*
+
+</div>
+
+<br>
 
 ### 📋 Systemanforderungen
 
-```yaml
-Minimum Requirements:
-  OS: Linux / Windows / macOS
-  Python: 3.10 oder höher
-  RAM: 512 MB (empfohlen: 1 GB+)
-  Storage: 200 MB freier Speicher
-  Network: Stabile Internetverbindung
+<table>
+<tr>
+<td width="50%">
 
-Benötigte Services:
-  Discord Bot Token: discord.com/developers/applications
-  Database: SQLite3 (vorinstalliert)
+**Minimum Requirements**
+
+```yaml
+Operating System:
+  - Linux (Ubuntu 20.04+)
+  - Windows 10/11
+  - macOS 11+
+
+Software:
+  - Python 3.10 oder höher
+  - pip (Python Package Manager)
+  - Git 2.0+
+
+Resources:
+  - RAM: 512 MB minimum
+  - Storage: 200 MB freier Speicher
+  - Network: Stabile Internetverbindung
 ```
+
+</td>
+<td width="50%">
+
+**Empfohlene Konfiguration**
+
+```yaml
+Production Environment:
+  - Linux Server (Ubuntu 22.04 LTS)
+  - Python 3.11+
+  - 1 GB+ RAM
+  - SSD Storage
+  - 24/7 Uptime Hosting
+
+Optional Services:
+  - Discord Bot Token (Required)
+  - Weather API Key (Optional)
+  - Custom Domain (Optional)
+  - SSL Certificate (Optional)
+```
+
+</td>
+</tr>
+</table>
 
 <br>
 
-### ⚡ Quick Start Guide
+### ⚡ Installation Guide
 
-**Linux / macOS:**
+<details>
+<summary><b>🐧 Linux / macOS Installation</b> (Click to expand)</summary>
+
+<br>
+
 ```bash
-# 1. Repository klonen
+# ──────────────────────────────────────────────────────────
+# Step 1: Repository klonen
+# ──────────────────────────────────────────────────────────
 git clone https://github.com/Oppro-net-Development/ManagerX.git
 cd ManagerX
 
-# 2. Python Virtual Environment erstellen (empfohlen)
+# ──────────────────────────────────────────────────────────
+# Step 2: Virtual Environment erstellen (empfohlen)
+# ──────────────────────────────────────────────────────────
 python3 -m venv venv
 source venv/bin/activate
 
-# 3. Dependencies installieren
+# ──────────────────────────────────────────────────────────
+# Step 3: Dependencies installieren
+# ──────────────────────────────────────────────────────────
+pip install --upgrade pip
 pip install -r requirements.txt
 
-# 4. Konfiguration erstellen
+# ──────────────────────────────────────────────────────────
+# Step 4: Konfiguration erstellen
+# ──────────────────────────────────────────────────────────
 cp .env.example .env
-nano .env  # TOKEN und andere Einstellungen anpassen
+nano .env  # Passe TOKEN und andere Einstellungen an
 
-# 5. Bot starten
+# ──────────────────────────────────────────────────────────
+# Step 5: Erste Datenbankinitialisierung
+# ──────────────────────────────────────────────────────────
+python -c "from utils.database import init_db; init_db()"
+
+# ──────────────────────────────────────────────────────────
+# Step 6: Bot starten
+# ──────────────────────────────────────────────────────────
 python main.py
+
+# ──────────────────────────────────────────────────────────
+# Optional: Systemd Service erstellen (für 24/7 Betrieb)
+# ──────────────────────────────────────────────────────────
+sudo nano /etc/systemd/system/managerx.service
+# Füge Service-Konfiguration hinzu (siehe Dokumentation)
+sudo systemctl enable managerx
+sudo systemctl start managerx
 ```
 
-**Windows:**
-```powershell
-# 1. Repository klonen
-git clone https://github.com/Oppro-net-Development/ManagerX.git
-cd ManagerX
+</details>
 
-# 2. Virtual Environment erstellen
-python -m venv venv
-venv\Scripts\activate
-
-# 3. Dependencies installieren
-pip install -r req.txt
-
-# 4. Konfiguration
-copy .env.example .env
-notepad .env  # TOKEN anpassen
-
-# 5. Bot starten
-python main.py
-```
+<details>
+<summary><b>🪟 Windows Installation</b> (Click to expand)</summary>
 
 <br>
 
-### 🔧 Konfiguration (.env)
+```powershell
+# ──────────────────────────────────────────────────────────
+# Step 1: Repository klonen
+# ──────────────────────────────────────────────────────────
+git clone https://github.com/Oppro-net-Development/ManagerX.git
+cd ManagerX
+
+# ──────────────────────────────────────────────────────────
+# Step 2: Virtual Environment erstellen
+# ──────────────────────────────────────────────────────────
+python -m venv venv
+venv\Scripts\activate
+
+# ──────────────────────────────────────────────────────────
+# Step 3: Dependencies installieren
+# ──────────────────────────────────────────────────────────
+python -m pip install --upgrade pip
+pip install -r req.txt
+
+# ──────────────────────────────────────────────────────────
+# Step 4: Konfiguration erstellen
+# ──────────────────────────────────────────────────────────
+copy .env.example .env
+notepad .env  # TOKEN und Einstellungen anpassen
+
+# ──────────────────────────────────────────────────────────
+# Step 5: Datenbank initialisieren
+# ──────────────────────────────────────────────────────────
+python -c "from utils.database import init_db; init_db()"
+
+# ──────────────────────────────────────────────────────────
+# Step 6: Bot starten
+# ──────────────────────────────────────────────────────────
+python main.py
+
+# ──────────────────────────────────────────────────────────
+# Optional: Als Windows Service einrichten
+# ──────────────────────────────────────────────────────────
+# Siehe Dokumentation für NSSM Setup
+```
+
+</details>
+
+<br>
+
+### 🔧 Konfiguration
+
+<table>
+<tr>
+<td width="60%">
+
+**Environment Variables (.env)**
 
 ```bash
+# ════════════════════════════════════════════════
 # Discord Bot Configuration
+# ════════════════════════════════════════════════
 DISCORD_TOKEN=your_bot_token_here
-WEATHER_API=your_Weather_API_Key
 DISCORD_CLIENT_ID=your_client_id
 DISCORD_CLIENT_SECRET=your_client_secret
-DISCORD_REDIRECT_URI=your_redirect_uri
+DISCORD_REDIRECT_URI=http://localhost:8080/callback
+
+# ════════════════════════════════════════════════
+# Optional API Keys
+# ════════════════════════════════════════════════
+WEATHER_API=your_openweathermap_api_key
+
+# ════════════════════════════════════════════════
+# Bot Settings
+# ════════════════════════════════════════════════
+BOT_PREFIX=!
+DEBUG_MODE=false
+LOG_LEVEL=INFO
+
+# ════════════════════════════════════════════════
+# Database Configuration
+# ════════════════════════════════════════════════
+DATABASE_PATH=./data/managerx.db
+BACKUP_ENABLED=true
+BACKUP_INTERVAL=24h
 ```
+
+</td>
+<td width="40%">
+
+**📍 Token erstellen**
+
+1. Besuche [Discord Developer Portal](https://discord.com/developers/applications)
+2. Klicke auf "New Application"
+3. Gehe zu "Bot" → "Add Bot"
+4. Kopiere den Token
+5. Füge ihn in `.env` ein
+
+**🔑 Wichtige Berechtigungen**
+
+```yaml
+Required Intents:
+  ✓ Server Members Intent
+  ✓ Message Content Intent
+  ✓ Presence Intent
+
+Bot Permissions:
+  ✓ Manage Roles
+  ✓ Manage Channels
+  ✓ Kick Members
+  ✓ Ban Members
+  ✓ Send Messages
+  ✓ Embed Links
+  ✓ Attach Files
+  ✓ Manage Messages
+  ✓ Read Message History
+```
+
+**🌦️ Weather API**
+
+Kostenloser API-Key: [OpenWeatherMap](https://openweathermap.org/api)
+
+</td>
+</tr>
+</table>
 
 <br>
 
 ---
 
-## 📋 Version History & Changelog
+<div align="center">
+
+## 📋 Version History & Roadmap
+
+*Entwicklungsgeschichte und zukünftige Features*
+
+</div>
+
+<br>
+
+### 🔄 Release Timeline
+
+```mermaid
+gantt
+    title ManagerX Development Timeline
+    dateFormat YYYY-MM-DD
+    section Releases
+    v1.0.0 Initial Release     :done, 2023-01-01, 30d
+    v1.5.0 Welcome System      :done, 2023-05-01, 45d
+    v1.6.0 Levelsystem         :done, 2023-08-01, 60d
+    v1.7.0 TempVC System       :done, 2023-11-01, 45d
+    v2.0.0 Major Refactor      :done, 2024-06-01, 90d
+    v2.1.0 Enhancements        :active, 2025-01-01, 60d
+    v2.5.0 Advanced Features   :2025-04-01, 90d
+```
+
+<br>
+
+<table>
+<tr>
+<td align="center" width="20%"><b>Version</b></td>
+<td align="center" width="15%"><b>Status</b></td>
+<td align="center" width="15%"><b>Datum</b></td>
+<td align="center" width="50%"><b>Key Features</b></td>
+</tr>
+<tr>
+<td align="center"><b>v2.1.0</b></td>
+<td align="center">🔜 <i>In Dev</i></td>
+<td align="center">Q1 2025</td>
+<td>
+• Performance Optimierungen<br>
+• Bug Fixes & Stability<br>
+• Enhanced Error Handling<br>
+• UI/UX Improvements
+</td>
+</tr>
+<tr>
+<td align="center"><b>v2.0.0</b></td>
+<td align="center">✅ <i>Current</i></td>
+<td align="center">2024-12</td>
+<td>
+• Komplettes Code Refactoring<br>
+• Globalchat v2 Launch<br>
+• Enhanced Statistics Module<br>
+• Improved Database Architecture
+</td>
+</tr>
+<tr>
+<td align="center"><b>v1.7.1</b></td>
+<td align="center">📦 <i>Stable</i></td>
+<td align="center">2024-08</td>
+<td>
+• Feature Enhancements<br>
+• Critical Bug Fixes<br>
+• Security Updates
+</td>
+</tr>
+<tr>
+<td align="center"><b>v1.7.0</b></td>
+<td align="center">📦 <i>Archived</i></td>
+<td align="center">2024-05</td>
+<td>
+• TempVC System Implementation<br>
+• Dynamic Voice Channel Management<br>
+• User Control Features
+</td>
+</tr>
+<tr>
+<td align="center"><b>v1.6.0</b></td>
+<td align="center">📦 <i>Archived</i></td>
+<td align="center">2024-02</td>
+<td>
+• Advanced Levelsystem<br>
+• XP & Rewards Engine<br>
+• Leaderboard System
+</td>
+</tr>
+<tr>
+<td align="center"><b>v1.5.0</b></td>
+<td align="center">📦 <i>Archived</i></td>
+<td align="center">2023-11</td>
+<td>
+• Welcome System Launch<br>
+• Auto-Role Assignment<br>
+• Custom Embeds
+</td>
+</tr>
+</table>
+
+<br>
+
+### 🗺️ Roadmap
+
+<table>
+<tr>
+<td width="33%" valign="top">
+
+**🎯 v2.1.0 - Q1 2025**
+
+```yaml
+Focus: Stability & Polish
+
+Features:
+  - Performance Tuning
+  - Memory Optimization
+  - Enhanced Logging
+  - Bug Fixes
+
+Improvements:
+  - Error Recovery
+  - Database Indexing
+  - Command Response Time
+  - Resource Management
+```
+
+</td>
+<td width="33%" valign="top">
+
+**🚀 v2.2.0 - Q2 2025**
+
+```yaml
+Focus: New Features
+
+Planned Features:
+  - Ticket System
+  - Advanced Polls
+  - Music Module
+  - Custom Commands 2.0
+  
+Enhancements:
+  - AI Integration
+  - Multi-Language Support
+  - Enhanced Analytics
+  - API Webhooks
+```
+
+</td>
+<td width="33%" valign="top">
+
+**💫 v2.3.0 - Q4 2025**
+
+```yaml
+Focus: Major Upgrade
+
+Revolutionary Features:
+  - Web Dashboard
+  - Mobile App Support
+  - Plugin System
+  - Advanced AI Features
+  
+Architecture:
+  - Microservices
+  - Cloud-Native
+  - Horizontal Scaling
+  - GraphQL API
+```
+
+</td>
+</tr>
+</table>
+
+<br>
 
 <div align="center">
 
-| Version | Status | Highlights |
-|---------|--------|------------|
-| **v2.1.0** | 🔜 In Development | Bug Fixes, Performance Improvements |
-| **v2.0.0** | ✅ Current | Refactored Codebase, Enhanced Stats, Globalchat v2 |
-| **v1.7.1** | 📦 Stable | Enhanced Features, Bug Fixes |
-| **v1.7.0** | 📦 Archived | TempVC System Implementation |
-| **v1.6.0** | 📦 Archived | Levelsystem Launch |
-| **v1.5.0** | 📦 Archived | Welcome System |
-
-[📖 View Full Changelog →](CHANGELOG.md)
+[📖 **Vollständiges Changelog anzeigen** →](CHANGELOG.md)
 
 </div>
 
@@ -291,47 +800,116 @@ DISCORD_REDIRECT_URI=your_redirect_uri
 
 ---
 
+<div align="center">
+
 ## 🤝 Contributing & Development
 
-### 💻 Werde Teil des Projekts!
+*Werde Teil unseres Open-Source Projekts!*
 
-Wir freuen uns über Contributions von der Community. Hier sind unsere Commit-Konventionen:
+</div>
+
+<br>
+
+### 💡 Wie kann ich beitragen?
 
 <table>
 <tr>
-<td align="center"><b>Präfix</b></td>
-<td><b>Beschreibung</b></td>
-<td><b>Beispiel</b></td>
+<td width="25%" align="center">
+
+**🐛 Bug Reports**
+
+Fehler gefunden?<br>
+[Issue erstellen →](https://github.com/Oppro-net-Development/ManagerX/issues/new?template=bug_report.md)
+
+</td>
+<td width="25%" align="center">
+
+**✨ Feature Requests**
+
+Idee für ein Feature?<br>
+[Feature vorschlagen →](https://github.com/Oppro-net-Development/ManagerX/issues/new?template=feature_request.md)
+
+</td>
+<td width="25%" align="center">
+
+**💻 Code Beiträge**
+
+Code beisteuern?<br>
+[Pull Request →](https://github.com/Oppro-net-Development/ManagerX/pulls)
+
+</td>
+<td width="25%" align="center">
+
+**📖 Dokumentation**
+
+Docs verbessern?<br>
+[Docs bearbeiten →](https://github.com/Oppro-net-Development/ManagerX-Docs)
+
+</td>
+</tr>
+</table>
+
+<br>
+
+### 📝 Commit-Konventionen
+
+Wir verwenden standardisierte Commit-Prefixes für bessere Nachvollziehbarkeit:
+
+<table>
+<tr>
+<td width="20%" align="center"><b>Präfix</b></td>
+<td width="30%"><b>Verwendung</b></td>
+<td width="50%"><b>Beispiel</b></td>
 </tr>
 <tr>
-<td align="center"><code>FEATURE:</code></td>
+<td align="center"><code>✨ FEATURE:</code></td>
 <td>Neue Funktion hinzugefügt</td>
-<td><code>FEATURE: Add weather command</code></td>
+<td><code>✨ FEATURE: Add weather command integration</code></td>
 </tr>
 <tr>
-<td align="center"><code>UPDATE:</code></td>
-<td>Bestehende Funktion aktualisiert</td>
-<td><code>UPDATE: Improve levelsystem performance</code></td>
+<td align="center"><code>🔄 UPDATE:</code></td>
+<td>Bestehende Funktion verbessert</td>
+<td><code>🔄 UPDATE: Improve levelsystem performance by 40%</code></td>
 </tr>
 <tr>
-<td align="center"><code>BUGFIX:</code></td>
-<td>Normaler Fehler behoben</td>
-<td><code>BUGFIX: Fix welcome message formatting</code></td>
+<td align="center"><code>🐛 BUGFIX:</code></td>
+<td>Bug behoben (normal)</td>
+<td><code>🐛 BUGFIX: Fix welcome message formatting issue</code></td>
 </tr>
 <tr>
-<td align="center"><code>HOTFIX:</code></td>
-<td>Kritischer Fehler behoben</td>
-<td><code>HOTFIX: Resolve database connection issues</code></td>
+<td align="center"><code>🚑 HOTFIX:</code></td>
+<td>Kritischer Bug behoben</td>
+<td><code>🚑 HOTFIX: Resolve critical database connection error</code></td>
 </tr>
 <tr>
-<td align="center"><code>DOCS:</code></td>
-<td>Dokumentation geändert</td>
-<td><code>DOCS: Update installation guide</code></td>
+<td align="center"><code>📚 DOCS:</code></td>
+<td>Dokumentation aktualisiert</td>
+<td><code>📚 DOCS: Update installation guide with troubleshooting</code></td>
 </tr>
 <tr>
-<td align="center"><code>DELETE:</code></td>
-<td>Datei oder Feature entfernt</td>
-<td><code>DELETE: Remove deprecated command</code></td>
+<td align="center"><code>🗑️ DELETE:</code></td>
+<td>Code/Feature entfernt</td>
+<td><code>🗑️ DELETE: Remove deprecated legacy commands</code></td>
+</tr>
+<tr>
+<td align="center"><code>🎨 STYLE:</code></td>
+<td>Code-Style Änderungen</td>
+<td><code>🎨 STYLE: Refactor code to match PEP 8 standards</code></td>
+</tr>
+<tr>
+<td align="center"><code>♻️ REFACTOR:</code></td>
+<td>Code-Umstrukturierung</td>
+<td><code>♻️ REFACTOR: Restructure database module architecture</code></td>
+</tr>
+<tr>
+<td align="center"><code>⚡ PERF:</code></td>
+<td>Performance-Verbesserung</td>
+<td><code>⚡ PERF: Optimize query execution time</code></td>
+</tr>
+<tr>
+<td align="center"><code>🧪 TEST:</code></td>
+<td>Tests hinzugefügt/geändert</td>
+<td><code>🧪 TEST: Add unit tests for moderation module</code></td>
 </tr>
 </table>
 
@@ -340,198 +918,33 @@ Wir freuen uns über Contributions von der Community. Hier sind unsere Commit-Ko
 ### 🔧 Development Workflow
 
 ```bash
+# ════════════════════════════════════════════════════════════════════════
 # 1. Repository forken & klonen
+# ════════════════════════════════════════════════════════════════════════
 git clone https://github.com/YOUR_USERNAME/ManagerX.git
 cd ManagerX
 
+# ════════════════════════════════════════════════════════════════════════
 # 2. Development Branch erstellen
+# ════════════════════════════════════════════════════════════════════════
 git checkout -b feature/amazing-feature
-
-# 3. Änderungen vornehmen und testen
-python main.py  # Testen
-
-# 4. Committen mit Konvention
-git commit -m "FEATURE: Add amazing new feature"
-
-# 5. Pushen
-git push origin feature/amazing-feature
-
-# 6. Pull Request erstellen auf GitHub
-```
-
-<br>
-
----
-
-## 💬 Support & Community
-
-<div align="center">
-
-### 🆘 Brauchst du Hilfe?
-
-<br>
-
-[![Discord Server](https://img.shields.io/badge/Discord-Join_Community-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/tmz673WAnV)
-[![Documentation](https://img.shields.io/badge/Docs-Read_More-00D9FF?style=for-the-badge&logo=gitbook&logoColor=white)](https://docs.oppro-network.de)
-[![GitHub Issues](https://img.shields.io/badge/Issues-Report_Bug-EA4335?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Oppro-net-Development/ManagerX/issues)
-[![Email](https://img.shields.io/badge/Email-Contact_Us-00D26A?style=for-the-badge&logo=gmail&logoColor=white)](mailto:development@oppro-network.de)
-
-<br>
-
-| Support-Kanal | Beschreibung | Antwortzeit |
-|---------------|--------------|-------------|
-| 💬 **Discord** | Community Support & Diskussion | < 1 Stunde |
-| 📖 **Docs** | Umfassende Anleitungen | Sofort |
-| 🐛 **GitHub Issues** | Bug Reports & Feature Requests | < 24 Stunden |
-| 📧 **E-Mail** | Direkter Support | < 48 Stunden |
-
-</div>
-
-<br>
-
----
-
-## 🏢 Empfohlener Hosting Partner
-
-<div align="center">
-
-### 🚀 Professionelles Hosting für ManagerX
-
-<br>
-
-<a href="https://deinserverhost.de/store/aff.php?aff=5609">
-  <img src="https://deinserverhost.de/tca/600x150_transparent.png" width="600" height="150" alt="DeinServerHost - Premium Hosting">
-</a>
-
-<br><br>
-
-**Zuverlässiges, deutsches Hosting für Discord Bots**
-
-✅ **24/7 Support** • ✅ **99.9% Uptime** • ✅ **DDoS Protection** • ✅ **SSD Storage**
-
-<br>
-
-[![Jetzt buchen](https://img.shields.io/badge/Hosting-Jetzt_buchen-00D9FF?style=for-the-badge&logo=server&logoColor=white)](https://deinserverhost.de/store/aff.php?aff=5609)
-
-</div>
-
-<br>
-
----
-
-## 📊 GitHub Statistics
-
-<div align="center">
-
-![Contributors](https://img.shields.io/github/contributors/Oppro-net-Development/ManagerX?style=for-the-badge&logo=github&logoColor=white&color=5865F2)
-![Forks](https://img.shields.io/github/forks/Oppro-net-Development/ManagerX?style=for-the-badge&logo=github&logoColor=white&color=00D26A)
-![Stars](https://img.shields.io/github/stars/Oppro-net-Development/ManagerX?style=for-the-badge&logo=github&logoColor=white&color=FFD700)
-![Issues](https://img.shields.io/github/issues/Oppro-net-Development/ManagerX?style=for-the-badge&logo=github&logoColor=white&color=EA4335)
-![Last Commit](https://img.shields.io/github/last-commit/Oppro-net-Development/ManagerX?style=for-the-badge&logo=github&logoColor=white)
-
-</div>
-
-<br>
-
----
-
-## 📄 Lizenz & Urheberrecht
-
-<div align="center">
-
-```
-╔═══════════════════════════════════════════════════════════════╗
-║                                                               ║
-║  This project is licensed under the GNU GPL-3.0 License      ║
-║                                                               ║
-║  Copyright © 2024 OPPRO.NET Development                      ║
-║  Copyright © 2025-present OPPRO.NET Network™                 ║
-║                                                               ║
-║  All rights reserved.                                         ║
-║                                                               ║
-╚═══════════════════════════════════════════════════════════════╝
-```
-
-<br>
-
-[![License](https://img.shields.io/badge/License-GPL--3.0-blue?style=for-the-badge&logo=opensourceinitiative&logoColor=white)](LICENSE)
-
-**📖 Vollständige Lizenz:** [LICENSE Datei anzeigen →](LICENSE)
-
-</div>
-
-<br>
-
----
-
-## 🙏 Credits & Danksagungen
-
-<div align="center">
-
-| Team | Community | Frameworks | Hosting |
-|:----:|:---------:|:----------:|:-------:|
-| **OPPRO.NET<br>Development** | **Contributors<br>& Beta Testers** | **py-cord<br>ezcord** | **DeinServerHost<br>Premium Partner** |
-
-<br>
-
-**Besonderer Dank an alle, die dieses Projekt unterstützen!**
-
-</div>
-
-<br>
-
----
-
-## 🔗 Wichtige Links
-
-<div align="center">
-
-| Link | Beschreibung |
-|------|--------------|
-| 🌐 [**Website**](https://development.oppro-network.de/ManagerX/) | Offizielle ManagerX Website |
-| 📚 [**Dokumentation**](https://docs.oppro-network.de/en/latest/) | Vollständige Bot-Dokumentation |
-| 🏠 [**OPPRO.NET**](https://oppro-network.de) | OPPRO.NET Network™ Hauptseite |
-| 💬 [**Discord**](https://discord.gg/tmz673WAnV) | Community & Support Server |
-| 📧 [**E-Mail**](mailto:development@oppro-network.de) | Direkter Kontakt |
-
-</div>
-
-<br>
-
----
-
-<div align="center">
-
-### ⭐ Hat dir ManagerX geholfen?
-
-<br>
-
-**Gib uns einen Stern auf GitHub und teile das Projekt!**
-
-<br>
-
-[![GitHub Stars](https://img.shields.io/github/stars/Oppro-net-Development/ManagerX?style=social)](https://github.com/Oppro-net-Development/ManagerX)
-[![GitHub Forks](https://img.shields.io/github/forks/Oppro-net-Development/ManagerX?style=social)](https://github.com/Oppro-net-Development/ManagerX/fork)
-[![GitHub Watchers](https://img.shields.io/github/watchers/Oppro-net-Development/ManagerX?style=social)](https://github.com/Oppro-net-Development/ManagerX)
-
-<br><br>
-
-```
-╔═══════════════════════════════════════════════════════════╗
-║                                                           ║
-║              Made with ❤️ in Germany                     ║
-║          by the OPPRO.NET Development Team               ║
-║                                                           ║
-║       Bringing communities together, one bot at a time   ║
-║                                                           ║
-╚═══════════════════════════════════════════════════════════╝
-```
-
-<br>
-
-![Made with Love](https://img.shields.io/badge/Made%20with-❤️-red?style=for-the-badge)
-![Powered by Coffee](https://img.shields.io/badge/Powered%20by-☕-brown?style=for-the-badge)
-![Made in Germany](https://img.shields.io/badge/Made%20in-🇩🇪%20Germany-black?style=for-the-badge)
-![Built with Python](https://img.shields.io/badge/Built%20with-🐍%20Python-blue?style=for-the-badge)
-
-</div>
+# Oder für Bugfixes:
+git checkout -b bugfix/fix-critical-issue
+
+# ════════════════════════════════════════════════════════════════════════
+# 3. Development Environment aufsetzen
+# ════════════════════════════════════════════════════════════════════════
+python -m venv venv
+source venv/bin/activate  # Windows: venv\Scripts\activate
+pip install -r requirements-dev.txt
+
+# ════════════════════════════════════════════════════════════════════════
+# 4. Änderungen vornehmen und testen
+# ════════════════════════════════════════════════════════════════════════
+# Code schreiben...
+python main.py  # Bot testen
+pytest tests/   # Unit Tests ausführen
+
+# ════════════════════════════════════════════════════════════════════════
+# 5. Code Style prüfen
+#

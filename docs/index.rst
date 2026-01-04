@@ -114,6 +114,7 @@ We welcome contributions from the community! Whether it's bug reports, feature r
    User Guide <user_guide/index>
    Developer Guide <dev_guide/index>
    Changelog & Releases <releases/index>
+   Plugins <plugins/index>
 
 ---
 
