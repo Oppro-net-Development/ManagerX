@@ -12,10 +12,8 @@
   "automerge": false,
   "rangeStrategy": "pin",
   "timezone": "Europe/Berlin",
-
-  "schedule": ["immediately"],
   "pip_requirements": {
-    "fileMatch": ["requirements/.*\\.txt"]
+    "fileMatch": ["^requirements/.*\\.txt$"]
   },
   "packageRules": [
     {
@@ -29,9 +27,8 @@
       "groupName": "All Major Python Updates"
     },
     {
-      "matchDepTypes": ["github-actions"],
+      "matchManagers": ["github-actions"],
       "groupName": "All GitHub Actions Updates"
     }
   ]
-
 }
