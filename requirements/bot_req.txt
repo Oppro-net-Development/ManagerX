@@ -12,3 +12,5 @@ yarl==1.22.0
 frozenlist==1.8.0
 h11==0.16.0
 multidict==6.7.0
+ManagerX-Handler==1.0.1
+ManagerX-DevTools==1.0.0

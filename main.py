@@ -27,7 +27,7 @@ import ezcord
 from ezcord import CogLog
 import yaml
 from discord.ext import tasks
-from log import logger, LogLevel, LogFormat, Category 
+from logger import logger, LogLevel, LogFormat, Category 
 
 
 BASEDIR = Path(__file__).resolve().parent
@@ -36,11 +36,9 @@ load_dotenv(dotenv_path=BASEDIR / 'config' / '.env')
 
 # ❗ LOKALE BIBLIOTHEKEN
 try:
-    from handler import VersionChecker 
     from DevTools import SettingsDB 
     
     class BotConfig:
-        VERSION = "2.0.0-dev"
         TOKEN = os.getenv("TOKEN") 
         
 except ImportError as e:
@@ -206,7 +204,6 @@ async def update_dashboard_data():
         stats = {
             "bot_info": {
                 "name": str(bot.user.name),
-                "version": BotConfig.VERSION,
                 "status": "online",
                 "latency": round(bot.latency * 1000, 1)
             },
@@ -243,9 +240,25 @@ async def on_ready():
 # =============================================================================
 
 if __name__ == '__main__':
-    print(f"\n{Fore.CYAN}{'=' * 60}")
+    # Definieren des Logos als Liste von Strings, um Formatierungsprobleme zu umgehe
+    logo_lines = [
+        r" _____ ______   ________  ________   ________  ________  _______   ________      ___   ___ ",
+        r"|\   _ \  _   \|\   __  \|\   ___  \|\   __  \|\   ____\|\  ___ \ |\   __  \    |\  \ /  /|",
+        r"\ \  \\\__\ \  \ \  \|\  \ \  \\ \  \ \  \|\  \ \  \___|\ \  __/|\ \  \|\  \   \ \  \/  / /",
+        r" \ \  \\|__| \  \ \   __  \ \  \\ \  \ \   __  \ \  \  __\ \  _|/_\ \   _  _\   \ \    / / ",
+        r"  \ \  \     \ \  \ \  \ \  \ \  \\ \  \ \  \ \  \ \  \|\  \ \  \_|\ \ \  \\  \|   /     \/  ",
+        r"   \ \__\     \ \__\ \__\ \__\ \__\\ \__\ \__\ \__\ \_______\ \_______\ \__\\ _\  /  /\   \  ",
+        r"    \|__|      \|__|\|__|\|__|\|__| \|__|\|__|\|__|\|_______|\|_______|\|__|\|__|/__/ /\ __\ ",
+        r"                                                                               |__|/ \|__| "
+    ]
+
+    # Ausgabe
+    print(Fore.CYAN)
+    for line in logo_lines:
+        print(line)
+    print(f"{'=' * 91}")
     print(f" ManagerX Discord Bot v{BotConfig.VERSION}")
-    print(f"{'=' * 60}{Style.RESET_ALL}\n")
+    print(f"{'=' * 91}{Style.RESET_ALL}\n")
     
     try:
         db = SettingsDB()
@@ -255,7 +268,6 @@ if __name__ == '__main__':
         logger.critical(Category.DATABASE, f"Datenbankfehler: {e}")
 
     # --- GEFIXTER LOAD-PROZESS ---
-    # EzCord's ignored_cogs filtert gegen den Dateinamen (z.B. "autocomplete")
     ignored = get_ignored_list(cogs_config)
     
     bot.load_cogs(
@@ -267,6 +279,7 @@ if __name__ == '__main__':
 
     if not BotConfig.TOKEN:
         logger.critical(Category.DEBUG, "Kein TOKEN gefunden!")
+        import sys
         sys.exit(1)
     
     bot.run(BotConfig.TOKEN)

@@ -7,7 +7,7 @@ import os
 import sys
 
 sys.path.insert(0, os.path.abspath('../src'))
-sys.setrecursionlimit(1500)
+sys.setrecursionlimit(2500)
 
 # -- Project information -----------------------------------------------------
 project = 'ManagerX'
@@ -67,5 +67,5 @@ html_theme_options = {
             "icon": "fa-brands fa-square-github",
             "type": "fontawesome",
         }
-   ]
+   ],
 }

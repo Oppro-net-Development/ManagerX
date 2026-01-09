@@ -2,8 +2,6 @@
 # ───────────────────────────────────────────────
 # >> Imports
 # ───────────────────────────────────────────────
-from DevTools.ui import emoji_yes, emoji_no, emoji_member, emoji_warn, emoji_summary, emoji_staff, emoji_slowmode
-
 import asyncio
 import re
 from datetime import datetime, timezone

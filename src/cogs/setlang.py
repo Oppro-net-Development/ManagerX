@@ -4,7 +4,9 @@ import ezcord
 
 from handler import TranslationHandler
 
-class SetLangCog(ezcord.Cog, group="informationen"):
+
+class SetLangCog(ezcord.Cog):
+    """Cog for setting user language preferences."""
 
     AVAILABLE_LANGUAGES = {
         "de": "Deutsch 🇩🇪",
@@ -13,11 +15,11 @@ class SetLangCog(ezcord.Cog, group="informationen"):
 
     @commands.slash_command(
         name="set-lang",
-        description="Stelle deine bevorzugte Sprache für Bot-Nachrichten ein."
+        description="Set your preferred language for bot messages."
     )
     @discord.option(
         "language",
-        description="Wähle eine Sprache",
+        description="Choose a language",
         choices=[
             discord.OptionChoice(name=name, value=code)
             for code, name in AVAILABLE_LANGUAGES.items()
@@ -25,14 +27,21 @@ class SetLangCog(ezcord.Cog, group="informationen"):
         required=True
     )
     async def set_language(self, ctx: discord.ApplicationContext, language: str):
-        # Sprache speichern
+        """
+        Set the user's preferred language.
+        
+        Args:
+            ctx: Discord application context
+            language: Selected language code
+        """
+        # Save language preference
         self.bot.settings_db.set_user_language(ctx.author.id, language)
 
-        # Name für Anzeige
+        # Get display name for the selected language
         lang_name = self.AVAILABLE_LANGUAGES.get(language, language)
 
-        # Nachricht laden über TranslationHandler
-        response_text = TranslationHandler.get(
+        # Load response message using TranslationHandler
+        response_text = await TranslationHandler.get_async(
             language,
             "cog_setlang.message.language_set",
             default="Language has been set to {language}.",
@@ -43,4 +52,5 @@ class SetLangCog(ezcord.Cog, group="informationen"):
 
 
 def setup(bot):
+    """Setup function to add the cog to the bot."""
     bot.add_cog(SetLangCog(bot))

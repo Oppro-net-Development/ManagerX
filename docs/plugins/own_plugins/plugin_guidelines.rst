@@ -1,5 +1,5 @@
 Plugin Policy
-=============
+============================================
 
 This document defines the official rules and requirements for all ManagerX
 plugins, including **Local Plugins** and **PyPI Plugins**.
@@ -12,20 +12,20 @@ The goal of this policy is to keep ManagerX:
 
 Plugins are never part of the core by default.
 
----
+-------------------------------------------------------------------------------------------------------------------
 
 General Principles
-------------------
+----------------------------------
 
 - All plugins are **optional**.
 - All plugins are **disabled by default**.
 - The ManagerX core must never depend on plugins.
 - Plugins must not modify or patch core files.
 
----
+---------------------------------------------------------------------------------------------------
 
 Plugin Types
-------------
+----------------------------
 
 ManagerX supports two types of plugins:
 
@@ -53,20 +53,20 @@ ManagerX supports two types of plugins:
 
 - Fully independent and always stored in their own GitHub repository
 
----
+-----------------------------------------------------------------------------------
 
 License
--------
+-----------------------
 
 - ManagerX itself is licensed under **GPL-3.0**.  
 - Local Plugins included in the repository **must also be GPL-3.0 compatible**.  
 - PyPI Plugins can use any license **compatible with GPL-3.0**.  
 - Plugins without a clear license will **not be accepted**.
 
----
+-----------------------------------------------------------------------------------
 
 Source Code Separation Requirement
-----------------------------------
+--------------------------------------------------
 
 All plugins, whether Local or PyPI, must have a **dedicated GitHub repository**.  
 
@@ -74,10 +74,10 @@ All plugins, whether Local or PyPI, must have a **dedicated GitHub repository**.
 - The **canonical source** is always the plugin's own repo.  
 - One plugin = one repository.
 
----
+-------------------------------------------------------------------
 
 Ownership & Responsibility
---------------------------
+------------------------------------------
 
 - Each plugin must have a clearly defined owner or maintainer.  
 - The owner is responsible for:
@@ -86,10 +86,10 @@ Ownership & Responsibility
   - legal matters
 - ManagerX does **not** provide support for third-party plugins.
 
----
+-----------------------------------------------------------------------------------
 
 Security Requirements
----------------------
+-------------------------------------
 
 Plugins must not:
 - contain malicious code
@@ -97,10 +97,10 @@ Plugins must not:
 - perform hidden network requests
 - auto-update without user consent
 
----
+-------------------------------------------------------------------
 
 Versioning Rules
-----------------
+--------------------------------
 
 - Every plugin must define a version.
 - Breaking changes require a major version bump.
@@ -109,7 +109,7 @@ Versioning Rules
 ---
 
 Documentation Requirement
--------------------------
+-----------------------------------------
 
 Each plugin must include a `README.md` that explains:
 - what the plugin does
@@ -119,10 +119,10 @@ Each plugin must include a `README.md` that explains:
 
 Plugins without documentation are not accepted.
 
----
+-------------------------------------------------------------------
 
 Compatibility Rules
--------------------
+-----------------------------------
 
 - Plugins must declare supported ManagerX versions.
 - Plugins must use only public plugin APIs.
@@ -131,7 +131,7 @@ Compatibility Rules
 ---
 
 Enable / Disable & Removal
---------------------------
+------------------------------------------
 
 - Plugins must be safely disableable.
 - Plugins must not block ManagerX startup.
@@ -140,7 +140,7 @@ Enable / Disable & Removal
 ---
 
 Official Plugin Status
-----------------------
+--------------------------------------
 
 If a plugin fulfills **all requirements** in this policy, it **may** be:
 
@@ -161,7 +161,7 @@ Promotion is evaluated on:
 ---
 
 Final Checklist
----------------
+-------------------------------
 
 Before a plugin can be accepted or promoted:
 
@@ -176,15 +176,7 @@ Before a plugin can be accepted or promoted:
 ---
 
 Conclusion
-----------
+--------------------------
 
 Local and PyPI plugins provide **modularity and freedom**.  
 The core remains clean and minimal, while plugins can evolve independently.  
-
-.. toctree::
-   :maxdepth: 2
-   :caption: Next Steps
-
-    Local Cog Development <create_local_plugin>
-    
-    Create a PyPi Plugin <create_pypi_plugin>

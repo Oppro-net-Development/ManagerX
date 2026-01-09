@@ -17,3 +17,5 @@ FastAPI
 uvicorn
 SimpleColoredLogs
 timedelta==2020.12.3
+ManagerX-Handler==1.0.1
+ManagerX-DevTools==1.0.0

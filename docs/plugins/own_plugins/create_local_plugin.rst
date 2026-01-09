@@ -1,5 +1,5 @@
 Local Plugins (Main GitHub Repository)
-=====================================
+================================================
 
 In addition to PyPI-based plugins, ManagerX also supports **local plugins** that live directly inside the **main GitHub repository**.
 
@@ -12,7 +12,7 @@ These plugins are intended for:
 Local plugins are **not enabled or shipped by default**.
 
 Design Principle
-----------------
+--------------------------------
 
 Local plugins follow the same core philosophy as external plugins:
 
@@ -23,7 +23,7 @@ Local plugins follow the same core philosophy as external plugins:
 This keeps the ManagerX core clean while still allowing flexibility and experimentation.
 
 Repository Structure
---------------------
+------------------------------------
 
 Local plugins are stored in a dedicated folder inside the main GitHub repository.
 
@@ -47,7 +47,7 @@ Example structure:
 Local plugins **must not** modify core files directly.
 
 Enabling Local Plugins
-----------------------
+--------------------------------------
 
 Local plugins are **disabled by default**.
 
@@ -59,7 +59,7 @@ To enable a local plugin:
 Only explicitly enabled plugins are loaded.
 
 Differences to PyPI Plugins
----------------------------
+-------------------------------------------
 
 +-------------------+------------------------+-------------------------+
 | Feature           | Local Plugins          | PyPI Plugins            |
@@ -76,7 +76,7 @@ Differences to PyPI Plugins
 +-------------------+------------------------+-------------------------+
 
 Promotion to PyPI
------------------
+---------------------------------
 
 A local plugin can later be **promoted to a PyPI plugin** if it:
 - proves stable
@@ -90,7 +90,7 @@ In this case, it must follow the PyPI naming scheme:
     managerx-[plugin-name]
 
 Conclusion
-----------
+--------------------------
 
 Local plugins provide a **safe space for innovation** without increasing the default footprint of ManagerX.
 
@@ -101,11 +101,3 @@ They allow contributors to:
 
 All without forcing functionality onto every ManagerX user.
 Happy coding! 🚀
-
-.. toctree::
-   :maxdepth: 2
-   :caption: Next Steps
-
-    Create a PyPi Plugin <create_pypi_plugin>
-    
-    Plugin Guidelines <plugin_guidelines>

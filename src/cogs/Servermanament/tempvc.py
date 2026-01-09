@@ -3,7 +3,6 @@ from DevTools import TempVCDatabase
 import discord
 from discord import slash_command, option, SlashCommandGroup
 from discord.ext import commands
-from DevTools import emoji_yes, emoji_no
 from discord.ui import Container
 import ezcord
 

@@ -13,7 +13,7 @@ To create a new cog, developers typically define a class that extends the Cog ba
 Overall, the cog system is a powerful architectural feature of ManagerX that enhances the bot's flexibility and maintainability, making it easier for developers to manage and expand its capabilities.
 
 Py-cord Emample (without Ezcord)
-~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: python
 
@@ -34,7 +34,7 @@ Py-cord Emample (without Ezcord)
 This example demonstrates how to define a simple cog with a command. The `setup` function is used to add the cog to the bot when it is loaded.
 
 Ezcord Example (With Py-cord)
-~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 With Ezcord, you can simplify cog creation even further:
 

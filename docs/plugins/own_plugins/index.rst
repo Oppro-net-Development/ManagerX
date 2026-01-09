@@ -14,21 +14,21 @@ Before you begin, make sure you have:
 - Familiarity with the ManagerX bot architecture
 
 1. Set Up Your Development Environment
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - Install all dependencies required by ManagerX.
 - Clone the ManagerX repository from GitHub to get the latest codebase.
 - For PyPi plugins, ensure you have `setuptools` and `wheel` installed to package your plugin.
 
 2. Understand the Plugin Structure
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - **Local Cogs**: look inside the `cogs` or `plugins` directory. Each plugin is typically a single Python file or module.
 - **PyPi Plugins**: structure your project like a standard Python package with a `setup.py` or `pyproject.toml` file.
 - Review existing plugins to understand naming conventions, commands, and event listeners.
 
 3. Create Your Plugin
-~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~
 
 **Local Cog Example:**
 
@@ -54,7 +54,7 @@ Before you begin, make sure you have:
 - Make sure your Cog is loaded automatically when installed
 
 4. Register Your Plugin
-~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - **Local Cogs**: add the Cog in your bot’s `setup` function or main script.
 - **PyPi Plugins**: once installed via `pip`, ensure ManagerX can discover and load your plugin dynamically.
@@ -72,6 +72,6 @@ Best Practices
    :maxdepth: 2
    :caption: Next Steps
 
-   Create a PyPi Plugin <create_pypi_plugin>
-   Local Cog Development <create_local_plugin>
+    Create a PyPi Plugin <create_pypi_plugin>
+    Local Cog Development <create_local_plugin>
     Plugin Guidelines <plugin_guidelines>

@@ -31,7 +31,7 @@ Py-cord Slash Command Structure for ManagerX
 ManagerX uses a modular Cog system with Slash Commands (`@slash_command`) for clean, maintainable command handling. Every command is a slash command with automatic parameter parsing, validation, and permission checks.
 
 1. Example Cog with Slash Commands
------------------------------
+------------------------------------
 
 .. code-block:: python
 
@@ -58,7 +58,7 @@ ManagerX uses a modular Cog system with Slash Commands (`@slash_command`) for cl
 This example demonstrates how to define a cog with multiple Slash Commands. Each command is decorated with `@slash_command`, specifying its name and description. The commands accept parameters, which are automatically parsed and validated by Py-cord.
 
 2. Features Demonstrated
-----------------------
+-----------------------------
 - **Slash Command Registration:** `@discord.slash_command` or `@slash_command` automatically registers commands with Discord.
 - **Parameter Parsing:** Parameters like `user: discord.Member` are automatically parsed and validated.
 - **Validation:** Py-cord ensures parameters are of the correct type (e.g., `discord.Member`).

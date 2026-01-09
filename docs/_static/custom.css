@@ -365,4 +365,35 @@ h2::before {
     font-weight: 600;
 }
 
+/* --- 21. BUTTON OVERRIDES (From Blue to ManagerX Red) --- */
+
+/* Haupt-Buttons (Primary) */
+.btn-primary {
+    background-color: var(--mx-red-primary) !important;
+    border-color: var(--mx-red-primary) !important;
+    color: #ffffff !important;
+    font-weight: 600;
+    transition: all 0.2s ease-in-out;
+}
+
+.btn-primary:hover, 
+.btn-primary:focus, 
+.btn-primary:active {
+    background-color: var(--mx-red-dark) !important;
+    border-color: var(--mx-red-dark) !important;
+    box-shadow: 0 0 0 0.25rem var(--mx-red-glow) !important;
+}
+
+/* Outline-Buttons (z.B. in der Suche oder API-Links) */
+.btn-outline-primary {
+    color: var(--mx-red-primary) !important;
+    border-color: var(--mx-red-primary) !important;
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--mx-red-primary) !important;
+    border-color: var(--mx-red-primary) !important;
+    color: #ffffff !important;
+}
+
 /* --- END OF MANAGERX ULTIMATE RED THEME --- */

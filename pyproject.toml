@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ManagerX"
-version = "2.0.0"
+version = "2026.0.1"
 description = "A powerful Discord bot for server management and fun."
 readme = "README.md"
 requires-python = ">=3.8"
@@ -44,7 +44,9 @@ dependencies = [
     "Jinja2==3.1.6",
     "MarkupSafe==3.0.3",
     "starlette==0.50.0",
-    "timedelta==2020.12.3"
+    "timedelta==2020.12.3",
+    "ManagerX-Handler==1.0.4",
+    "ManagerX-DevTools==1.0.0"
 ]
 
 [project.urls]
@@ -133,5 +135,5 @@ package-dir = {"src" = "src"}
 
 [tool.setuptools.packages.find]
 where = ["src"]
-include = ["managerx*", "plugins*", "handlers*", "DevTools*", "cogs*"]
+include = ["managerx*", "plugins*", "DevTools*", "cogs*"]
 exclude = ["tests*"]

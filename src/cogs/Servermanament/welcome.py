@@ -18,7 +18,6 @@ import aiosqlite
 from datetime import datetime
 import ezcord
 from discord.ui import Container
-from DevTools import emoji_yes, emoji_no, emoji_add
 
 
 # Logger Setup
