@@ -6,7 +6,6 @@ Verwaltet Datenbankverbindungen und Initialisierung
 Pfad: src/bot/core/database.py
 """
 
-import sys
 from logger import logger, Category
 
 try:
