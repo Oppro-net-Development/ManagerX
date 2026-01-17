@@ -915,6 +915,18 @@ Wir verwenden standardisierte Commit-Prefixes für bessere Nachvollziehbarkeit:
 
 <br>
 
+### 📌 Versionierungs-Schema
+
+Um maximale Transparenz und Aktualität zu gewährleisten, nutzen wir eine duale Strategie:
+
+* **GitHub (Source Code):** Nutzt das **Semantic Versioning** (Beispiel: `2.0.0`). Dies markiert große Meilensteine und strukturelle Änderungen im Code.
+* **PyPI (Distribution):** Nutzt **CalVer (Calendar Versioning)** (Beispiel: `2.2026.1.9.1`). Dies ermöglicht es Entwicklern, sofort zu erkennen, wie aktuell das installierte Paket ist.
+
+| Plattform | Schema | Beispiel |
+| :--- | :--- | :--- |
+| **GitHub** | MAJOR.MINOR.PATCH | `2.0.0` |
+| **PyPI** | MAJOR.JJJJ.MM.TT | `2.2026.01.09.1` |
+
 ### 🔧 Development Workflow
 
 ```bash

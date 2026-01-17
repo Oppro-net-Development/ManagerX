@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ManagerX"
-version = "2026.0.1"
+version = "2.2026.01.11"
 description = "A powerful Discord bot for server management and fun."
 readme = "README.md"
 requires-python = ">=3.8"
@@ -45,8 +45,8 @@ dependencies = [
     "MarkupSafe==3.0.3",
     "starlette==0.50.0",
     "timedelta==2020.12.3",
-    "ManagerX-Handler==1.0.4",
-    "ManagerX-DevTools==1.0.0"
+    "ManagerX-Handler==1.2026.01.10",
+    "ManagerX-DevTools==1.2026.01.11.1"
 ]
 
 [project.urls]
