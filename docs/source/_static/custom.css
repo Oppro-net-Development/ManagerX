@@ -1,0 +1,1058 @@
+/* ==========================================================================
+   MANAGERX PREMIUM DOCS THEME
+   PyData Sphinx Theme - Optimized & Refined
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+:root {
+    /* ManagerX Premium Color System */
+    --mx-red-primary: #dc2626;
+    --mx-red-dark: #991b1b;
+    --mx-red-darker: #7f1d1d;
+    --mx-red-light: #fef2f2;
+    --mx-red-accent: #f87171;
+    --mx-red-glow: rgba(220, 38, 38, 0.1);
+    
+    /* Neutral Palette */
+    --mx-gray-50: #f8fafc;
+    --mx-gray-100: #f1f5f9;
+    --mx-gray-200: #e2e8f0;
+    --mx-gray-300: #cbd5e1;
+    --mx-gray-400: #94a3b8;
+    --mx-gray-500: #64748b;
+    --mx-gray-600: #475569;
+    --mx-gray-700: #334155;
+    --mx-gray-800: #1e293b;
+    --mx-gray-900: #0f172a;
+    
+    /* Semantic Colors */
+    --mx-success: #059669;
+    --mx-warning: #d97706;
+    --mx-danger: #dc2626;
+    --mx-info: #0284c7;
+    
+    /* Typography System */
+    --pst-font-family-base: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --pst-font-family-heading: 'Space Grotesk', 'Inter', sans-serif;
+    --pst-font-family-monospace: 'JetBrains Mono', 'Consolas', 'Monaco', monospace;
+    
+    /* PyData Theme Overrides */
+    --pst-color-primary: var(--mx-red-primary);
+    --pst-color-secondary: var(--mx-gray-600);
+    --pst-color-link: var(--mx-red-primary);
+    --pst-color-link-hover: var(--mx-red-dark);
+    --pst-color-target: #fbbf24;
+    
+    /* Shadows & Effects */
+    --mx-shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --mx-shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.06);
+    --mx-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+    --mx-shadow-lg: 0 10px 24px rgba(0, 0, 0, 0.1);
+    --mx-shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.12);
+    
+    /* Transitions */
+    --mx-transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    --mx-transition-base: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    --mx-transition-slow: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    
+    /* Border Radius */
+    --mx-radius-sm: 6px;
+    --mx-radius-md: 10px;
+    --mx-radius-lg: 14px;
+    --mx-radius-xl: 20px;
+    --mx-radius-full: 9999px;
+}
+
+/* ==========================================================================
+   1. GLOBAL FOUNDATION & TYPOGRAPHY
+   ========================================================================== */
+
+body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    letter-spacing: -0.011em;
+    line-height: 1.65;
+}
+
+/* Premium Scrollbar Design */
+::-webkit-scrollbar {
+    width: 14px;
+    height: 14px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--mx-gray-300);
+    border-radius: var(--mx-radius-full);
+    border: 3px solid var(--mx-gray-50);
+    transition: background var(--mx-transition-base);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--mx-red-primary);
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb {
+    background: var(--mx-gray-600);
+    border-color: var(--mx-gray-900);
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+    background: var(--mx-red-accent);
+}
+
+/* Improved Typography Hierarchy */
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--pst-font-family-heading);
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    color: var(--mx-gray-900);
+    line-height: 1.25;
+}
+
+[data-theme="dark"] h1,
+[data-theme="dark"] h2,
+[data-theme="dark"] h3,
+[data-theme="dark"] h4 {
+    color: var(--mx-gray-50);
+}
+
+h1 {
+    font-size: 2.5rem;
+    margin-top: 0 !important;
+    margin-bottom: 2rem !important;
+}
+
+h2 {
+    font-size: 2rem;
+    margin-top: 3rem !important;
+    margin-bottom: 1.5rem !important;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--mx-gray-100);
+}
+
+[data-theme="dark"] h2 {
+    border-bottom-color: var(--mx-gray-700);
+}
+
+h3 {
+    font-size: 1.5rem;
+    margin-top: 2rem !important;
+    margin-bottom: 1rem !important;
+}
+
+h4 {
+    font-size: 1.25rem;
+    margin-top: 1.5rem !important;
+    margin-bottom: 0.75rem !important;
+}
+
+/* Subtle Section Indicators */
+h2::before {
+    content: "";
+    display: inline-block;
+    width: 4px;
+    height: 1.5rem;
+    background: linear-gradient(180deg, var(--mx-red-primary), var(--mx-red-accent));
+    margin-right: 1rem;
+    border-radius: var(--mx-radius-sm);
+    vertical-align: middle;
+}
+
+/* ==========================================================================
+   2. HEADER & NAVIGATION
+   ========================================================================== */
+
+/* Premium Glassmorphic Header */
+.bd-header {
+    background: rgba(255, 255, 255, 0.85) !important;
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border-bottom: 1px solid rgba(220, 38, 38, 0.1) !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 10px 30px rgba(220, 38, 38, 0.03);
+    transition: all var(--mx-transition-base);
+}
+
+[data-theme="dark"] .bd-header {
+    background: rgba(15, 23, 42, 0.9) !important;
+    border-bottom-color: rgba(220, 38, 38, 0.2) !important;
+}
+
+/* Logo & Brand Styling */
+.navbar-brand {
+    font-family: var(--pst-font-family-heading);
+    font-weight: 700;
+    font-size: 1.25rem;
+    letter-spacing: -0.02em;
+    transition: transform var(--mx-transition-fast);
+}
+
+.navbar-brand:hover {
+    transform: translateX(2px);
+}
+
+/* Mobile Toggle */
+.bd-header .navbar-toggler {
+    border: 2px solid var(--mx-red-primary);
+    border-radius: var(--mx-radius-md);
+    color: var(--mx-red-primary);
+    transition: all var(--mx-transition-base);
+}
+
+.bd-header .navbar-toggler:hover {
+    background: var(--mx-red-light);
+    transform: scale(1.05);
+}
+
+/* ==========================================================================
+   3. SIDEBAR NAVIGATION
+   ========================================================================== */
+
+/* Primary Sidebar Styling */
+.bd-sidebar-primary {
+    border-right: 1px solid var(--mx-gray-100);
+}
+
+[data-theme="dark"] .bd-sidebar-primary {
+    border-right-color: var(--mx-gray-700);
+}
+
+/* Section Headers */
+.bd-sidebar-primary .caption-text {
+    color: var(--mx-red-dark);
+    font-family: var(--pst-font-family-heading);
+    font-weight: 700;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
+    padding-left: 1rem;
+}
+
+/* Navigation Links */
+.bd-sidebar-primary .nav-link {
+    border-radius: var(--mx-radius-md);
+    margin: 2px 0;
+    padding: 0.5rem 1rem;
+    transition: all var(--mx-transition-base);
+    font-size: 0.9rem;
+}
+
+.bd-sidebar-primary .nav-link:hover {
+    background: var(--mx-gray-50);
+    color: var(--mx-red-primary);
+    transform: translateX(4px);
+}
+
+[data-theme="dark"] .bd-sidebar-primary .nav-link:hover {
+    background: var(--mx-gray-800);
+}
+
+/* Active Navigation Item */
+.bd-sidebar-primary .nav-item.current > a,
+.bd-sidebar-primary .nav-item.active > a {
+    background: linear-gradient(90deg, var(--mx-red-light) 0%, transparent 100%);
+    color: var(--mx-red-primary) !important;
+    font-weight: 600;
+    border-left: 3px solid var(--mx-red-primary);
+    padding-left: calc(1rem - 3px);
+}
+
+[data-theme="dark"] .bd-sidebar-primary .nav-item.current > a {
+    background: linear-gradient(90deg, rgba(220, 38, 38, 0.15) 0%, transparent 100%);
+}
+
+/* Nested Navigation */
+.bd-sidebar-primary .nav-item .nav-item .nav-link {
+    font-size: 0.85rem;
+    padding-left: 2rem;
+}
+
+/* ==========================================================================
+   4. MAIN CONTENT AREA
+   ========================================================================== */
+
+/* Content Container */
+.bd-main {
+    padding-top: 2rem;
+    padding-bottom: 4rem;
+}
+
+article.bd-article {
+    max-width: 850px;
+}
+
+/* Paragraph Spacing */
+article p {
+    margin-bottom: 1.25rem;
+    line-height: 1.75;
+}
+
+/* Target Highlighting */
+:target {
+    scroll-margin-top: 120px;
+    animation: highlight-pulse 2s ease-out;
+}
+
+@keyframes highlight-pulse {
+    0%, 50% {
+        background-color: var(--mx-red-glow);
+        box-shadow: 0 0 0 8px var(--mx-red-glow);
+    }
+    100% {
+        background-color: transparent;
+        box-shadow: 0 0 0 0 transparent;
+    }
+}
+
+/* ==========================================================================
+   5. ADMONITIONS & CALLOUTS
+   ========================================================================== */
+
+/* Base Admonition Styling */
+.admonition {
+    border: none !important;
+    border-left: 4px solid var(--mx-red-primary) !important;
+    border-radius: var(--mx-radius-lg) !important;
+    background: var(--mx-gray-50) !important;
+    box-shadow: var(--mx-shadow-sm) !important;
+    padding: 1.5rem !important;
+    margin: 2rem 0 !important;
+    transition: all var(--mx-transition-base);
+}
+
+.admonition:hover {
+    box-shadow: var(--mx-shadow-md) !important;
+    transform: translateY(-2px);
+}
+
+[data-theme="dark"] .admonition {
+    background: var(--mx-gray-800) !important;
+}
+
+/* Admonition Title */
+.admonition-title {
+    background: transparent !important;
+    color: var(--mx-red-primary) !important;
+    font-family: var(--pst-font-family-heading) !important;
+    font-weight: 700 !important;
+    font-size: 0.875rem !important;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.75rem !important;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.admonition-title::before {
+    content: "●";
+    font-size: 0.6em;
+}
+
+/* Admonition Variants */
+.admonition.note {
+    border-left-color: var(--mx-info) !important;
+}
+
+.admonition.note .admonition-title {
+    color: var(--mx-info) !important;
+}
+
+.admonition.warning {
+    border-left-color: var(--mx-warning) !important;
+}
+
+.admonition.warning .admonition-title {
+    color: var(--mx-warning) !important;
+}
+
+.admonition.danger,
+.admonition.error {
+    border-left-color: var(--mx-danger) !important;
+}
+
+.admonition.danger .admonition-title,
+.admonition.error .admonition-title {
+    color: var(--mx-danger) !important;
+}
+
+.admonition.tip,
+.admonition.hint {
+    border-left-color: var(--mx-success) !important;
+}
+
+.admonition.tip .admonition-title,
+.admonition.hint .admonition-title {
+    color: var(--mx-success) !important;
+}
+
+/* ==========================================================================
+   6. CODE BLOCKS & SYNTAX HIGHLIGHTING
+   ========================================================================== */
+
+/* Code Block Container */
+div.highlight {
+    border: 1px solid var(--mx-gray-200) !important;
+    border-radius: var(--mx-radius-lg) !important;
+    background: var(--mx-gray-50) !important;
+    box-shadow: var(--mx-shadow-sm);
+    padding: 0 !important;
+    margin: 1.5rem 0;
+    overflow: hidden;
+    transition: all var(--mx-transition-base);
+}
+
+div.highlight:hover {
+    box-shadow: var(--mx-shadow-md);
+}
+
+[data-theme="dark"] div.highlight {
+    background: var(--mx-gray-900) !important;
+    border-color: var(--mx-gray-700) !important;
+}
+
+/* Code Block Pre */
+div.highlight pre {
+    padding: 1.25rem !important;
+    margin: 0 !important;
+    overflow-x: auto;
+    font-size: 0.875rem;
+    line-height: 1.6;
+    background: transparent !important;
+}
+
+/* Inline Code */
+code.literal {
+    background: var(--mx-red-light);
+    color: var(--mx-red-dark);
+    padding: 0.15em 0.4em;
+    border-radius: var(--mx-radius-sm);
+    font-size: 0.875em;
+    font-weight: 500;
+    border: 1px solid rgba(220, 38, 38, 0.1);
+}
+
+[data-theme="dark"] code.literal {
+    background: rgba(220, 38, 38, 0.15);
+    color: var(--mx-red-accent);
+    border-color: rgba(220, 38, 38, 0.2);
+}
+
+/* Keyboard Shortcuts */
+kbd {
+    background: linear-gradient(180deg, var(--mx-gray-50), var(--mx-gray-100));
+    border: 1px solid var(--mx-gray-300);
+    border-radius: var(--mx-radius-sm);
+    box-shadow: 0 2px 0 var(--mx-gray-300), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    color: var(--mx-gray-700);
+    font-family: var(--pst-font-family-monospace);
+    font-size: 0.85em;
+    padding: 0.2em 0.5em;
+    font-weight: 500;
+}
+
+[data-theme="dark"] kbd {
+    background: linear-gradient(180deg, var(--mx-gray-700), var(--mx-gray-800));
+    border-color: var(--mx-gray-600);
+    box-shadow: 0 2px 0 var(--mx-gray-600);
+    color: var(--mx-gray-200);
+}
+
+/* Syntax Highlighting Customization */
+.highlight .k,
+.highlight .kd {
+    color: var(--mx-red-primary);
+    font-weight: 600;
+}
+
+.highlight .nc,
+.highlight .nn {
+    color: var(--mx-red-dark);
+    font-weight: 600;
+}
+
+.highlight .s,
+.highlight .s2,
+.highlight .s1 {
+    color: #059669;
+}
+
+.highlight .c1,
+.highlight .cm {
+    color: var(--mx-gray-400);
+    font-style: italic;
+}
+
+.highlight .nf {
+    color: #0284c7;
+}
+
+.highlight .mi,
+.highlight .mf {
+    color: #7c3aed;
+}
+
+/* ==========================================================================
+   7. TABLES
+   ========================================================================== */
+
+table.docutils {
+    width: 100%;
+    border-collapse: separate !important;
+    border-spacing: 0;
+    border-radius: var(--mx-radius-lg);
+    overflow: hidden;
+    border: 1px solid var(--mx-gray-200) !important;
+    margin: 2rem 0;
+    box-shadow: var(--mx-shadow-sm);
+}
+
+[data-theme="dark"] table.docutils {
+    border-color: var(--mx-gray-700) !important;
+}
+
+/* Table Header */
+table.docutils thead {
+    background: linear-gradient(180deg, var(--mx-red-primary), var(--mx-red-dark));
+}
+
+table.docutils thead th {
+    color: white !important;
+    font-family: var(--pst-font-family-heading);
+    font-weight: 600 !important;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 1rem !important;
+    border: none !important;
+    text-align: left;
+}
+
+/* Table Body */
+table.docutils tbody tr {
+    transition: background-color var(--mx-transition-fast);
+}
+
+table.docutils tbody tr:hover {
+    background-color: var(--mx-gray-50);
+}
+
+[data-theme="dark"] table.docutils tbody tr:hover {
+    background-color: var(--mx-gray-800);
+}
+
+table.docutils tbody td {
+    padding: 0.875rem 1rem !important;
+    border-bottom: 1px solid var(--mx-gray-100) !important;
+    font-size: 0.9rem;
+}
+
+[data-theme="dark"] table.docutils tbody td {
+    border-bottom-color: var(--mx-gray-700) !important;
+}
+
+table.docutils tbody tr:last-child td {
+    border-bottom: none !important;
+}
+
+/* ==========================================================================
+   8. LINKS & REFERENCES
+   ========================================================================== */
+
+/* Internal & External Links */
+article a.reference.internal,
+article a.reference.external {
+    color: var(--mx-red-primary);
+    text-decoration: none;
+    font-weight: 500;
+    position: relative;
+    transition: color var(--mx-transition-fast);
+}
+
+article a.reference:hover {
+    color: var(--mx-red-dark);
+}
+
+/* Animated Underline */
+article a.reference::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    bottom: -2px;
+    left: 0;
+    background: linear-gradient(90deg, var(--mx-red-primary), var(--mx-red-accent));
+    transform: scaleX(0);
+    transform-origin: bottom right;
+    transition: transform var(--mx-transition-base);
+    border-radius: var(--mx-radius-full);
+}
+
+article a.reference:hover::after {
+    transform: scaleX(1);
+    transform-origin: bottom left;
+}
+
+/* External Link Icon */
+article a.reference.external::before {
+    content: "↗";
+    font-size: 0.7em;
+    margin-left: 0.2em;
+    opacity: 0.6;
+}
+
+/* ==========================================================================
+   9. IMAGES & FIGURES
+   ========================================================================== */
+
+/* Figure Container */
+figure.align-default,
+figure.align-center {
+    margin: 3rem auto;
+    padding: 1.5rem;
+    background: white;
+    border-radius: var(--mx-radius-xl);
+    box-shadow: var(--mx-shadow-md);
+    text-align: center;
+    transition: all var(--mx-transition-base);
+}
+
+figure.align-default:hover,
+figure.align-center:hover {
+    box-shadow: var(--mx-shadow-lg);
+    transform: translateY(-4px);
+}
+
+[data-theme="dark"] figure.align-default,
+[data-theme="dark"] figure.align-center {
+    background: var(--mx-gray-800);
+}
+
+/* Figure Image */
+figure.align-default img,
+figure.align-center img {
+    border-radius: var(--mx-radius-md);
+    max-width: 100%;
+    height: auto;
+}
+
+/* Figure Caption */
+figcaption,
+.caption-text {
+    margin-top: 1rem;
+    font-size: 0.875rem;
+    color: var(--mx-gray-500);
+    font-style: italic;
+    line-height: 1.5;
+}
+
+/* ==========================================================================
+   10. API DOCUMENTATION (Autodoc)
+   ========================================================================== */
+
+/* Function/Class/Method Containers */
+dl.py.function,
+dl.py.class,
+dl.py.method,
+dl.py.attribute {
+    background: var(--mx-gray-50);
+    border: 1px solid var(--mx-gray-200);
+    border-left: 4px solid var(--mx-red-primary);
+    border-radius: var(--mx-radius-lg);
+    padding: 1.5rem;
+    margin: 2rem 0;
+    box-shadow: var(--mx-shadow-sm);
+    transition: all var(--mx-transition-base);
+}
+
+dl.py.function:hover,
+dl.py.class:hover,
+dl.py.method:hover {
+    box-shadow: var(--mx-shadow-md);
+}
+
+[data-theme="dark"] dl.py.function,
+[data-theme="dark"] dl.py.class,
+[data-theme="dark"] dl.py.method {
+    background: var(--mx-gray-800);
+    border-color: var(--mx-gray-700);
+}
+
+/* Signature */
+dt.sig {
+    font-family: var(--pst-font-family-monospace);
+    font-size: 1rem;
+    color: var(--mx-red-primary);
+    background: rgba(220, 38, 38, 0.05);
+    padding: 0.75rem;
+    border-radius: var(--mx-radius-md);
+    margin-bottom: 1rem;
+    font-weight: 500;
+}
+
+/* Parameters */
+.sig-param {
+    color: var(--mx-gray-700);
+}
+
+[data-theme="dark"] .sig-param {
+    color: var(--mx-gray-300);
+}
+
+/* Return Type */
+.sig-return {
+    color: var(--mx-success);
+}
+
+/* ==========================================================================
+   11. SEARCH
+   ========================================================================== */
+
+/* Search Input */
+.bd-search .form-control {
+    border-radius: var(--mx-radius-full) !important;
+    border: 2px solid var(--mx-gray-200) !important;
+    padding: 0.625rem 1.25rem !important;
+    transition: all var(--mx-transition-base);
+    font-size: 0.9rem;
+}
+
+.bd-search .form-control:focus {
+    border-color: var(--mx-red-primary) !important;
+    box-shadow: 0 0 0 4px var(--mx-red-glow) !important;
+    outline: none;
+}
+
+[data-theme="dark"] .bd-search .form-control {
+    border-color: var(--mx-gray-700) !important;
+    background: var(--mx-gray-800) !important;
+}
+
+/* Search Keyboard Shortcut */
+.search-button__kbd-shortcut {
+    background: var(--mx-red-light) !important;
+    color: var(--mx-red-primary) !important;
+    border: 1px solid rgba(220, 38, 38, 0.2) !important;
+    border-radius: var(--mx-radius-sm) !important;
+    font-weight: 600;
+}
+
+/* ==========================================================================
+   12. PAGINATION & NAVIGATION
+   ========================================================================== */
+
+/* Previous/Next Navigation */
+.prev-next-area {
+    margin-top: 4rem;
+    padding-top: 2rem;
+    border-top: 2px solid var(--mx-gray-100);
+}
+
+[data-theme="dark"] .prev-next-area {
+    border-top-color: var(--mx-gray-700);
+}
+
+.prev-next-area a {
+    border: 1px solid var(--mx-gray-200) !important;
+    border-radius: var(--mx-radius-lg) !important;
+    padding: 1.5rem !important;
+    transition: all var(--mx-transition-base) !important;
+    background: white;
+}
+
+[data-theme="dark"] .prev-next-area a {
+    background: var(--mx-gray-800);
+    border-color: var(--mx-gray-700) !important;
+}
+
+.prev-next-area a:hover {
+    border-color: var(--mx-red-primary) !important;
+    box-shadow: 0 8px 24px var(--mx-red-glow) !important;
+    transform: translateY(-4px);
+}
+
+.prev-next-area .prev-next-title {
+    color: var(--mx-red-primary) !important;
+    font-family: var(--pst-font-family-heading);
+    font-weight: 600;
+    font-size: 1.125rem;
+}
+
+/* ==========================================================================
+   13. BUTTONS
+   ========================================================================== */
+
+/* Primary Buttons */
+.btn-primary {
+    background: linear-gradient(135deg, var(--mx-red-primary), var(--mx-red-dark)) !important;
+    border: none !important;
+    color: white !important;
+    font-family: var(--pst-font-family-heading);
+    font-weight: 600;
+    padding: 0.625rem 1.5rem;
+    border-radius: var(--mx-radius-md);
+    transition: all var(--mx-transition-base);
+    box-shadow: var(--mx-shadow-sm);
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px var(--mx-red-glow) !important;
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+/* Outline Buttons */
+.btn-outline-primary {
+    color: var(--mx-red-primary) !important;
+    border: 2px solid var(--mx-red-primary) !important;
+    background: transparent !important;
+    font-weight: 600;
+    border-radius: var(--mx-radius-md);
+    transition: all var(--mx-transition-base);
+}
+
+.btn-outline-primary:hover {
+    background: var(--mx-red-primary) !important;
+    color: white !important;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px var(--mx-red-glow);
+}
+
+/* ==========================================================================
+   14. FOOTER
+   ========================================================================== */
+
+.bd-footer {
+    margin-top: 6rem;
+    padding: 3rem 0 2rem;
+    border-top: 2px solid var(--mx-gray-100);
+    font-size: 0.875rem;
+}
+
+[data-theme="dark"] .bd-footer {
+    border-top-color: var(--mx-gray-700);
+}
+
+.footer-items__end {
+    color: var(--mx-gray-500);
+}
+
+.footer-items__end strong {
+    color: var(--mx-red-primary);
+    font-weight: 600;
+}
+
+/* ==========================================================================
+   15. CUSTOM COMPONENTS
+   ========================================================================== */
+
+/* Hero Section */
+.mx-hero {
+    text-align: center;
+    padding: 5rem 2rem;
+    background: radial-gradient(
+        circle at center,
+        var(--mx-red-glow) 0%,
+        transparent 70%
+    );
+    border-radius: var(--mx-radius-xl);
+    margin: 3rem 0;
+}
+
+/* Grid Layout Helper */
+.mx-grid-2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    margin: 2rem 0;
+}
+
+@media (max-width: 768px) {
+    .mx-grid-2 {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Card Component */
+.mx-box {
+    padding: 2rem;
+    border-radius: var(--mx-radius-lg);
+    background: white;
+    border: 1px solid var(--mx-gray-200);
+    box-shadow: var(--mx-shadow-sm);
+    transition: all var(--mx-transition-base);
+}
+
+.mx-box:hover {
+    box-shadow: var(--mx-shadow-md);
+    transform: translateY(-4px);
+}
+
+[data-theme="dark"] .mx-box {
+    background: var(--mx-gray-800);
+    border-color: var(--mx-gray-700);
+}
+
+/* Accent Border */
+.mx-box-accent {
+    border-bottom: 4px solid var(--mx-red-primary);
+}
+
+/* ==========================================================================
+   16. VERSION SWITCHER & DROPDOWNS
+   ========================================================================== */
+
+.bd-version-switcher__button {
+    border-radius: var(--mx-radius-md) !important;
+    border: 1px solid var(--mx-gray-200) !important;
+    transition: all var(--mx-transition-base);
+}
+
+[data-theme="dark"] .bd-version-switcher__button {
+    border-color: var(--mx-gray-700) !important;
+}
+
+.bd-version-switcher__button:hover {
+    background: var(--mx-red-light) !important;
+    color: var(--mx-red-primary) !important;
+    border-color: var(--mx-red-primary) !important;
+}
+
+/* ==========================================================================
+   17. ANNOUNCEMENT BANNER
+   ========================================================================== */
+
+.bd-header-announcement {
+    background: linear-gradient(135deg, var(--mx-red-dark), var(--mx-red-primary)) !important;
+    color: white !important;
+    font-weight: 600;
+    padding: 0.75rem;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* ==========================================================================
+   18. RESPONSIVE DESIGN
+   ========================================================================== */
+
+@media (max-width: 992px) {
+    h1 {
+        font-size: 2rem;
+    }
+    
+    h2 {
+        font-size: 1.65rem;
+    }
+    
+    h3 {
+        font-size: 1.35rem;
+    }
+    
+    .bd-main {
+        padding-top: 1rem;
+    }
+    
+    .mx-hero {
+        padding: 3rem 1.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    h1 {
+        font-size: 1.75rem;
+    }
+    
+    h2 {
+        font-size: 1.5rem;
+    }
+    
+    .admonition {
+        padding: 1.25rem !important;
+    }
+    
+    table.docutils {
+        font-size: 0.85rem;
+    }
+    
+    .prev-next-area a {
+        padding: 1.25rem !important;
+    }
+}
+
+/* ==========================================================================
+   19. PRINT STYLES
+   ========================================================================== */
+
+@media print {
+    .bd-header,
+    .bd-sidebar-primary,
+    .bd-sidebar-secondary,
+    .bd-footer,
+    .prev-next-area {
+        display: none !important;
+    }
+    
+    article {
+        max-width: 100% !important;
+    }
+    
+    .admonition {
+        page-break-inside: avoid;
+    }
+}
+
+/* ==========================================================================
+   20. ACCESSIBILITY IMPROVEMENTS
+   ========================================================================== */
+
+/* Focus Visible States */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible {
+    outline: 3px solid var(--mx-red-primary);
+    outline-offset: 2px;
+    border-radius: var(--mx-radius-sm);
+}
+
+/* Skip to Content Link */
+.skip-link {
+    position: absolute;
+    top: -40px;
+    left: 0;
+    background: var(--mx-red-primary);
+    color: white;
+    padding: 0.5rem 1rem;
+    text-decoration: none;
+    border-radius: 0 0 var(--mx-radius-md) 0;
+    z-index: 100;
+}
+
+.skip-link:focus {
+    top: 0;
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* ==========================================================================
+   END OF MANAGERX PREMIUM DOCS THEME
+   ========================================================================== */
