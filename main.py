@@ -27,7 +27,6 @@ from src.bot.core.cog_manager import CogManager
 from src.bot.core.database import DatabaseManager
 from src.bot.core.dashboard import DashboardTask
 from src.bot.core.utils import print_logo
-
 # =============================================================================
 # SETUP
 # =============================================================================
@@ -38,7 +37,6 @@ colorama_init(autoreset=True)
 # Sys-Path
 if str(BASEDIR) not in sys.path:
     sys.path.append(str(BASEDIR))
-
 # =============================================================================
 # MAIN EXECUTION
 # =============================================================================
@@ -88,6 +86,7 @@ if __name__ == '__main__':
         # Commands sync
         await bot.sync_commands()
         logger.success("COMMANDS", "Application Commands synchronisiert")
+
     
     # Minimaler KeepAlive Cog - damit Bot immer online bleibt
     class KeepAlive(discord.ext.commands.Cog):
