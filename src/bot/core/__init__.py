@@ -11,7 +11,6 @@ from .cog_manager import CogManager
 from .database import DatabaseManager
 from .dashboard import DashboardTask
 from .utils import print_logo, format_uptime, truncate_text
-from .groups import *
 
 __all__ = [
     'ConfigLoader',
