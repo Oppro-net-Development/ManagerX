@@ -53,7 +53,7 @@ Bevor du Änderungen vorschlägst, stelle bitte sicher, dass du Folgendes beacht
 
 Wenn du Fragen hast oder Hilfe brauchst, kontaktiere uns gerne:
 
-📧 Mail: [oppro.help@gmail.com](mailto:oppro.help@gmail.com)  
+📧 Mail: [development@oppro-network.de](mailto:development@oppro-network.de)  
 🌐 Projektseite: [https://github.com/Oppro-net-Development/ManagerX](https://github.com/Oppro-net-Development/ManagerX)  
 💬 Discord: https://discord.gg/ddAneB8nAu
 
