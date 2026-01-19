@@ -30,14 +30,17 @@ checker.py
 bot_stats.json
 
 # Build-Ordner: alles ignorieren...
-_build/*
+build/*
 .pickle
 .doctree
 .buildinfo
 .nojekyll
 .inv
-docs/_build/html/_sources/
+docs/build/
 furo.js.LICENSE.txt
 fontawesome.js.LICENSE.txt
 .map
-docs/_build/*
+docs/build/*
+ManagerX.egg-info/
+dist/
+node_modules

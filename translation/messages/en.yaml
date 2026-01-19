@@ -6,13 +6,18 @@ general:
     option_missing: "A required option is missing."
     bot_has_no_permission: "The bot does not have the necessary permissions to execute this command."
 
-cog_setlang:
-  error_types:
-    unsupported_language: "The specified language is not supported."
-    same_language: "The specified language is already set."
+cog_settings:
+  language:
+    error_types:
+      unsupported_language: "The specified language is not supported."
+      same_language: "The specified language is already set."
+      failed_set_language: "Failed to set the language."
+      language_not_set: "You have not set a preferred language yet."
+      
+    message:
+      language_set: "Language has been set to {language}."
+      current_language: "Your current preferred language is {language}."
 
-  message:
-    language_set: "Language has been set to {language}."
 ###################################################################
 #
 # Cog Folder: cogs/fun 

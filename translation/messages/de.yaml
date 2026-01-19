@@ -8,13 +8,19 @@ general:
     bot_has_no_permission: "Der Bot hat nicht die erforderlichen Berechtigungen, um diesen Befehl auszuführen."
 
 
-cog_setlang:
-  error_types:
-    unsupported_language: "Die angegebene Sprache wird nicht unterstützt."
-    same_language: "Die angegebene Sprache ist bereits eingestellt."
+cog_settings:
+  language:
+    error_types:
+      unsupported_language: "Die angegebene Sprache wird nicht unterstützt."
+      same_language: "Die angegebene Sprache ist bereits eingestellt."
+      failed_set_language: "Fehler beim Einstellen der Sprache."
+      language_not_set: "Du hast noch keine bevorzugte Sprache eingestellt."
 
-  message:
-    language_set: "Die Sprache wurde auf {language} gesetzt."
+
+    message:
+      language_set: "Die Sprache wurde auf {language} gesetzt."
+      current_language: "Deine aktuelle bevorzugte Sprache ist {language}."
+
 #########################################################
 # Fun Cogs
 #########################################################
