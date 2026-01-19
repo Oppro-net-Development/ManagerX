@@ -43,3 +43,4 @@ fontawesome.js.LICENSE.txt
 docs/build/*
 ManagerX.egg-info/
 dist/
+node_modules
