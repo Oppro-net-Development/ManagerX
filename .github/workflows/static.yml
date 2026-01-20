@@ -4,7 +4,7 @@ name: Deploy static content to Pages
 on:
   # Runs on pushes targeting the 2.0.0 branch
   push:
-    branches: ["2.0.0"]
+    branches: ["main"]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -37,7 +37,7 @@ jobs:
         uses: actions/upload-pages-artifact@v4
         with:
           # This points to your specific folder
-          path: 'site/'
+          path: 'src/web'
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
