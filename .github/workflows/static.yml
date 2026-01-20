@@ -37,7 +37,7 @@ jobs:
         uses: actions/upload-pages-artifact@v4
         with:
           # This points to your specific folder
-          path: 'site/'
+          path: 'src/web'
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
