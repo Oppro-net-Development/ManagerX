@@ -26,6 +26,7 @@ class EnhancedStatsCog(commands.Cog):
         logger.info("Enhanced StatsCog initialized")
 
     stats = SlashCommandGroup("stats", "Statistiken")
+    gb = stats.create_subgroup("global")
 
     def cog_unload(self):
         """Called when the cog is unloaded."""
@@ -208,8 +209,8 @@ class EnhancedStatsCog(commands.Cog):
             )
             await ctx.followup.send(embed=error_embed, ephemeral=True)
 
-    @stats.command(
-        name="globalstats",
+    @gb.command(
+        name="stats",
         description="Zeige deine globalen Level-Statistiken über alle Server an"
     )
     async def global_stats_command(
@@ -505,7 +506,7 @@ class EnhancedStatsCog(commands.Cog):
             await ctx.followup.send(embed=error_embed, ephemeral=True)
 
     @stats.command(
-        name="stats_info",
+        name="info",
         description="Informationen über das erweiterte Statistik-System"
     )
     async def stats_info_command(self, ctx: discord.ApplicationContext):
