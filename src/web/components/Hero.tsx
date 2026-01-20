@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Shield, Users, MessageCircle, Sparkles } from "lucide-react";
 
 const stats = [
-  { label: "Server", value: "10,000+", icon: Users },
+  { label: "Server", value: "10+", icon: Users },
   { label: "Befehle", value: "90+", icon: MessageCircle },
   { label: "Uptime", value: "99.9%", icon: Sparkles },
 ];
@@ -29,14 +29,14 @@ StatCard.displayName = "StatCard";
 export const Hero = memo(function Hero() {
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Static Background - no blur for performance */}
+      {/* Static Background */}
       <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-background to-background" />
       
-      {/* Simple gradient orbs without blur */}
+      {/* Simple gradient orbs */}
       <div className="absolute top-1/4 left-1/4 w-[400px] h-[400px] bg-primary/10 rounded-full opacity-50" />
       <div className="absolute bottom-1/4 right-1/4 w-[300px] h-[300px] bg-accent/10 rounded-full opacity-40" />
       
-      {/* Grid Pattern - static */}
+      {/* Grid Pattern */}
       <div 
         className="absolute inset-0 opacity-[0.03]"
         style={{
@@ -56,7 +56,7 @@ export const Hero = memo(function Hero() {
             className="inline-flex items-center gap-2 glass rounded-full px-5 py-2.5 mb-10"
           >
             <span className="w-2.5 h-2.5 bg-accent rounded-full animate-pulse" />
-            <span className="text-sm text-foreground/80 font-medium">Version 2.0 jetzt verfügbar</span>
+            <span className="text-sm text-foreground/80 font-medium">Version 2.0 in Work</span>
             <Sparkles className="w-4 h-4 text-accent" />
           </motion.div>
 
@@ -88,17 +88,16 @@ export const Hero = memo(function Hero() {
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">X</span>
           </motion.h1>
 
-          {/* Description */}
+          {/* DER NEUE SLOGAN (Ersetzt die alte Description) */}
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
-            className="text-xl md:text-2xl text-muted-foreground mb-12 max-w-3xl mx-auto leading-relaxed"
+            className="text-2xl md:text-3xl text-muted-foreground mb-12 max-w-3xl mx-auto leading-relaxed font-medium tracking-tight"
           >
-            Der ultimative Discord Bot für{" "}
-            <span className="text-foreground font-medium">Moderation</span>,{" "}
-            <span className="text-foreground font-medium">Levelsystem</span>,{" "}
-            <span className="text-foreground font-medium">Globalchat</span> und mehr.
+            Sicher <span className="text-primary/40 mx-2">•</span> 
+            Schnell <span className="text-primary/40 mx-2">•</span> 
+            Open Source
           </motion.p>
 
           {/* CTA Buttons */}

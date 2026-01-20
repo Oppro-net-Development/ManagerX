@@ -4,9 +4,9 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, Sparkles } from "lucide-react";
 
 const stats = [
-  { label: "Aktive Server", value: "10K+" },
-  { label: "Befehle ausgeführt", value: "1M+" },
-  { label: "Zufriedene User", value: "50K+" },
+  { label: "Aktive Server", value: "10+" },
+  { label: "Befehle ausgeführt", value: "1000+" },
+  { label: "Zufriedene User", value: "300+" },
 ];
 
 export const CTA = memo(function CTA() {
