@@ -11,11 +11,13 @@ Version: 2.0.0
 # =============================================================================
 import discord
 import sys
+import asyncio
 from pathlib import Path
 from colorama import Fore, Style, init as colorama_init
 from dotenv import load_dotenv
 import ezcord
 from ezcord import CogLog
+from aiohttp import web  # Neu für die Status-Seite
 
 # Logger (muss existieren!)
 from logger import logger
@@ -27,6 +29,7 @@ from src.bot.core.cog_manager import CogManager
 from src.bot.core.database import DatabaseManager
 from src.bot.core.dashboard import DashboardTask
 from src.bot.core.utils import print_logo
+
 # =============================================================================
 # SETUP
 # =============================================================================
@@ -37,6 +40,41 @@ colorama_init(autoreset=True)
 # Sys-Path
 if str(BASEDIR) not in sys.path:
     sys.path.append(str(BASEDIR))
+
+# =============================================================================
+# STATUS API SERVER (Für die React-Webseite)
+# =============================================================================
+async def get_status_api(request):
+    """Liefert Live-Daten an die React Status-Seite"""
+    try:
+        status_data = {
+            "status": "online",
+            "latency": f"{round(bot.latency * 1000)}ms",
+            "version": BotConfig.VERSION,
+            "guilds": len(bot.guilds),
+            "users": len(bot.users),
+            "sqlite": "connected",
+            "ai_engine": "ready"
+        }
+        return web.json_response(status_data, headers={
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "GET"
+        })
+    except Exception as e:
+        logger.error("API", f"Fehler bei Status-Abfrage: {e}")
+        return web.json_response({"status": "error"}, status=500)
+
+async def start_webserver():
+    """Startet den aiohttp Webserver auf Port 8080"""
+    app = web.Application()
+    app.router.add_get('/api/status', get_status_api)
+    runner = web.AppRunner(app)
+    await runner.setup()
+    # Port 8080 - Stelle sicher, dass dieser in der Firewall offen ist (ufw allow 8080/tcp)
+    site = web.TCPSite(runner, '0.0.0.0', 8040)
+    await site.start()
+    logger.success("API", "Status-Server läuft auf http://0.0.0.0:8040/api/status")
+
 # =============================================================================
 # MAIN EXECUTION
 # =============================================================================
@@ -55,7 +93,7 @@ if __name__ == '__main__':
     bot_setup = BotSetup(config)
     bot = bot_setup.create_bot()
     
-    # Datenbank initialisieren (optional - Bot läuft auch ohne)
+    # Datenbank initialisieren
     db_manager = DatabaseManager()
     if not db_manager.initialize(bot):
         logger.warning("DATABASE", "Bot läuft ohne Datenbank weiter...")
@@ -70,6 +108,9 @@ if __name__ == '__main__':
     @bot.event
     async def on_ready():
         logger.success("BOT", f"Logged in as {bot.user.name}")
+        
+        # --- NEU: Status API & Webserver starten ---
+        bot.loop.create_task(start_webserver())
         
         # Dashboard starten
         dashboard.start()
@@ -87,10 +128,8 @@ if __name__ == '__main__':
         await bot.sync_commands()
         logger.success("COMMANDS", "Application Commands synchronisiert")
 
-    
-    # Minimaler KeepAlive Cog - damit Bot immer online bleibt
+    # Minimaler KeepAlive Cog
     class KeepAlive(discord.ext.commands.Cog):
-        """Minimal Cog to keep bot online"""
         def __init__(self, bot):
             self.bot = bot
         
@@ -98,7 +137,6 @@ if __name__ == '__main__':
         async def on_ready(self):
             logger.info("KEEPALIVE", "KeepAlive Cog aktiv - Bot bleibt online")
     
-    # KeepAlive Cog immer laden
     bot.add_cog(KeepAlive(bot))
     logger.success("BOT", "KeepAlive Cog geladen")
     
