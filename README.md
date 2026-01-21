@@ -32,6 +32,7 @@
   <img src="https://img.shields.io/github/issues/Oppro-net-Development/ManagerX?style=flat-square&logo=github&logoColor=white" alt="Issues">
   <img src="https://img.shields.io/github/stars/Oppro-net-Development/ManagerX?style=flat-square&logo=github&logoColor=white&color=FFD700" alt="Stars">
   <img src="https://img.shields.io/github/forks/Oppro-net-Development/ManagerX?style=flat-square&logo=github&logoColor=white&color=00D26A" alt="Forks">
+  <a href="https://www.codefactor.io/repository/github/managerx-development/managerx"><img src="https://www.codefactor.io/repository/github/managerx-development/managerx/badge" alt="CodeFactor" /></a>
 </p>
 
 <br>
