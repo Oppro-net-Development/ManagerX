@@ -1,10 +1,10 @@
 import { memo } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Shield, Heart, Github, MessageCircle, ExternalLink, Terminal, Sparkles } from "lucide-react";
+import { Shield, Heart, Github, MessageCircle, ExternalLink, Terminal, Sparkles, Code2 } from "lucide-react";
 
 const socialLinks = [
-  { icon: Github, href: "https://github.com/dein-github", label: "GitHub" },
+  { icon: Github, href: "https://github.com/ManagerX-Development/ManagerX", label: "GitHub" },
   { icon: MessageCircle, href: "https://discord.gg/dein-link", label: "Discord Support" },
 ];
 
@@ -13,11 +13,12 @@ export const Footer = memo(function Footer() {
     <footer className="relative py-24 border-t border-white/5 bg-background overflow-hidden">
       {/* Hintergrund-Effekte */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-[1px] bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
+      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-primary/5 blur-[120px] rounded-full pointer-events-none" />
       
       <div className="container relative z-10 px-4">
         <div className="flex flex-col items-center">
           
-          {/* --- EXAKT DAS LOGO AUS DER HERO --- */}
+          {/* --- HERO LOGO REPLICA --- */}
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             whileInView={{ opacity: 1, scale: 1 }}
@@ -34,18 +35,18 @@ export const Footer = memo(function Footer() {
             </div>
           </motion.div>
 
-          {/* --- TITEL AUS DER HERO --- */}
+          {/* --- BRAND TITLE --- */}
           <motion.h2
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             className="text-5xl md:text-6xl font-bold mb-6 tracking-tight text-center"
           >
-            <span className="text-foreground">Manager</span>
+            <span className="text-foreground italic">Manager</span>
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent ml-2">X</span>
           </motion.h2>
 
-          {/* --- DEIN SLOGAN --- */}
+          {/* --- SLOGAN --- */}
           <motion.p
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
@@ -74,42 +75,102 @@ export const Footer = memo(function Footer() {
             ))}
           </div>
 
-          {/* --- NAVIGATION GRID --- */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-12 text-center border-y border-white/5 py-16 w-full max-w-5xl mb-16">
+          {/* --- NAVIGATION & TECH GRID --- */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-12 text-center md:text-left border-y border-white/5 py-16 w-full max-w-6xl mb-16">
+            
+            {/* Spalte 1: Bot Navigation */}
             <div className="flex flex-col gap-4">
-              <span className="text-[10px] font-black uppercase tracking-widest text-primary">Bot</span>
-              <a href="#features" className="text-sm text-muted-foreground hover:text-foreground">Features</a>
-              <a href="#stats" className="text-sm text-muted-foreground hover:text-foreground">Stats</a>
+              <span className="text-[10px] font-black uppercase tracking-widest text-primary">Schnellzugriff</span>
+              <a href="#features" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Features</a>
+              <a href="#stats" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Stats</a>
+              <a href="#commands" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Commands</a>
             </div>
+
+            {/* Spalte 2: Links */}
             <div className="flex flex-col gap-4">
               <span className="text-[10px] font-black uppercase tracking-widest text-primary">Links</span>
-              <a href="https://docs.oppro-network.de/" target="_blank" className="text-sm text-muted-foreground hover:text-foreground flex items-center justify-center gap-1 text-center">Docs <ExternalLink className="w-3 h-3" /></a>
-              <a href="https://discord..." className="text-sm text-muted-foreground hover:text-foreground text-center">Invite</a>
+              <a href="https://docs.oppro-network.de/" target="_blank" rel="noreferrer" className="text-sm text-muted-foreground hover:text-foreground flex items-center justify-center md:justify-start gap-1">
+                Docs <ExternalLink className="w-3 h-3" />
+              </a>
+              <a href="https://discord.com" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Invite Bot</a>
+              <a href="https://status.oppro-network.de" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Status Page</a>
             </div>
+
+            {/* Spalte 3: Rechtliches */}
             <div className="flex flex-col gap-4">
               <span className="text-[10px] font-black uppercase tracking-widest text-primary">Rechtliches</span>
-              <Link to="/Datenschutz" className="text-sm text-muted-foreground hover:text-foreground">Datenschutz</Link>
-              <Link to="/Impressum" className="text-sm text-muted-foreground hover:text-foreground">Impressum</Link>
-              <Link to="/Nutzungsbedingungen" className="text-sm text-muted-foreground hover:text-foreground">Nutzungsbedingungen</Link>
+              <Link to="/datenschutz" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Datenschutz</Link>
+              <Link to="/impressum" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Impressum</Link>
+              <Link to="/nutzungsbedingungen" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Nutzungsbedingungen</Link>
             </div>
-            <div className="flex flex-col gap-4 items-center">
-              <span className="text-[10px] font-black uppercase tracking-widest text-primary">Status</span>
-              <div className="flex items-center gap-2 text-xs font-mono text-accent">
-                <Terminal className="w-4 h-4" />
-                <span>Online</span>
+
+            {/* Spalte 4: TECH STACK (DEINE REPO DATEN) */}
+            <div className="flex flex-col gap-4">
+              <span className="text-[10px] font-black uppercase tracking-widest text-primary">System Architecture</span>
+              <div className="space-y-4">
+                {/* Python */}
+                <div className="space-y-1.5">
+                  <div className="flex justify-between text-[10px] font-mono tracking-tighter">
+                    <span className="text-foreground">Python (Core)</span>
+                    <span className="text-primary">66.6%</span>
+                  </div>
+                  <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
+                    <motion.div 
+                      initial={{ width: 0 }}
+                      whileInView={{ width: "66.6%" }}
+                      viewport={{ once: true }}
+                      className="h-full bg-primary shadow-[0_0_8px_rgba(var(--primary),0.4)]" 
+                    />
+                  </div>
+                </div>
+
+                {/* TypeScript */}
+                <div className="space-y-1.5">
+                  <div className="flex justify-between text-[10px] font-mono tracking-tighter">
+                    <span className="text-foreground">TypeScript (Web)</span>
+                    <span className="text-accent">32.0%</span>
+                  </div>
+                  <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
+                    <motion.div 
+                      initial={{ width: 0 }}
+                      whileInView={{ width: "32.0%" }}
+                      viewport={{ once: true }}
+                      className="h-full bg-accent shadow-[0_0_8px_rgba(var(--accent),0.4)]" 
+                    />
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3 pt-1">
+                  <div className="flex items-center gap-1.5">
+                    <div className="w-1.5 h-1.5 rounded-full bg-blue-400 opacity-50" />
+                    <span className="text-[9px] font-mono text-muted-foreground">CSS 1.1%</span>
+                  </div>
+                  <div className="flex items-center gap-2 px-2 py-0.5 rounded bg-accent/5 border border-accent/10">
+                    <Terminal className="w-3 h-3 text-accent" />
+                    <span className="text-[9px] font-mono text-accent">V2.0.0</span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
 
           {/* --- BOTTOM BAR --- */}
           <div className="flex flex-col md:flex-row items-center justify-between w-full gap-8">
-            <div className="flex items-center gap-3 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+            <div className="flex items-center gap-3 text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
               <span>Built with</span>
               <Heart className="w-4 h-4 text-primary fill-primary animate-pulse" />
               <span>by ManagerX Dev Team</span>
             </div>
+
+            <div className="flex items-center gap-6 opacity-40">
+              <div className="flex items-center gap-2 text-[10px] font-mono uppercase">
+                <Code2 className="w-3 h-3" />
+                <span>Open Source Project</span>
+              </div>
+            </div>
+
             <p className="text-[10px] font-mono text-muted-foreground/40">
-              © {new Date().getFullYear()} / V2.0.0
+              © {new Date().getFullYear()} / ALL RIGHTS RESERVED
             </p>
           </div>
         </div>

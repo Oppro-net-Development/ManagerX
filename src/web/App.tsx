@@ -8,6 +8,9 @@ import NotFound from "./pages/NotFound";
 import Impressum from "./pages/Impressum";
 import Datenschutz from "./pages/Datenschutz";
 import Nutzungsbedingungen from "./pages/Nutzungsbedingungen";
+import PluginsPage from "./pages/PluginsPage";
+import Status from "./pages/Status";
+
 
 const queryClient = new QueryClient();
 
@@ -22,6 +25,8 @@ const App = () => (
           <Route path="/impressum" element={<Impressum />} />
           <Route path="/datenschutz" element={<Datenschutz />} />
           <Route path="/nutzungsbedingungen" element={<Nutzungsbedingungen />} />
+          <Route path="/plugins" element={<PluginsPage />} />
+          <Route path="/status" element={<Status />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
