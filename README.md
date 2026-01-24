@@ -10,15 +10,18 @@
 
 <!-- Haupt-Badges -->
 <p align="center">
-  <a href="https://github.com/Oppro-net-Development/ManagerX/releases">
-    <img src="https://img.shields.io/badge/Version-2.0.0-5865F2?style=for-the-badge&logo=discord&logoColor=white" alt="Version">
+  <a href="https://status.oppro-network.de">
+    <img src="https://status.oppro-network.de/api/badge/6/status?style=for-the-badge" alt="Status">
   </a>
+
   <a href="#-roadmap">
     <img src="https://img.shields.io/badge/Next_Release-v2.1.0-00D9FF?style=for-the-badge&logo=rocket&logoColor=white" alt="Next Release">
   </a>
+
   <a href="https://github.com/Oppro-net-Development/ManagerX/commits/main">
     <img src="https://img.shields.io/github/last-commit/Oppro-net-Development/ManagerX?style=for-the-badge&logo=git&logoColor=white&color=F05032&label=Last%20Commit" alt="Last Commit">
   </a>
+
   <a href="LICENSE">
     <img src="https://img.shields.io/badge/License-GPL--3.0-blue?style=for-the-badge&logo=opensourceinitiative&logoColor=white" alt="License">
   </a>
