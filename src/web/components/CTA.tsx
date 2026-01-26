@@ -12,57 +12,105 @@ const stats = [
 export const CTA = memo(function CTA() {
   return (
     <section id="support" className="py-32 relative overflow-hidden">
-      {/* Simple Background */}
-      <div className="absolute inset-0 bg-gradient-to-b from-background via-primary/5 to-background" />
+      {/* Premium Background */}
+      <div className="absolute inset-0 bg-gradient-to-b from-background via-primary/8 to-accent/5" />
+      <div className="absolute top-1/2 left-1/4 w-[500px] h-[500px] bg-primary/10 blur-[150px] rounded-full" />
+      <div className="absolute bottom-0 right-1/4 w-[600px] h-[600px] bg-accent/10 blur-[150px] rounded-full" />
 
       <div className="container relative z-10 px-4">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="glass rounded-[2.5rem] p-10 md:p-20 text-center max-w-5xl mx-auto"
+          transition={{ duration: 0.8, ease: "easeInOut" }}
+          className="glass rounded-[2.5rem] p-10 md:p-24 text-center max-w-5xl mx-auto border border-white/10 backdrop-blur-lg shadow-2xl"
         >
-          <div className="inline-flex items-center gap-2 glass rounded-full px-5 py-2.5 mb-8">
-            <Sparkles className="w-4 h-4 text-accent" />
-            <span className="text-sm text-foreground/80 font-medium">100% Kostenlos</span>
-          </div>
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.1, duration: 0.6, ease: "easeInOut" }}
+            className="inline-flex items-center gap-2 glass rounded-full px-6 py-3 mb-10 border border-accent/20"
+          >
+            <Sparkles className="w-4 h-4 text-accent animate-spin" style={{animationDuration: "3s"}} />
+            <span className="text-sm text-foreground/80 font-bold">100% Kostenlos & Open Source</span>
+          </motion.div>
 
-          <h2 className="text-4xl md:text-6xl font-bold mb-6">
+          <motion.h2 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2, duration: 0.7, ease: "easeInOut" }}
+            className="text-5xl md:text-7xl font-black mb-8 tracking-tighter leading-tight"
+          >
             <span className="text-foreground">Bereit für das </span>
-            <span className="text-foreground font-extrabold">nächste </span>
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent font-extrabold">Level</span>
-            <span className="text-foreground font-extrabold">?</span>
-          </h2>
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-primary to-accent font-black">nächste Level</span>
+            <span className="text-foreground">?</span>
+          </motion.h2>
 
-          <p className="text-foreground/70 text-lg md:text-xl mb-12 max-w-2xl mx-auto leading-relaxed">
-            Füge ManagerX jetzt zu deinem Server hinzu und erlebe die Zukunft 
-            der Discord Server-Verwaltung.
-          </p>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.3 }}
+            className="text-lg md:text-2xl text-muted-foreground mb-14 max-w-3xl mx-auto leading-relaxed font-medium"
+          >
+            Füge ManagerX jetzt zu deinem Server hinzu und erlebe die moderne Discord Server-Verwaltung mit 90 innovativen Slash-Commands.
+          </motion.p>
 
-          <div className="flex flex-col sm:flex-row gap-5 justify-center">
-            <Button variant="hero" size="xl" className="group" asChild>
-              <a href="https://discord.com/oauth2/authorize" target="_blank" rel="noopener noreferrer">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.4 }}
+            className="flex flex-col sm:flex-row gap-5 justify-center mb-16"
+          >
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
+              <a 
+                href="https://discord.com/oauth2/authorize?client_id=1368201272624287754&permissions=1669118160151&integration_type=0&scope=bot" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="group inline-flex items-center gap-3 px-8 py-4 rounded-2xl bg-gradient-to-r from-primary to-accent text-primary-foreground font-bold text-lg hover:shadow-2xl hover:shadow-primary/50 transition-all"
+              >
                 <span>Bot einladen</span>
-                <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform" />
               </a>
-            </Button>
-            <Button variant="glass" size="xl" asChild>
-              <a href="https://discord.gg" target="_blank" rel="noopener noreferrer">
+            </motion.div>
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
+              <a 
+                href="https://discord.gg" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl glass hover:bg-white/10 border border-white/20 font-bold text-lg transition-all"
+              >
                 Support Server
               </a>
-            </Button>
-          </div>
+            </motion.div>
+          </motion.div>
 
           {/* Bottom Stats */}
-          <div className="flex flex-wrap justify-center gap-12 mt-16 pt-8 border-t border-border/50">
-            {stats.map((stat) => (
-              <div key={stat.label} className="text-center">
-                <div className="text-2xl font-bold text-foreground">{stat.value}</div>
-                <div className="text-sm text-muted-foreground">{stat.label}</div>
-              </div>
+          <motion.div 
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.5 }}
+            className="flex flex-wrap justify-center gap-8 md:gap-16 pt-10 border-t border-white/10"
+          >
+            {stats.map((stat, idx) => (
+              <motion.div 
+                key={stat.label}
+                whileHover={{ y: -5 }}
+                className="text-center"
+              >
+                <div className="text-3xl md:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent mb-1">
+                  {stat.value}
+                </div>
+                <div className="text-sm text-muted-foreground font-semibold uppercase tracking-wide">
+                  {stat.label}
+                </div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </motion.div>
       </div>
     </section>

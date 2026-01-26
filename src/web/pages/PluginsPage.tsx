@@ -1,6 +1,5 @@
 import { memo } from "react";
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
 import { 
   ArrowLeft, Puzzle, Gamepad2, Globe, ShieldCheck, 
   Users, Zap, Settings2, Code2, Layers, Mail, Github 
@@ -49,14 +48,16 @@ const corePlugins = [
 
 export const PluginsPage = memo(function PluginsPage() {
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div 
+      className="min-h-screen bg-background flex flex-col"
+    >
       <Navbar />
       
       <main className="flex-grow container relative z-10 px-4 pt-32 pb-24">
         <div className="max-w-5xl mx-auto">
           
           {/* Zurück Button */}
-          <motion.div 
+          <div 
             initial={{ opacity: 0, x: -10 }}
             animate={{ opacity: 1, x: 0 }}
           >
@@ -67,7 +68,7 @@ export const PluginsPage = memo(function PluginsPage() {
               <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
               Zurück zur Startseite
             </Link>
-          </motion.div>
+          </div>
 
           {/* Header Bereich */}
           <header className="mb-16">
@@ -162,10 +163,10 @@ export const PluginsPage = memo(function PluginsPage() {
               <p className="text-sm text-muted-foreground">Kontaktiere uns für individuelle Funktions-Ideen.</p>
             </div>
             <div className="flex gap-4">
-              <a href="mailto:development@oppro-network.de" className="p-3 rounded-xl glass border border-white/10 hover:text-primary transition-colors">
+              <a href="mailto:development@oppro-network.de" className="p-3 rounded-xl glass border border-white/10 hover:text-primary transition-colors" title="Email">
                 <Mail className="w-5 h-5" />
               </a>
-              <a href="https://github.com/ManagerX-Development/ManagerX" className="p-3 rounded-xl glass border border-white/10 hover:text-primary transition-colors">
+              <a href="https://github.com/ManagerX-Development/ManagerX" className="p-3 rounded-xl glass border border-white/10 hover:text-primary transition-colors" title="GitHub">
                 <Github className="w-5 h-5" />
               </a>
             </div>

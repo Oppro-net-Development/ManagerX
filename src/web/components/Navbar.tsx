@@ -2,13 +2,16 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Shield, Menu, X, Sparkles, Puzzle, Activity } from "lucide-react"; // Activity Icon hinzugefügt
+import { 
+  Shield, Menu, X, Sparkles, Puzzle, Activity, 
+  Newspaper // Icon für den Blog hinzugefügt
+} from "lucide-react"; 
 import { cn } from "@/lib/utils";
 
 const navLinks = [
-  { label: "Features", href: "/#features" },
+  { label: "Features", href: "/#features", icon: Sparkles },
   { label: "Plugins", href: "/plugins", icon: Puzzle },
-  { label: "Status", href: "/status", icon: Activity }, // Status Link hinzugefügt
+  { label: "Status", href: "/status", icon: Activity },
 ];
 
 export function Navbar() {
@@ -28,9 +31,9 @@ export function Navbar() {
     <motion.header
       initial={{ y: -100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.6, ease: "easeOut" }}
+      transition={{ duration: 0.8, ease: "easeInOut" }}
       className={cn(
-        "fixed top-0 left-0 right-0 z-50 transition-all duration-500",
+        "fixed top-0 left-0 right-0 z-50 transition-all duration-700 ease-out",
         isScrolled ? "glass-strong py-3 shadow-lg shadow-primary/5" : "py-5 bg-transparent"
       )}
     >
@@ -50,43 +53,52 @@ export function Navbar() {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-8">
-            {navLinks.map((link) => (
-              <Link
-                key={link.label}
-                to={link.href}
-                className={cn(
-                  "relative text-[10px] font-black uppercase tracking-[0.2em] transition-colors group flex items-center gap-2",
-                  location.pathname === link.href ? "text-primary" : "text-muted-foreground hover:text-white"
-                )}
-              >
-                {link.icon && <link.icon className="w-3.5 h-3.5" />}
-                {link.label}
-                <span className={cn(
-                  "absolute -bottom-1 left-0 h-0.5 bg-gradient-to-r from-primary to-accent transition-all duration-300",
-                  location.pathname === link.href ? "w-full" : "w-0 group-hover:w-full"
-                )} />
-              </Link>
+          <div className="hidden md:flex items-center gap-2">
+            {navLinks.map((link, idx) => (
+              <motion.div key={link.label} initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: idx * 0.1 }}>
+                <Link
+                  to={link.href}
+                  className={cn(
+                    "relative text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-300 group flex items-center gap-2 px-4 py-2 rounded-lg",
+                    location.pathname === link.href 
+                      ? "text-primary bg-primary/10" 
+                      : "text-muted-foreground hover:text-white hover:bg-white/5"
+                  )}
+                >
+                  {link.icon && <link.icon className="w-4 h-4" />}
+                  {link.label}
+                  <span className={cn(
+                    "absolute -bottom-1 left-0 h-0.5 bg-gradient-to-r from-primary to-accent transition-all duration-300 rounded-full",
+                    location.pathname === link.href ? "w-[calc(100%-32px)] ml-4" : "w-0 group-hover:w-[calc(100%-32px)]"
+                  )} />
+                </Link>
+              </motion.div>
             ))}
           </div>
 
           {/* CTA Button */}
           <div className="hidden md:block">
-            <Button variant="default" className="group bg-primary hover:bg-primary/90 rounded-xl px-6 text-white font-bold" asChild>
-              <a href="https://discord.com" target="_blank" rel="noopener noreferrer">
-                <Sparkles className="w-4 h-4 mr-2 group-hover:rotate-12 transition-transform" />
-                Bot einladen
-              </a>
-            </Button>
+            <motion.a
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.98 }}
+              href="https://discord.com/oauth2/authorize?client_id=1368201272624287754&permissions=1669118160151&integration_type=0&scope=bot" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="group inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-primary to-accent text-white font-bold hover:shadow-lg hover:shadow-primary/50 transition-all"
+            >
+              <Sparkles className="w-4 h-4 group-hover:rotate-12 transition-transform" />
+              Bot einladen
+            </motion.a>
           </div>
 
           {/* Mobile Menu Button */}
-          <button
+          <motion.button
+            whileTap={{ scale: 0.95 }}
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="md:hidden p-2 text-white"
+            className="md:hidden p-2 text-white hover:bg-white/5 rounded-lg transition-colors"
           >
-            {isMobileMenuOpen ? <X /> : <Menu />}
-          </button>
+            {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          </motion.button>
         </nav>
       </div>
 
@@ -97,29 +109,44 @@ export function Navbar() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-background/95 backdrop-blur-lg border-b border-white/5"
+            transition={{ duration: 0.3 }}
+            className="md:hidden glass border-b border-white/10 backdrop-blur-lg"
           >
-            <div className="container py-8 flex flex-col gap-6">
-              {navLinks.map((link) => (
-                <Link 
+            <div className="container py-10 flex flex-col gap-6">
+              {navLinks.map((link, idx) => (
+                <motion.div 
                   key={link.label}
-                  to={link.href} 
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className={cn(
-                    "text-2xl font-black italic uppercase flex items-center gap-3",
-                    location.pathname === link.href ? "text-primary" : "text-white"
-                  )}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: idx * 0.1 }}
                 >
-                  {link.icon && <link.icon className="w-6 h-6 text-primary" />}
-                  {link.label}
-                </Link>
+                  <Link 
+                    to={link.href} 
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className={cn(
+                      "text-lg font-bold uppercase flex items-center gap-3 p-3 rounded-lg transition-colors",
+                      location.pathname === link.href 
+                        ? "text-primary bg-primary/10" 
+                        : "text-foreground/80 hover:text-white hover:bg-white/5"
+                    )}
+                  >
+                    {link.icon && <link.icon className="w-5 h-5 text-primary" />}
+                    {link.label}
+                  </Link>
+                </motion.div>
               ))}
-              <a 
-                href="https://discord.com" 
-                className="mt-4 bg-primary text-white p-4 rounded-2xl text-center font-black uppercase italic tracking-widest"
+              <motion.a 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4 }}
+                href="https://discord.com/oauth2/authorize?client_id=1368201272624287754&permissions=1669118160151&integration_type=0&scope=bot" 
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-6 inline-flex items-center justify-center gap-2 bg-gradient-to-r from-primary to-accent text-white p-4 rounded-2xl text-center font-bold uppercase tracking-widest hover:shadow-lg transition-all"
               >
+                <Sparkles className="w-4 h-4" />
                 Bot einladen
-              </a>
+              </motion.a>
             </div>
           </motion.div>
         )}

@@ -1,13 +1,14 @@
 import { memo } from "react";
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
 import { ArrowLeft, Mail, MapPin, User, ShieldCheck } from "lucide-react";
 import { Navbar } from "../components/Navbar";
 import { Footer } from "../components/Footer";
 
 export const Impressum = memo(function Impressum() {
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div 
+      className="min-h-screen bg-background flex flex-col"
+    >
       <Navbar />
       
       <main className="flex-grow container relative z-10 px-4 pt-32 pb-24">
@@ -53,8 +54,9 @@ export const Impressum = memo(function Impressum() {
                 <User className="w-5 h-5 text-primary" />
               </div>
               <div>
-                <h2 className="text-sm font-bold uppercase tracking-widest text-primary mb-3">Verantwortlich</h2>
+                <h2 className="text-sm font-bold uppercase tracking-widest text-primary mb-3">Verantwortliche Person (§5 TMG)</h2>
                 <p className="text-xl font-semibold text-foreground">Lenny Steiger</p>
+                <p className="text-sm text-muted-foreground mt-1">Gründer & Projektleiter</p>
               </div>
             </section>
 
@@ -64,8 +66,9 @@ export const Impressum = memo(function Impressum() {
                 <MapPin className="w-5 h-5 text-primary" />
               </div>
               <div>
-                <h2 className="text-sm font-bold uppercase tracking-widest text-primary mb-3">Anschrift</h2>
-                <div className="space-y-1 text-muted-foreground leading-relaxed">
+                <h2 className="text-sm font-bold uppercase tracking-widest text-primary mb-3">Adresse</h2>
+                <div className="space-y-1 text-muted-foreground leading-relaxed text-sm">
+                  <p>Lenny Steiger</p>
                   <p>Eulauer Str. 24</p>
                   <p>04523 Pegau</p>
                   <p>Deutschland</p>
@@ -80,19 +83,84 @@ export const Impressum = memo(function Impressum() {
               </div>
               <div>
                 <h2 className="text-sm font-bold uppercase tracking-widest text-primary mb-3">Kontakt</h2>
-                <a 
-                  href="mailto:contact@oppro-network.de" 
-                  className="text-lg font-medium text-foreground hover:text-primary transition-colors underline decoration-primary/30 underline-offset-4"
-                >
-                  contact@oppro-network.de
-                </a>
+                <div className="space-y-2">
+                  <div>
+                    <p className="text-xs text-muted-foreground/70">E-Mail (Allgemein):</p>
+                    <a 
+                      href="mailto:contact@oppro-network.de" 
+                      className="text-sm font-medium text-foreground hover:text-primary transition-colors"
+                    >
+                      contact@oppro-network.de
+                    </a>
+                  </div>
+                  <div>
+                    <p className="text-xs text-muted-foreground/70">E-Mail (Legal):</p>
+                    <a 
+                      href="mailto:legal@oppro-network.de" 
+                      className="text-sm font-medium text-foreground hover:text-primary transition-colors"
+                    >
+                      legal@oppro-network.de
+                    </a>
+                  </div>
+                </div>
               </div>
+            </section>
+
+            {/* Rechtliche Hinweise */}
+            <section className="border-t border-white/5 pt-8 space-y-4">
+              <h2 className="text-sm font-bold uppercase tracking-widest text-primary mb-4">Rechtliche Informationen</h2>
+              
+              <div className="space-y-3 text-sm text-muted-foreground">
+                <div>
+                  <p className="font-medium text-foreground mb-1">Haftungsausschluss (§ 7 TMG)</p>
+                  <p>Als Diensteanbieter sind wir gemäß § 7 Abs.1 TMG für eigene Inhalte auf diesen Seiten nach den allgemeinen Gesetzen verantwortlich. Nach §§ 8 bis 10 TMG sind wir als Diensteanbieter jedoch nicht verpflichtet, übermittelte oder gespeicherte fremde Informationen zu überwachen oder nach Umständen zu forschen, die auf eine rechtswidrige Tätigkeit hinweisen.</p>
+                </div>
+
+                <div>
+                  <p className="font-medium text-foreground mb-1">Haftung für Links</p>
+                  <p>Unsere Website enthält Links zu externen Websites. Für die Inhalte der verlinkten Seiten sind wir nicht verantwortlich. Die Betreiber der verlinkten Seiten sind allein für deren Inhalte verantwortlich.</p>
+                </div>
+
+                <div>
+                  <p className="font-medium text-foreground mb-1">Urheberrecht</p>
+                  <p>Die Inhalte und Werke auf dieser Website sind urheberrechtlich geschützt. Eine Vervielfältigung, Bearbeitung, Verbreitung oder jede Art der Verwertung außerhalb der Grenzen des Urheberrechts bedarf der vorherigen schriftlichen Zustimmung des Autors oder Erstellers. Der Quellcode ist unter der <strong>GPL-3.0 Lizenz</strong> verfügbar.</p>
+                </div>
+
+                <div>
+                  <p className="font-medium text-foreground mb-1">Hosting & GitHub Pages</p>
+                  <p>Diese Website wird gehostet auf <strong>GitHub Pages</strong> (GitHub Inc., San Francisco, USA). Informationen zur Datenverarbeitung finden Sie unter: <a href="https://docs.github.com/en/github/site-policy/github-privacy-statement" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">GitHub Privacy Statement</a></p>
+                </div>
+
+                <div>
+                  <p className="font-medium text-foreground mb-1">Datenschutz</p>
+                  <p>Siehe unsere <Link to="/datenschutz" className="text-primary hover:underline">Datenschutzerklärung</Link> für Informationen über die Verarbeitung personenbezogener Daten.</p>
+                </div>
+
+                <div>
+                  <p className="font-medium text-foreground mb-1">Nutzungsbedingungen</p>
+                  <p>Die <Link to="/nutzungsbedingungen" className="text-primary hover:underline">Nutzungsbedingungen</Link> regeln die Verwendung dieses Services.</p>
+                </div>
+              </div>
+            </section>
+
+            {/* Streitbeilegung */}
+            <section className="border-t border-white/5 pt-8 space-y-3">
+              <h2 className="text-sm font-bold uppercase tracking-widest text-primary mb-4">Streitbeilegung</h2>
+              <p className="text-sm text-muted-foreground">
+                Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit: <a href="https://ec.europa.eu/consumers/odr/" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">https://ec.europa.eu/consumers/odr/</a>
+              </p>
+              <p className="text-xs text-muted-foreground/70">Wir sind nicht bereit und nicht verpflichtet, an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen.</p>
+            </section>
+
+            {/* Letzte Aktualisierung */}
+            <section className="border-t border-white/5 pt-8">
+              <p className="text-xs text-muted-foreground/60">Letzte Aktualisierung: Januar 2026</p>
             </section>
           </motion.div>
 
           {/* Optional Footer Disclaimer */}
-          <p className="mt-8 text-center text-[11px] text-muted-foreground/40 leading-relaxed max-w-xl mx-auto italic">
-            Dieses Impressum gilt auch für unsere Social-Media-Präsenzen und den Discord-Bot ManagerX.
+          <p className="mt-8 text-center text-[10px] text-muted-foreground/40 leading-relaxed max-w-xl mx-auto">
+            Dieses Impressum gilt auch für unsere Social-Media-Präsenzen und den Discord-Bot ManagerX. Das Projekt wird entwickelt und gehostet von OPPRO.NET Network.
           </p>
         </div>
       </main>

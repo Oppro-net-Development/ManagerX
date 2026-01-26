@@ -1,6 +1,5 @@
 import { memo, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
 import { 
   ArrowLeft, Activity, Globe, Cpu, Layers, 
   CheckCircle2, XCircle, Mail, Github 
@@ -12,28 +11,36 @@ const Status = memo(function Status() {
   // State für die Live-Daten vom Bot
   const [data, setData] = useState({ 
     status: "loading", 
-    latency: "--", 
-    version: "2.0.0",
-    guilds: 0 
+    latency: "--",
+    uptime: "--",
+    guilds: 0,
+    users: 0,
+    bot_name: "ManagerX",
+    bot_id: null,
+    database: "disconnected"
   });
 
   useEffect(() => {
     const fetchStatus = async () => {
       try {
-        // Abfrage an deinen Py-cord Bot auf Port 8040
-        const response = await fetch("http://localhost:8040/api/status");
+        // Abfrage an die neue FastAPI-Route für echte Bot-Daten
+        const response = await fetch("http://localhost:8040/api/v1/managerx/stats");
         if (!response.ok) throw new Error("Offline");
         
         const result = await response.json();
         setData({
-          status: "online",
-          latency: result.latency,
-          version: result.version,
-          guilds: result.guilds
+          status: result.status || "online",
+          latency: result.latency || "--",
+          uptime: result.uptime || "--",
+          guilds: result.guilds || 0,
+          users: result.users || 0,
+          bot_name: result.bot_name || "ManagerX",
+          bot_id: result.bot_id || null,
+          database: result.database || "disconnected"
         });
       } catch (error) {
         // Falls der Bot nicht erreichbar ist
-        setData((prev) => ({ ...prev, status: "offline", latency: "--" }));
+        setData((prev) => ({ ...prev, status: "offline", latency: "--", database: "disconnected" }));
       }
     };
 
@@ -48,39 +55,41 @@ const Status = memo(function Status() {
       name: "ManagerX Core Engine",
       status: data.status,
       latency: data.latency,
-      description: `Zentrale Instanz (v${data.version}) inkl. KI & SQLite`,
+      description: `${data.bot_name} - Uptime: ${data.uptime} | ${data.guilds} Gilden | ${data.users} User`,
       icon: Cpu,
       isParent: true
     },
     {
       name: "Globalchat Network",
       status: data.status === "online" ? "online" : "offline",
-      latency: "Active",
+      latency: `${data.guilds} active`,
       description: "Echtzeit-Verbindung zum ManagerX-Netzwerk",
       icon: Globe,
     },
     {
-      name: "Static Content",
-      status: "online", // Website läuft ja gerade
-      latency: "2ms",
-      description: "Bereitstellung von lokalen Modul-Assets",
+      name: "Database Connection",
+      status: data.database === "connected" ? "online" : "offline",
+      latency: data.database,
+      description: "SQLite Settings Database für alle Guild-Konfigurationen",
       icon: Layers,
     }
   ];
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div 
+      className="min-h-screen bg-background flex flex-col"
+    >
       <Navbar />
       
       <main className="flex-grow container relative z-10 px-4 pt-32 pb-24 text-white">
         <div className="max-w-4xl mx-auto">
           
-          <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }}>
+          <div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }}>
             <Link to="/" className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors mb-12 group text-sm font-medium">
               <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
               Zurück zur Zentrale
             </Link>
-          </motion.div>
+          </div>
 
           <header className="mb-16 text-center md:text-left">
             <div className="flex flex-col md:flex-row items-center gap-5 mb-6">
@@ -168,13 +177,14 @@ const Status = memo(function Status() {
           <div className="mt-20 flex flex-col md:flex-row items-center justify-between p-8 glass rounded-3xl border border-white/5 gap-6">
             <div className="text-center md:text-left text-sm text-muted-foreground">
               <p>Aktive Gilden im Netzwerk: <span className="text-white font-mono">{data.guilds}</span></p>
-              <p>Überprüfung erfolgt alle 15 Sekunden via Local-API.</p>
+              <p>Registrierte User: <span className="text-white font-mono">{data.users}</span></p>
+              <p>Überprüfung erfolgt alle 15 Sekunden via FastAPI-Endpoint.</p>
             </div>
             <div className="flex gap-3">
-              <a href="mailto:support@oppro.net" className="p-3 glass rounded-xl hover:text-primary transition-colors border border-white/5">
+              <a href="mailto:support@oppro.net" className="p-3 glass rounded-xl hover:text-primary transition-colors border border-white/5" title="Email">
                 <Mail className="w-5 h-5" />
               </a>
-              <a href="https://github.com/ManagerX-Development" className="p-3 glass rounded-xl hover:text-primary transition-colors border border-white/5">
+              <a href="https://github.com/ManagerX-Development" className="p-3 glass rounded-xl hover:text-primary transition-colors border border-white/5" title="GitHub">
                 <Github className="w-5 h-5" />
               </a>
             </div>

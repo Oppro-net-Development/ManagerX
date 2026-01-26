@@ -37,39 +37,55 @@ export const FeatureCard = memo(function FeatureCard({
       initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-100px" }}
-      transition={{ duration: 0.4, delay }}
-      className="group glass rounded-3xl p-7 hover:bg-card/80 transition-colors duration-300"
+      transition={{ duration: 0.6, delay, ease: "easeInOut" }}
+      whileHover={{ y: -8, boxShadow: "0 20px 40px rgba(var(--primary), 0.15)" }}
+      className="group glass rounded-3xl p-8 hover:bg-card/80 transition-all duration-500 ease-out border border-white/10 backdrop-blur-lg"
     >
       {/* Header */}
-      <div className="flex items-start justify-between mb-6">
-        <div className={cn(
-          "w-14 h-14 rounded-2xl flex items-center justify-center transition-transform duration-300 group-hover:scale-110",
-          categoryBgColors[category]
-        )}>
-          <Icon className={cn("w-7 h-7", categoryColors[category])} />
-        </div>
+      <div className="flex items-start justify-between mb-8">
+        <motion.div 
+          whileHover={{ scale: 1.1, rotate: 5 }}
+          className={cn(
+            "w-16 h-16 rounded-2xl flex items-center justify-center transition-all duration-300 shadow-lg",
+            categoryBgColors[category]
+          )}
+        >
+          <Icon className={cn("w-8 h-8", categoryColors[category])} />
+        </motion.div>
       </div>
       
-      <h3 className="text-xl font-bold mb-5 text-foreground">
+      <motion.h3 
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        transition={{ delay: delay + 0.2 }}
+        className="text-2xl font-bold mb-6 text-foreground group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-primary group-hover:to-accent transition-all"
+      >
         {title}
-      </h3>
+      </motion.h3>
       
-      <ul className="space-y-3">
+      <div className="space-y-4">
         {features.map((feature, index) => (
-          <li
+          <motion.div
             key={index}
-            className="flex items-start gap-3 text-sm text-muted-foreground"
+            initial={{ opacity: 0, x: -10 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: delay + 0.1 + index * 0.05 }}
+            className="flex items-start gap-4 text-sm text-muted-foreground group-hover:text-foreground transition-colors"
           >
-            <div className={cn(
-              "w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5",
-              categoryBgColors[category]
-            )}>
-              <Check className={cn("w-3 h-3", categoryColors[category])} />
-            </div>
-            <span>{feature}</span>
-          </li>
+            <motion.div 
+              whileHover={{ scale: 1.2 }}
+              className={cn(
+                "w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-1 shadow-md",
+                categoryBgColors[category]
+              )}
+            >
+              <Check className={cn("w-3.5 h-3.5", categoryColors[category])} />
+            </motion.div>
+            <span className="leading-relaxed">{feature}</span>
+          </motion.div>
         ))}
-      </ul>
+      </div>
     </motion.div>
   );
 });

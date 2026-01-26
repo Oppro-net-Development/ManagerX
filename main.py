@@ -13,11 +13,14 @@ import discord
 import sys
 import asyncio
 from pathlib import Path
+from datetime import datetime
 from colorama import Fore, Style, init as colorama_init
 from dotenv import load_dotenv
 import ezcord
 from ezcord import CogLog
-from aiohttp import web  # Neu für die Status-Seite
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from uvicorn import Server, Config
 
 # Logger (muss existieren!)
 from logger import logger
@@ -29,6 +32,9 @@ from src.bot.core.cog_manager import CogManager
 from src.bot.core.database import DatabaseManager
 from src.bot.core.dashboard import DashboardTask
 from src.bot.core.utils import print_logo
+
+# API Routes für Dashboard
+from src.api.dashboard.routes import set_bot_instance, router as dashboard_router
 
 # =============================================================================
 # SETUP
@@ -42,38 +48,32 @@ if str(BASEDIR) not in sys.path:
     sys.path.append(str(BASEDIR))
 
 # =============================================================================
-# STATUS API SERVER (Für die React-Webseite)
+# FASTAPI SETUP
 # =============================================================================
-async def get_status_api(request):
-    """Liefert Live-Daten an die React Status-Seite"""
-    try:
-        status_data = {
-            "status": "online",
-            "latency": f"{round(bot.latency * 1000)}ms",
-            "version": BotConfig.VERSION,
-            "guilds": len(bot.guilds),
-            "users": len(bot.users),
-            "sqlite": "connected",
-            "ai_engine": "ready"
-        }
-        return web.json_response(status_data, headers={
-            "Access-Control-Allow-Origin": "*",
-            "Access-Control-Allow-Methods": "GET"
-        })
-    except Exception as e:
-        logger.error("API", f"Fehler bei Status-Abfrage: {e}")
-        return web.json_response({"status": "error"}, status=500)
+app = FastAPI(
+    title="ManagerX Dashboard API",
+    description="Live Bot Status & Statistiken API",
+    version=BotConfig.VERSION
+)
+
+# CORS aktivieren
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Dashboard-Routes einbinden
+app.include_router(dashboard_router)
 
 async def start_webserver():
-    """Startet den aiohttp Webserver auf Port 8080"""
-    app = web.Application()
-    app.router.add_get('/api/status', get_status_api)
-    runner = web.AppRunner(app)
-    await runner.setup()
-    # Port 8080 - Stelle sicher, dass dieser in der Firewall offen ist (ufw allow 8080/tcp)
-    site = web.TCPSite(runner, '0.0.0.0', 8040)
-    await site.start()
-    logger.success("API", "Status-Server läuft auf http://0.0.0.0:8040/api/status")
+    """Startet den FastAPI Webserver auf Port 8040"""
+    config = Config(app=app, host="0.0.0.0", port=8040, log_level="error")
+    server = Server(config)
+    await server.serve()
+    logger.success("API", "FastAPI-Server läuft auf http://0.0.0.0:8040")
 
 # =============================================================================
 # MAIN EXECUTION
@@ -92,6 +92,13 @@ if __name__ == '__main__':
     logger.info("BOT", "Initialisiere Bot...")
     bot_setup = BotSetup(config)
     bot = bot_setup.create_bot()
+    
+    # Speichere Bot Start-Zeit für Uptime-Berechnung
+    bot.start_time = datetime.utcnow()
+    
+    # Übergebe Bot-Instanz an die API-Routes
+    set_bot_instance(bot)
+    logger.info("API", "Bot-Instanz an Dashboard-API übergeben")
     
     # Datenbank initialisieren
     db_manager = DatabaseManager()
