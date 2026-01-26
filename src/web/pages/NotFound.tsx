@@ -2,7 +2,6 @@ import { useLocation, Link } from "react-router-dom";
 import { useEffect } from "react";
 import { motion } from "framer-motion";
 import { Shield, Sparkles, Home, Terminal } from "lucide-react";
-import { Button } from "@/components/ui/button";
 
 const NotFound = () => {
   const location = useLocation();
@@ -12,7 +11,9 @@ const NotFound = () => {
   }, [location.pathname]);
 
   return (
-    <div className="relative min-h-screen flex items-center justify-center overflow-hidden bg-background">
+    <div 
+      className="relative min-h-screen flex items-center justify-center overflow-hidden bg-background"
+    >
       {/* --- ORIGINAL HERO BACKGROUND --- */}
       <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-background to-background" />
       
@@ -21,14 +22,7 @@ const NotFound = () => {
       <div className="absolute bottom-1/4 right-1/4 w-[300px] h-[300px] bg-accent/10 rounded-full opacity-40 blur-[80px]" />
       
       {/* Grid Pattern */}
-      <div 
-        className="absolute inset-0 opacity-[0.03]"
-        style={{
-          backgroundImage: `linear-gradient(hsl(var(--foreground)) 1px, transparent 1px),
-                            linear-gradient(90deg, hsl(var(--foreground)) 1px, transparent 1px)`,
-          backgroundSize: "80px 80px",
-        }}
-      />
+      <div className="absolute inset-0 opacity-[0.03] grid-pattern" />
 
       <div className="container relative z-10 px-4">
         <div className="text-center max-w-5xl mx-auto">
@@ -77,13 +71,11 @@ const NotFound = () => {
             transition={{ delay: 0.3 }}
             className="flex justify-center mb-20"
           >
-            <Button variant="hero" size="xl" className="group" asChild>
-              <Link to="/">
-                <Home className="w-5 h-5 mr-2" />
-                <span>Zurück zur Home</span>
-                <span className="inline-block ml-2 group-hover:translate-x-1 transition-transform">→</span>
-              </Link>
-            </Button>
+            <Link to="/" className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-primary to-accent rounded-xl text-white font-bold hover:shadow-lg hover:shadow-primary/50 transition-all group">
+              <Home className="w-5 h-5" />
+              <span>Zurück zur Home</span>
+              <span className="inline-block group-hover:translate-x-1 transition-transform">→</span>
+            </Link>
           </motion.div>
 
           {/* --- TERMINAL FOOTER --- */}
@@ -96,7 +88,7 @@ const NotFound = () => {
             <Terminal className="w-3 h-3 text-primary" />
             <span>Path: {location.pathname}</span>
             <span className="text-primary/30">|</span>
-            <span>Status: 404_NOT_FOUND</span>
+            <span>Status: 404 NOT FOUND</span>
           </motion.div>
         </div>
       </div>

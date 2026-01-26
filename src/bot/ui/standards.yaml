@@ -1,0 +1,7 @@
+standards:
+  footer:
+    name: "A Project of ManagerX Development."
+    name_with_webpage: "A Project of ManagerX Development ¦ https://managerx.oppro-network.de/"
+
+  authors:
+    name: "ManagerX Development"
