@@ -150,19 +150,19 @@ export const Footer = memo(function Footer() {
               className="flex flex-col gap-5 p-5 rounded-2xl hover:bg-white/5 transition-all"
             >
               <span className="text-[11px] font-black uppercase tracking-widest text-primary">Rechtliches</span>
-              <Link to="/datenschutz" className="text-sm text-muted-foreground hover:text-primary transition-colors font-medium flex items-center justify-center md:justify-start gap-2 group">
+              <Link to="/legal/privacy" className="text-sm text-muted-foreground hover:text-primary transition-colors font-medium flex items-center justify-center md:justify-start gap-2 group">
                 <Lock className="w-3.5 h-3.5 text-primary flex-shrink-0" />
                 <span className="group-hover:translate-x-1 transition-transform">Datenschutz</span>
               </Link>
-              <Link to="/impressum" className="text-sm text-muted-foreground hover:text-accent transition-colors font-medium flex items-center justify-center md:justify-start gap-2 group">
+              <Link to="/legal/imprint" className="text-sm text-muted-foreground hover:text-accent transition-colors font-medium flex items-center justify-center md:justify-start gap-2 group">
                 <Info className="w-3.5 h-3.5 text-accent flex-shrink-0" />
                 <span className="group-hover:translate-x-1 transition-transform">Impressum</span>
               </Link>
-              <Link to="/nutzungsbedingungen" className="text-sm text-muted-foreground hover:text-primary transition-colors font-medium flex items-center justify-center md:justify-start gap-2 group">
+              <Link to="/legal/terms" className="text-sm text-muted-foreground hover:text-primary transition-colors font-medium flex items-center justify-center md:justify-start gap-2 group">
                 <FileCheck className="w-3.5 h-3.5 text-primary flex-shrink-0" />
                 <span className="group-hover:translate-x-1 transition-transform">Nutzungsbedingungen</span>
               </Link>
-              <Link to="/license" className="text-sm text-muted-foreground hover:text-accent font-medium flex items-center justify-center md:justify-start gap-2 group">
+              <Link to="/legal/license" className="text-sm text-muted-foreground hover:text-accent font-medium flex items-center justify-center md:justify-start gap-2 group">
                 <Code2 className="w-3.5 h-3.5 text-accent flex-shrink-0" />
                 <span className="group-hover:translate-x-1 transition-transform">Open Source</span>
               </Link>
