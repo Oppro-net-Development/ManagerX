@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { ArrowLeft, Mail, MapPin, User, ShieldCheck } from "lucide-react";
 import { Navbar } from "../components/Navbar";
 import { Footer } from "../components/Footer";
+import { motion } from "framer-motion";
 
 export const Impressum = memo(function Impressum() {
   return (

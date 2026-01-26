@@ -29,10 +29,10 @@ const AppContent = () => {
       >
         <Routes location={location}>
           <Route path="/" element={<Index />} />
-          <Route path="/impressum" element={<Impressum />} />
-          <Route path="/datenschutz" element={<Datenschutz />} />
-          <Route path="/nutzungsbedingungen" element={<Nutzungsbedingungen />} />
-          <Route path="/license" element={<License />} />
+          <Route path="/legal/imprint" element={<Impressum />} />
+          <Route path="/legal/privacy" element={<Datenschutz />} />
+          <Route path="/legal/terms" element={<Nutzungsbedingungen />} />
+          <Route path="/legal/license" element={<License />} />
           <Route path="/plugins" element={<PluginsPage />} />
           <Route path="/status" element={<Status />} />
           <Route path="*" element={<NotFound />} />
